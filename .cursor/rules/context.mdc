@@ -1,0 +1,143 @@
+---
+alwaysApply: true
+---
+
+### Prompt para el Contexto de Cursor (Versión Final v7)
+
+````
+**Contexto del Proyecto y Directivas (Project Context & Directives)**
+
+Eres mi asistente experto en desarrollo frontend. Estamos construyendo un nuevo proyecto y debes seguir estricta y consistentemente las siguientes directivas tecnológicas y arquitectónicas en todo el código que generes.
+
+**1. Stack Tecnológico Principal (Core Tech Stack):**
+* **Framework:** Next.js (^15.0.4) (Usando App Router).
+* **Internacionalización (i18n):** `next-intl` (^v3.15.0).
+* **Estilos:** Tailwind CSS (^v3.4.x).
+* **Componentes UI:** shadcn/ui (CLI ^v0.9.5).
+* **Alertas y Notificaciones:** shadcn/ui Toaster (basado en `react-hot-toast` ^v2.6.0).
+* **Estado Global:** Jotai (^v2.x).
+* **Autenticación:** Next-Auth (Auth.js ^v5.x, instalado vía `next-auth@beta`).
+* **Peticiones API:** Axios (^v1.13.2).
+* **Manejo de Fechas:** Day.js (^v1.11.19).
+
+**2. Reglas Supremamente Importantes (Non-Negotiable Rules):**
+* **TypeScript Estricto:** El modo `strict` de TypeScript está activado. Es **mandatorio** no usar tipos implícitos o explícitos como `any`.
+* **Tipado Fuerte:** No se permiten tipos `unknown` sin su debida validación de tipo. Evita `undefined` explícito si puede ser reemplazado por tipos opcionales (`?`) o valores por defecto.
+* **Código Limpio (Producción):** El código final no debe contener llamadas a `console.log`, `console.warn`, etc. No dejes comentarios innecesarios o código comentado (`//`). Si necesitas depurar, estos `console.log` deben ser eliminados antes de finalizar la tarea.
+* **Buenas Prácticas:** Sigue siempre las mejores prácticas de programación (principios SOLID, DRY - Don't Repeat Yourself). Escribe código limpio, legible y mantenible.
+* **Centralización de Tipos y Esquemas (DRY):** Para asegurar que los tipos sean estrictos y compartidos, todas las definiciones de tipos de datos comunes (interfaces de API, tipos de sesión de Auth.js) y esquemas (`zod`) deben estar centralizados.
+    * **Estructura:** Utiliza `src/lib/types/` para interfaces y tipos (`*.types.ts`).
+    * **Estructura (Esquemas):** Utiliza `src/lib/schemas/` para los esquemas de Zod. Esto permite que un esquema (ej: `loginSchema`) se importe y use tanto en el formulario del cliente (react-hook-form) como en una validación de API (Route Handler) sin duplicar código.
+
+**3. Stack de Formularios (Forms Stack):**
+* **Manejo de Estado:** `react-hook-form` (~v7.66.0).
+* **Validación de Esquemas:** `zod` (~v4.1.12).
+* **Directiva de Formularios:** Todos los formularios deben usar `react-hook-form`. Todos los datos del formulario deben ser validados usando un esquema de `zod` importado desde `src/lib/schemas/`. Los componentes de `shadcn/ui` deben integrarse correctamente.
+
+**4. Arquitectura de UI OBLIGATORIA (Atomic Design):**
+Esta es la regla más importante para la UI. Los componentes de UI (vistas) deben estar separados de la lógica de rutas (directorios `app`).
+* **Base (Átomos):** Los componentes de `src/components/ui/` (instalados por shadcn) se consideran nuestros **Átomos** base.
+* **Estructura de Componentes:** Todos los componentes reutilizables deben seguir esta estructura:
+    * `src/components/1-atoms/`: (Solo si es un átomo personalizado. Ej: `Logo.tsx`).
+    * `src/components/2-molecules/`: (Combinaciones de átomos. Ej: `SearchBar.tsx`).
+    * `src/components/3-organisms/`: (Secciones complejas. Ej: `Header.tsx`, `CompleteLoginForm.tsx`).
+    * `src/components/4-templates/`: (Estructuras de página, ej: `DashboardLayout.tsx`).
+
+**5. Arquitectura de Rutas, i18n y Middleware (Regla Central):**
+Esta es la arquitectura principal de la aplicación. El archivo `middleware.ts` (estándar en Next.js 15) es el punto de control central.
+
+* **A. Estructura de Rutas (Route Groups):**
+    Toda la aplicación debe estar anidada dentro de un directorio `[locale]` para `next-intl`. Dentro, usamos "Route Groups" para separar las secciones.
+    ```
+    src/app/
+    └── [locale]/
+        ├── (public)/
+        │   ├── login/
+        │   └── page.tsx (Homepage)
+        ├── (private)/
+        │   ├── dashboard/
+        │   └── messages/
+        ├── (admin)/
+        │   ├── users/
+        │   └── settings/
+        └── layout.tsx  (Layout raíz de i18n)
+    ```
+
+* **B. Internacionalización (i18n):**
+    * Usamos `next-intl` para gestionar el enrutamiento.
+    * **Directiva:** Solo usaremos 'es' (español) por ahora.
+    * Los archivos de traducción deben vivir en `src/messages/es.json`.
+
+* **C. Guía del Archivo Middleware (src/middleware.ts):**
+    Este archivo maneja **tanto i18n como la autenticación**. Usamos el `middleware` de `next-auth` y lo componemos con `next-intl`.
+
+    ```typescript
+    import { NextResponse } from 'next/server';
+    import type { NextRequest } from 'next/server';
+    import NextAuth from 'next-auth';
+    import { authConfig } from './auth.config'; // Config de Auth.js v5
+    import createIntlMiddleware from 'next-intl/middleware';
+
+    // 1. Inicializa el middleware de Auth.js
+    const { auth } = NextAuth(authConfig);
+
+    // 2. Configuración de i18n (next-intl)
+    const intlMiddleware = createIntlMiddleware({
+      locales: ['es'],
+      defaultLocale: 'es',
+      localePrefix: 'as-needed', // No añadir prefijo para 'es'
+    });
+
+    // 3. Lógica principal del Middleware (combinado)
+    export default auth((request) => {
+      const { nextUrl } = request;
+      const session = request.auth;
+
+      // --- Lógica de i18n (Se ejecuta primero) ---
+      const intlResponse = intlMiddleware(request);
+      if (intlResponse.status === 307 || intlResponse.status === 308) {
+        return intlResponse;
+      }
+
+      // --- Lógica de Autorización (Auth) ---
+      const pathname = nextUrl.pathname.replace(
+        new RegExp(`^/(${intlMiddleware.locales.join('|')})?`),
+        ''
+      ) || '/';
+
+      const isPublic = pathname === '/' || pathname === '/login';
+      const isPrivate = pathname.startsWith('/dashboard') || pathname.startsWith('/messages');
+      const isAdmin = pathname.startsWith('/users') || pathname.startsWith('/settings');
+
+      // Si no hay sesión (no logueado)
+      if (!session) {
+        if (isPrivate || isAdmin) {
+          const loginUrl = nextUrl.clone();
+          loginUrl.pathname = `/${nextUrl.locale || intlMiddleware.defaultLocale}/login`;
+          return NextResponse.redirect(loginUrl);
+        }
+        return intlResponse; // Permitir rutas públicas
+      }
+
+      // Si SÍ hay sesión (logueado)
+      const userRole = session.user?.role; // Asumiendo que 'role' está en el token
+
+      if (isAdmin && userRole !== 'admin') {
+        const dashboardUrl = nextUrl.clone();
+        dashboardUrl.pathname = `/${nextUrl.locale || intlMiddleware.defaultLocale}/dashboard`;
+        return NextResponse.redirect(dashboardUrl);
+      }
+
+      return intlResponse;
+    });
+
+    // Configuración de rutas (Matcher)
+    export const config = {
+      matcher: [
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+      ],
+    };
+    ```
+
+En resumen: Prioriza el tipado estricto (sin `any`) y centralizado (en `src/lib/types` y `src/lib/schemas`), usa Next.js 15, estructura rutas con `(grupos)` dentro de `[locale]`, valida formularios con `zod` + `react-hook-form`, estructura componentes con Atomic Design y usa `middleware.ts` para la lógica combinada de `next-intl` (solo 'es') y `next-auth`.
+````
