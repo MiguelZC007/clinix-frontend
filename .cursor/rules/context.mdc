@@ -10,15 +10,15 @@ alwaysApply: true
 Eres mi asistente experto en desarrollo frontend. Estamos construyendo un nuevo proyecto y debes seguir estricta y consistentemente las siguientes directivas tecnológicas y arquitectónicas en todo el código que generes.
 
 **1. Stack Tecnológico Principal (Core Tech Stack):**
-* **Framework:** Next.js (^15.0.4) (Usando App Router).
-* **Internacionalización (i18n):** `next-intl` (^v3.15.0).
-* **Estilos:** Tailwind CSS (^v3.4.x).
+* **Framework:** Next.js (15.5.6) (Usando App Router).
+* **Internacionalización (i18n):** `next-intl` (^4.5.3).
+* **Estilos:** Tailwind CSS (^4).
 * **Componentes UI:** shadcn/ui (CLI ^v0.9.5).
-* **Alertas y Notificaciones:** shadcn/ui Toaster (basado en `react-hot-toast` ^v2.6.0).
-* **Estado Global:** Jotai (^v2.x).
-* **Autenticación:** Next-Auth (Auth.js ^v5.x, instalado vía `next-auth@beta`).
-* **Peticiones API:** Axios (^v1.13.2).
-* **Manejo de Fechas:** Day.js (^v1.11.19).
+* **Alertas y Notificaciones:** shadcn/ui Toaster (basado en `react-hot-toast` ^2.6.0).
+* **Estado Global:** Jotai (^2.15.1).
+* **Autenticación:** Next-Auth (^4.24.13).
+* **Peticiones API:** Axios (^1.13.2).
+* **Manejo de Fechas:** Day.js (^1.11.19).
 
 **2. Reglas Supremamente Importantes (Non-Negotiable Rules):**
 * **TypeScript Estricto:** El modo `strict` de TypeScript está activado. Es **mandatorio** no usar tipos implícitos o explícitos como `any`.
