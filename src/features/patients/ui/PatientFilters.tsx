@@ -1,0 +1,22 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { SearchInput } from '@/ui/molecules';
+
+type PatientFiltersProps = {
+  search: string;
+  onSearchChange: (value: string) => void;
+};
+
+export function PatientFilters({ search, onSearchChange }: PatientFiltersProps) {
+  const t = useTranslations();
+
+  return (
+    <SearchInput
+      value={search}
+      onChange={onSearchChange}
+      placeholder={t('common.search')}
+      className="w-full max-w-sm"
+    />
+  );
+}
