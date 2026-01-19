@@ -26,6 +26,8 @@ function useBreadcrumbs(): BreadcrumbItemData[] {
 
     if (segment === 'patients') {
       breadcrumbs.push({ label: t('navigation.patients'), href: '/patients' });
+    } else if (segment === 'appointments') {
+      breadcrumbs.push({ label: t('navigation.appointments'), href: '/appointments' });
     } else if (segment === 'clinical-histories') {
       breadcrumbs.push({ label: t('navigation.clinicalHistories'), href: '/clinical-histories' });
     } else if (segment === 'new') {

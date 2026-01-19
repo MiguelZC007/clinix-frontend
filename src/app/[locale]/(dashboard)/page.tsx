@@ -83,27 +83,27 @@ export default function DashboardPage() {
         <StatCard
           title={t('navigation.patients')}
           value="128"
-          description="Pacientes registrados"
+          description={t('dashboard.registeredPatients')}
           icon={<Users className="h-4 w-4" />}
           trend="+12%"
         />
         <StatCard
           title={t('navigation.appointments')}
           value="24"
-          description="Citas esta semana"
+          description={t('dashboard.appointmentsThisWeek')}
           icon={<Calendar className="h-4 w-4" />}
           trend="+8%"
         />
         <StatCard
           title={t('navigation.clinicalHistories')}
           value="342"
-          description="Historiales totales"
+          description={t('dashboard.totalHistories')}
           icon={<FileText className="h-4 w-4" />}
         />
         <StatCard
-          title="Consultas Hoy"
+          title={t('dashboard.consultationsToday')}
           value="8"
-          description="Consultas completadas"
+          description={t('dashboard.completedConsultations')}
           icon={<TrendingUp className="h-4 w-4" />}
         />
       </div>
@@ -111,25 +111,25 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Acciones Rápidas</CardTitle>
-            <CardDescription>Accede rápidamente a las funciones más usadas</CardDescription>
+            <CardTitle>{t('dashboard.quickActions')}</CardTitle>
+            <CardDescription>{t('dashboard.quickActionsDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <QuickAction
               title={t('patients.newPatient')}
-              description="Registrar un nuevo paciente"
+              description={t('dashboard.registerNewPatient')}
               icon={<Users className="h-5 w-5" />}
               onClick={() => router.push('/patients/new')}
             />
             <QuickAction
               title={t('clinicalHistories.newHistory')}
-              description="Crear un nuevo historial clínico"
+              description={t('dashboard.createNewHistory')}
               icon={<FileText className="h-5 w-5" />}
               onClick={() => router.push('/clinical-histories/new')}
             />
             <QuickAction
               title={t('patients.title')}
-              description="Ver lista de pacientes"
+              description={t('dashboard.viewPatientsList')}
               icon={<Users className="h-5 w-5" />}
               onClick={() => router.push('/patients')}
             />
@@ -138,8 +138,8 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Últimas Consultas</CardTitle>
-            <CardDescription>Historiales clínicos recientes</CardDescription>
+            <CardTitle>{t('dashboard.recentConsultations')}</CardTitle>
+            <CardDescription>{t('dashboard.recentConsultationsDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -151,7 +151,7 @@ export default function DashboardPage() {
                   <p className="font-medium">Juan Pérez</p>
                   <p className="text-sm text-muted-foreground">Gastritis aguda</p>
                 </div>
-                <span className="text-xs text-muted-foreground">Hoy</span>
+                <span className="text-xs text-muted-foreground">{t('common.today')}</span>
               </div>
               <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer" onClick={() => router.push('/clinical-histories/2')}>
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                   <p className="font-medium">María González</p>
                   <p className="text-sm text-muted-foreground">Control rutinario</p>
                 </div>
-                <span className="text-xs text-muted-foreground">Ayer</span>
+                <span className="text-xs text-muted-foreground">{t('common.yesterday')}</span>
               </div>
             </div>
             <Button
@@ -169,7 +169,7 @@ export default function DashboardPage() {
               className="w-full mt-4"
               onClick={() => router.push('/clinical-histories')}
             >
-              Ver todos los historiales
+              {t('dashboard.viewAllHistories')}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardContent>

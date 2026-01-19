@@ -17,7 +17,9 @@
     "actions": "Actions",
     "back": "Back",
     "view": "View",
-    "close": "Close"
+    "close": "Close",
+    "today": "Today",
+    "yesterday": "Yesterday"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -37,6 +39,40 @@
     "backToLogin": "Back to login",
     "loginError": "Invalid credentials",
     "sessionExpired": "Your session has expired"
+  },
+  "calendar": {
+    "today": "Today",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "more": "+{count} more",
+    "noAppointments": "No appointments for this date"
+  },
+  "dashboard": {
+    "registeredPatients": "Registered patients",
+    "appointmentsThisWeek": "Appointments this week",
+    "totalHistories": "Total histories",
+    "consultationsToday": "Consultations Today",
+    "completedConsultations": "Completed consultations",
+    "quickActions": "Quick Actions",
+    "quickActionsDescription": "Quick access to the most used features",
+    "recentConsultations": "Recent Consultations",
+    "recentConsultationsDescription": "Recent clinical histories",
+    "registerNewPatient": "Register a new patient",
+    "createNewHistory": "Create a new clinical history",
+    "viewPatientsList": "View patients list",
+    "viewAllHistories": "View all histories",
+    "appointmentCount": "{count} appointment",
+    "appointmentsCount": "{count} appointments"
   },
   "patients": {
     "title": "Patients",
