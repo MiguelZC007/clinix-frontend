@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -20,6 +20,7 @@ import { LoadingSpinner } from '@/ui/atoms';
 
 export function LoginForm() {
   const t = useTranslations();
+  const router = useRouter();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -31,6 +32,7 @@ export function LoginForm() {
 
   const onSubmit = (data: LoginFormData) => {
     console.log('Login data:', data);
+    router.push('/');
   };
 
   return (

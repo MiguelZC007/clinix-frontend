@@ -15,7 +15,7 @@ function useBreadcrumbs(): BreadcrumbItemData[] {
 
   const segments = pathname.split('/').filter(Boolean);
   const breadcrumbs: BreadcrumbItemData[] = [
-    { label: t('navigation.dashboard'), href: '/dashboard' },
+    { label: t('navigation.dashboard'), href: '/' },
   ];
 
   let currentPath = '';
@@ -24,16 +24,10 @@ function useBreadcrumbs(): BreadcrumbItemData[] {
     const segment = segments[i];
     currentPath += `/${segment}`;
 
-    if (segment === 'dashboard') continue;
-
     if (segment === 'patients') {
       breadcrumbs.push({ label: t('navigation.patients'), href: '/patients' });
-    } else if (segment === 'appointments') {
-      breadcrumbs.push({ label: t('navigation.appointments'), href: '/appointments' });
     } else if (segment === 'clinical-histories') {
       breadcrumbs.push({ label: t('navigation.clinicalHistories'), href: '/clinical-histories' });
-    } else if (segment === 'settings') {
-      breadcrumbs.push({ label: t('navigation.settings'), href: '/settings' });
     } else if (segment === 'new') {
       breadcrumbs.push({ label: t('common.create') });
     } else if (segment === 'edit') {
