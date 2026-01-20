@@ -57,8 +57,9 @@ export function LoginForm() {
         form.reset();
       } else if (result?.ok) {
         toast.success(t('auth.loginSuccess') || 'Inicio de sesión exitoso');
-        // Usar window.location para forzar recarga completa y actualizar la sesión
-        window.location.href = '/dashboard';
+        // Usar router.push para respetar el locale (es por defecto)
+        // Redirigir a pacientes que es una ruta que existe
+        router.push('/patients');
       }
     } catch (error) {
       // El error ya se mostrará en el interceptor de axios

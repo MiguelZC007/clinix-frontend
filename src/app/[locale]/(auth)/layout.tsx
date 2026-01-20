@@ -15,9 +15,9 @@ export default function AuthLayoutPage({ children }: AuthLayoutPageProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Si ya está autenticado, redirigir al dashboard
+    // Si ya está autenticado, redirigir a pacientes (respeta el locale)
     if (status === 'authenticated' && session) {
-      router.replace('/dashboard');
+      router.replace('/patients');
     }
   }, [status, session, router]);
 

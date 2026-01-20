@@ -42,16 +42,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Si está autenticado e intenta acceder a login, redirigir al dashboard
+  // Si está autenticado e intenta acceder a login, redirigir a la raíz
   if (isAuthPage && token) {
-    const dashboardUrl = new URL('/dashboard', request.url);
-    const localeMatch = pathname.match(/^\/(es|en)/);
-    if (localeMatch) {
-      dashboardUrl.pathname = `/${localeMatch[1]}/dashboard`;
-    } else {
-      dashboardUrl.pathname = '/dashboard';
-    }
-    return NextResponse.redirect(dashboardUrl);
+    const rootUrl = new URL('/', request.url);
+    return NextResponse.redirect(rootUrl);
   }
 
   // Permitir acceso a rutas de autenticación y API sin verificar token

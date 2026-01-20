@@ -6,7 +6,8 @@ export default async function HomePage() {
   const session = await getServerSession(authOptions);
 
   if (session) {
-    redirect('/dashboard');
+    // Redirigir a pacientes que es una ruta que definitivamente existe
+    redirect('/patients');
   } else {
     redirect('/login');
   }

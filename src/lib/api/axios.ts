@@ -112,7 +112,12 @@ api.interceptors.response.use(
       if (error.response?.status === 401 && !isAuthRequest) {
         // Esperar un momento para que el usuario vea el mensaje
         setTimeout(() => {
-          window.location.href = '/login';
+          // Obtener el locale actual de la URL o usar 'es' por defecto
+          const currentPath = window.location.pathname;
+          const localeMatch = currentPath.match(/^\/(es|en)/);
+          const locale = localeMatch ? localeMatch[1] : 'es';
+          const loginPath = locale === 'es' ? '/login' : `/${locale}/login`;
+          window.location.href = loginPath;
         }, 2000);
       }
     }
