@@ -6,10 +6,11 @@ import { useTranslations } from 'next-intl';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ListPageTemplate } from '@/ui/templates';
-import { EmptyState, ConfirmDialog } from '@/ui/molecules';
+import { EmptyState, ConfirmDialog, ErrorState } from '@/ui/molecules';
 import { PatientTable, PatientFilters } from '@/features/patients/ui';
-import { MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
+import { usePatientList, useDeletePatient } from '@/features/patients/hooks/usePatients';
 import type { Patient } from '@/features/patients/types/patient.types';
+import { toast } from 'sonner';
 
 export default function PatientsPage() {
   const t = useTranslations();
@@ -18,12 +19,11 @@ export default function PatientsPage() {
   const [page, setPage] = useState(1);
   const [deletePatient, setDeletePatient] = useState<Patient | null>(null);
 
-  const filteredPatients = MOCK_PATIENTS.filter(
-    (patient) =>
-      patient.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      patient.lastName.toLowerCase().includes(search.toLowerCase()) ||
-      patient.document.includes(search)
-  );
+  const { data, isLoading, error, refetch } = usePatientList({ search, page, pageSize: 10 });
+  const { mutate: deletePatientMutation, isLoading: isDeleting } = useDeletePatient();
+
+  const patients = data?.items || [];
+  const totalPages = data?.totalPages || 0;
 
   const handleView = (patient: Patient) => {
     router.push(`/patients/${patient.id}`);
@@ -33,8 +33,17 @@ export default function PatientsPage() {
     router.push(`/patients/${patient.id}/edit`);
   };
 
-  const handleDelete = () => {
-    setDeletePatient(null);
+  const handleDelete = async () => {
+    if (!deletePatient) return;
+    
+    try {
+      await deletePatientMutation(deletePatient.id);
+      toast.success(t('patients.deleteSuccess') || 'Paciente eliminado correctamente');
+      setDeletePatient(null);
+      refetch();
+    } catch (error) {
+      toast.error(t('patients.deleteError') || 'Error al eliminar paciente');
+    }
   };
 
   return (
@@ -50,7 +59,17 @@ export default function PatientsPage() {
         }
         filters={<PatientFilters search={search} onSearchChange={setSearch} />}
       >
-        {filteredPatients.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-muted-foreground">{t('common.loading') || 'Cargando...'}</div>
+          </div>
+        ) : error ? (
+          <ErrorState
+            title={t('common.error') || 'Error'}
+            description={error.message}
+            onRetry={refetch}
+          />
+        ) : patients.length === 0 ? (
           <EmptyState
             type="patients"
             title={t('patients.emptyTitle')}
@@ -60,9 +79,9 @@ export default function PatientsPage() {
           />
         ) : (
           <PatientTable
-            patients={filteredPatients}
+            patients={patients}
             page={page}
-            totalPages={1}
+            totalPages={totalPages}
             onPageChange={setPage}
             onView={handleView}
             onEdit={handleEdit}
@@ -80,6 +99,7 @@ export default function PatientsPage() {
         cancelLabel={t('common.cancel')}
         onConfirm={handleDelete}
         variant="destructive"
+        isLoading={isDeleting}
       />
     </>
   );

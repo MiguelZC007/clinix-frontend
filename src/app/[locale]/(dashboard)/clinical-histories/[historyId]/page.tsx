@@ -1,21 +1,50 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { PageHeader } from '@/ui/molecules';
+import { PageHeader, ErrorState } from '@/ui/molecules';
 import { ClinicalHistoryDetail } from '@/features/clinical-histories/ui';
-import { getMockClinicalHistoryById, MOCK_CLINICAL_HISTORIES } from '@/features/clinical-histories/__mocks__/clinical-histories.mock';
+import { useClinicalHistory } from '@/features/clinical-histories/hooks/useClinicalHistories';
 
 export default function ClinicalHistoryDetailPage() {
   const t = useTranslations();
   const router = useRouter();
   const params = useParams();
+  const historyId = params.historyId as string;
 
-  const history = getMockClinicalHistoryById(params.historyId as string) ?? { ...MOCK_CLINICAL_HISTORIES[0], id: params.historyId as string };
+  const { data: history, isLoading, error } = useClinicalHistory(historyId);
+
+  useEffect(() => {
+    if (error && !isLoading) {
+      const timer = setTimeout(() => {
+        router.push('/clinical-histories');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-muted-foreground">{t('common.loading') || 'Cargando...'}</div>
+      </div>
+    );
+  }
+
+  if (error || !history) {
+    return (
+      <ErrorState
+        title={t('clinicalHistories.notFound') || 'Historia clínica no encontrada'}
+        description={error?.message || t('clinicalHistories.notFoundDescription') || 'La historia clínica solicitada no existe'}
+        onRetry={() => router.push('/clinical-histories')}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -24,7 +53,7 @@ export default function ClinicalHistoryDetailPage() {
         description={
           <div className="flex items-center gap-2 mt-1">
             <User className="h-4 w-4" />
-            <span>{history.patientName}</span>
+            <span>{history.patientName || `${history.patientId}`}</span>
             <Badge variant="secondary">
               {new Date(history.createdAt).toLocaleDateString()}
             </Badge>

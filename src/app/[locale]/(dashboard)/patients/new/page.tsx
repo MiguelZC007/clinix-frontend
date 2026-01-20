@@ -1,24 +1,25 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { FormPageTemplate } from '@/ui/templates';
 import { PatientForm } from '@/features/patients/ui';
+import { useCreatePatient } from '@/features/patients/hooks/usePatients';
 import type { PatientFormData } from '@/features/patients/schemas/patient.schema';
+import { toast } from 'sonner';
 
 export default function NewPatientPage() {
   const t = useTranslations();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutate: createPatient, isLoading } = useCreatePatient();
 
   const handleSubmit = async (data: PatientFormData) => {
-    setIsLoading(true);
     try {
-      console.log('Create patient:', data);
+      await createPatient(data);
+      toast.success(t('patients.createSuccess') || 'Paciente creado correctamente');
       router.push('/patients');
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      toast.error(t('patients.createError') || 'Error al crear paciente');
     }
   };
 

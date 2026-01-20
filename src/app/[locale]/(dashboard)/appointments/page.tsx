@@ -6,9 +6,9 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { PageHeader } from '@/ui/molecules';
+import { PageHeader, ErrorState } from '@/ui/molecules';
 import { AppointmentCalendar } from '@/features/appointments';
-import { MOCK_APPOINTMENTS } from '@/features/appointments/__mocks__/appointments.mock';
+import { useAppointmentList } from '@/features/appointments/hooks/useAppointments';
 import type { Appointment, AppointmentStatus } from '@/features/appointments';
 
 function getStatusBadge(status: AppointmentStatus, t: ReturnType<typeof useTranslations>) {
@@ -33,6 +33,9 @@ export default function AppointmentsPage() {
   const dateLocale = locale === 'es' ? 'es-ES' : 'en-US';
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
+  const { data, isLoading, error } = useAppointmentList();
+  const appointments = data?.items || [];
+
   return (
     <div className="space-y-4 h-full">
       <PageHeader
@@ -46,10 +49,22 @@ export default function AppointmentsPage() {
         }
       />
 
-      <AppointmentCalendar
-        appointments={MOCK_APPOINTMENTS}
-        onAppointmentClick={setSelectedAppointment}
-      />
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-muted-foreground">{t('common.loading') || 'Cargando...'}</div>
+        </div>
+      ) : error ? (
+        <ErrorState
+          title={t('common.error') || 'Error'}
+          description={error.message}
+          onRetry={() => window.location.reload()}
+        />
+      ) : (
+        <AppointmentCalendar
+          appointments={appointments}
+          onAppointmentClick={setSelectedAppointment}
+        />
+      )}
 
       <Dialog open={!!selectedAppointment} onOpenChange={(open) => !open && setSelectedAppointment(null)}>
         <DialogContent>

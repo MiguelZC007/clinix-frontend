@@ -5,14 +5,17 @@ import { useTranslations } from 'next-intl';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ListPageTemplate } from '@/ui/templates';
-import { EmptyState } from '@/ui/molecules';
+import { EmptyState, ErrorState } from '@/ui/molecules';
 import { ClinicalHistoryCard } from '@/features/clinical-histories/ui';
-import { MOCK_CLINICAL_HISTORIES } from '@/features/clinical-histories/__mocks__/clinical-histories.mock';
+import { useClinicalHistoryList } from '@/features/clinical-histories/hooks/useClinicalHistories';
 import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
 
 export default function ClinicalHistoriesPage() {
   const t = useTranslations();
   const router = useRouter();
+
+  const { data, isLoading, error, refetch } = useClinicalHistoryList();
+  const histories = data?.items || [];
 
   const handleView = (history: ClinicalHistory) => {
     router.push(`/clinical-histories/${history.id}`);
@@ -29,7 +32,17 @@ export default function ClinicalHistoriesPage() {
         </Button>
       }
     >
-      {MOCK_CLINICAL_HISTORIES.length === 0 ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-muted-foreground">{t('common.loading') || 'Cargando...'}</div>
+        </div>
+      ) : error ? (
+        <ErrorState
+          title={t('common.error') || 'Error'}
+          description={error.message}
+          onRetry={refetch}
+        />
+      ) : histories.length === 0 ? (
         <EmptyState
           type="clinical-histories"
           title={t('clinicalHistories.emptyTitle')}
@@ -39,7 +52,7 @@ export default function ClinicalHistoriesPage() {
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {MOCK_CLINICAL_HISTORIES.map((history) => (
+          {histories.map((history) => (
             <ClinicalHistoryCard
               key={history.id}
               history={history}

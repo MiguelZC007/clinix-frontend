@@ -130,10 +130,10 @@ export function useCancelAppointment() {
     error: null,
   });
 
-  const mutate = useCallback(async (id: string, reason: string): Promise<Appointment> => {
+  const mutate = useCallback(async (id: string): Promise<Appointment> => {
     setState({ isLoading: true, error: null });
     try {
-      const result = await cancelAppointment(id, reason);
+      const result = await cancelAppointment(id);
       setState({ isLoading: false, error: null });
       return result;
     } catch (error) {

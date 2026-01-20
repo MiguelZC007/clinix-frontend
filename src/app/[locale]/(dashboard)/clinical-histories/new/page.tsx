@@ -1,25 +1,30 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { FormPageTemplate } from '@/ui/templates';
 import { ClinicalHistoryForm } from '@/features/clinical-histories/ui';
-import { MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
+import { usePatientList } from '@/features/patients/hooks/usePatients';
+import { useCreateClinicalHistory } from '@/features/clinical-histories/hooks/useClinicalHistories';
 import type { ClinicalHistoryFormData } from '@/features/clinical-histories/schemas/clinical-history.schema';
+import { toast } from 'sonner';
 
 export default function NewClinicalHistoryPage() {
   const t = useTranslations();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { data: patientsData, isLoading: isLoadingPatients } = usePatientList();
+  const { mutate: createClinicalHistory, isLoading: isCreating } = useCreateClinicalHistory();
+
+  const patients = patientsData?.items || [];
 
   const handleSubmit = async (data: ClinicalHistoryFormData) => {
-    setIsLoading(true);
     try {
-      console.log('Create clinical history:', data);
+      await createClinicalHistory(data);
+      toast.success(t('clinicalHistories.createSuccess') || 'Historia clínica creada correctamente');
       router.push('/clinical-histories');
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      toast.error(t('clinicalHistories.createError') || 'Error al crear historia clínica');
     }
   };
 
@@ -31,12 +36,18 @@ export default function NewClinicalHistoryPage() {
     <FormPageTemplate
       title={t('clinicalHistories.newHistory')}
     >
-      <ClinicalHistoryForm
-        patients={MOCK_PATIENTS}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        isLoading={isLoading}
-      />
+      {isLoadingPatients ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-muted-foreground">{t('common.loading') || 'Cargando...'}</div>
+        </div>
+      ) : (
+        <ClinicalHistoryForm
+          patients={patients}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isLoading={isCreating}
+        />
+      )}
     </FormPageTemplate>
   );
 }
