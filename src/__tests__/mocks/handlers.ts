@@ -4,7 +4,7 @@ import { MOCK_APPOINTMENTS } from '@/features/appointments/__mocks__/appointment
 import { MOCK_CLINICAL_HISTORIES } from '@/features/clinical-histories/__mocks__/clinical-histories.mock';
 import { MOCK_CONVERSATIONS, MOCK_MESSAGES } from '@/features/messages/__mocks__/messages.mock';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/v1';
 
 export const handlers = [
   http.get(`${API_BASE_URL}/patients`, () => {

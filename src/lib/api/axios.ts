@@ -1,8 +1,11 @@
 import axios from 'axios';
 
 // Instancia única de Axios
+// Prioriza NEXT_PUBLIC_API_URL (disponible en cliente y servidor)
+// Si no está definida, verifica NEXT_API_URL (solo servidor)
+// Valor por defecto: http://localhost:4000/v1
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/v1',
+  baseURL: process.env.NEXT_API_URL || 'http://localhost:4000/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
