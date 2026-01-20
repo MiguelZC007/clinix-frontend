@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
+import { SessionProvider } from '@/lib/auth/SessionProvider';
 import '../globals.css';
 
 const geistSans = Geist({
@@ -40,9 +41,11 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <SessionProvider>
+          <NextIntlClientProvider messages={messages}>
+            {children}
+          </NextIntlClientProvider>
+        </SessionProvider>
       </body>
     </html>
   );

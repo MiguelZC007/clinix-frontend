@@ -1,25 +1,19 @@
 export type User = {
   id: string;
-  email: string;
-  firstName: string;
+  name: string;
   lastName: string;
-  role: UserRole;
-  avatar?: string;
-  createdAt: string;
-  updatedAt: string;
+  phone: string;
+  email: string;
 };
 
-export type UserRole = 'admin' | 'doctor' | 'nurse' | 'receptionist';
-
 export type LoginRequest = {
-  email: string;
+  phone: string;
   password: string;
 };
 
 export type LoginResponse = {
   user: User;
   accessToken: string;
-  refreshToken: string;
 };
 
 export type ForgotPasswordRequest = {

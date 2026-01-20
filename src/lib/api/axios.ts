@@ -12,19 +12,30 @@ export const api = axios.create({
   },
 });
 
-// Interceptor para adjuntar token (si existe)
-api.interceptors.request.use(
-  (config) => {
-    // TODO: Integrar con NextAuth o sistema de sesión
-    // const token = ...
-    // if (token) config.headers.Authorization = `Bearer ${token}`
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// Función helper para obtener token (usada en client.ts)
+export async function getAuthToken(): Promise<string | null> {
+  // En el cliente, usar getSession de next-auth/react
+  if (typeof window !== 'undefined') {
+    const { getSession } = await import('next-auth/react');
+    const session = await getSession();
+    return session?.accessToken || null;
+  }
+  // En el servidor, el token se pasa explícitamente o se obtiene de las cookies
+  // Por ahora retornamos null, el token se manejará en client.ts
+  return null;
+}
 
-// Interceptor de respuesta (opcional, el manejo de errores se hace en client.ts o errors.ts)
+// Interceptor de respuesta para manejar errores 401
 api.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  async (error) => {
+    // Si el token expiró o es inválido, redirigir a login
+    if (error.response?.status === 401) {
+      // Solo redirigir en el cliente
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
 );

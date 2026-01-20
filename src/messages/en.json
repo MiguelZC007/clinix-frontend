@@ -33,12 +33,17 @@
     "login": "Login",
     "logout": "Logout",
     "email": "Email",
+    "phone": "Phone",
     "password": "Password",
     "forgotPassword": "Forgot your password?",
     "forgotPasswordDescription": "Enter your email and we will send you a link to reset your password.",
     "sendResetLink": "Send reset link",
     "backToLogin": "Back to login",
-    "loginError": "Invalid credentials",
+    "loginError": "Error signing in",
+    "loginSuccess": "Successfully signed in",
+    "logoutSuccess": "Successfully signed out",
+    "logoutError": "Error signing out",
+    "invalidCredentials": "Invalid credentials",
     "sessionExpired": "Your session has expired"
   },
   "calendar": {

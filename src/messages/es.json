@@ -33,12 +33,17 @@
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
     "email": "Correo electrónico",
+    "phone": "Teléfono",
     "password": "Contraseña",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "forgotPasswordDescription": "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
     "sendResetLink": "Enviar enlace",
     "backToLogin": "Volver al inicio de sesión",
-    "loginError": "Credenciales inválidas",
+    "loginError": "Error al iniciar sesión",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "logoutSuccess": "Sesión cerrada correctamente",
+    "logoutError": "Error al cerrar sesión",
+    "invalidCredentials": "Credenciales inválidas",
     "sessionExpired": "Tu sesión ha expirado"
   },
   "calendar": {

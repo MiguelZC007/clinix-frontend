@@ -8,16 +8,12 @@ const ENDPOINT = '/auth';
 const loginResponseSchema = z.object({
   user: z.object({
     id: z.string(),
-    email: z.string().email(),
-    firstName: z.string(),
+    name: z.string(),
     lastName: z.string(),
-    role: z.enum(['admin', 'doctor', 'nurse', 'receptionist']),
-    avatar: z.string().optional(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
+    phone: z.string(),
+    email: z.string().email(),
   }),
   accessToken: z.string(),
-  refreshToken: z.string(),
 });
 
 export async function login(data: LoginRequest): Promise<LoginResponse> {

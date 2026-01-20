@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
@@ -17,22 +19,41 @@ import {
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { loginSchema, type LoginFormData } from '../schemas/login.schema';
 import { LoadingSpinner } from '@/ui/atoms';
+import { toast } from 'sonner';
 
 export function LoginForm() {
   const t = useTranslations();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      phone: '',
       password: '',
     },
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log('Login data:', data);
-    router.push('/');
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    try {
+      const result = await signIn('credentials', {
+        phone: data.phone,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast.error(t('auth.invalidCredentials') || 'Credenciales inválidas');
+      } else if (result?.ok) {
+        toast.success(t('auth.loginSuccess') || 'Inicio de sesión exitoso');
+        router.push('/dashboard');
+      }
+    } catch (error) {
+      toast.error(t('auth.loginError') || 'Error al iniciar sesión');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,14 +66,14 @@ export function LoginForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="email"
+              name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.email')}</FormLabel>
+                  <FormLabel>{t('auth.phone') || 'Teléfono'}</FormLabel>
                   <FormControl>
                     <Input
-                      type="email"
-                      placeholder="doctor@clinicasanmiguel.com"
+                      type="tel"
+                      placeholder="+584241234567"
                       {...field}
                     />
                   </FormControl>
@@ -78,9 +99,9 @@ export function LoginForm() {
             <Button
               type="submit"
               className="w-full"
-              disabled={form.formState.isSubmitting}
+              disabled={isLoading || form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? (
+              {(isLoading || form.formState.isSubmitting) ? (
                 <LoadingSpinner size="sm" className="mr-2" />
               ) : null}
               {t('auth.login')}
