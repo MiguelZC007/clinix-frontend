@@ -6,22 +6,8 @@ import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { FormPageTemplate } from '@/ui/templates';
 import { PatientForm } from '@/features/patients/ui';
+import { getMockPatientById, MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
 import type { PatientFormData } from '@/features/patients/schemas/patient.schema';
-import type { Patient } from '@/features/patients/types/patient.types';
-
-const MOCK_PATIENT: Patient = {
-  id: '1',
-  firstName: 'Juan',
-  lastName: 'Pérez',
-  document: '12345678',
-  birthDate: '1990-05-15',
-  gender: 'male',
-  phone: '+591 70000001',
-  email: 'juan.perez@email.com',
-  address: 'Av. Principal 123',
-  createdAt: '2024-01-15T10:00:00Z',
-  updatedAt: '2024-01-15T10:00:00Z',
-};
 
 export default function EditPatientPage() {
   const t = useTranslations();
@@ -29,7 +15,7 @@ export default function EditPatientPage() {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
 
-  const patient = { ...MOCK_PATIENT, id: params.patientId as string };
+  const patient = getMockPatientById(params.patientId as string) ?? { ...MOCK_PATIENTS[0], id: params.patientId as string };
 
   const handleSubmit = async (data: PatientFormData) => {
     setIsLoading(true);

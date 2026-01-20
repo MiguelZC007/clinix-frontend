@@ -7,50 +7,8 @@ import { Button } from '@/components/ui/button';
 import { ListPageTemplate } from '@/ui/templates';
 import { EmptyState } from '@/ui/molecules';
 import { ClinicalHistoryCard } from '@/features/clinical-histories/ui';
+import { MOCK_CLINICAL_HISTORIES } from '@/features/clinical-histories/__mocks__/clinical-histories.mock';
 import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
-
-const MOCK_HISTORIES: ClinicalHistory[] = [
-  {
-    id: '1',
-    patientId: '1',
-    patientName: 'Juan Pérez',
-    reason: 'Dolor abdominal persistente desde hace 3 días',
-    symptoms: 'Dolor en zona epigástrica, náuseas ocasionales',
-    physicalExam: 'Abdomen blando, dolor a la palpación en epigastrio',
-    diagnosis: 'Gastritis aguda',
-    treatment: 'Omeprazol 20mg cada 12 horas por 14 días. Dieta blanda.',
-    notes: 'Control en 2 semanas',
-    vitalSigns: {
-      bloodPressure: '120/80',
-      heartRate: 72,
-      temperature: 36.5,
-      weight: 75,
-      height: 175,
-    },
-    createdAt: '2024-01-20T10:00:00Z',
-    updatedAt: '2024-01-20T10:00:00Z',
-  },
-  {
-    id: '2',
-    patientId: '2',
-    patientName: 'María González',
-    reason: 'Control rutinario',
-    symptoms: 'Sin síntomas actuales',
-    physicalExam: 'Examen físico normal',
-    diagnosis: 'Paciente sana',
-    treatment: 'Continuar con estilo de vida saludable',
-    notes: 'Próximo control en 6 meses',
-    vitalSigns: {
-      bloodPressure: '110/70',
-      heartRate: 68,
-      temperature: 36.2,
-      weight: 62,
-      height: 165,
-    },
-    createdAt: '2024-01-18T14:30:00Z',
-    updatedAt: '2024-01-18T14:30:00Z',
-  },
-];
 
 export default function ClinicalHistoriesPage() {
   const t = useTranslations();
@@ -71,7 +29,7 @@ export default function ClinicalHistoriesPage() {
         </Button>
       }
     >
-      {MOCK_HISTORIES.length === 0 ? (
+      {MOCK_CLINICAL_HISTORIES.length === 0 ? (
         <EmptyState
           type="clinical-histories"
           title={t('clinicalHistories.emptyTitle')}
@@ -81,7 +39,7 @@ export default function ClinicalHistoriesPage() {
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {MOCK_HISTORIES.map((history) => (
+          {MOCK_CLINICAL_HISTORIES.map((history) => (
             <ClinicalHistoryCard
               key={history.id}
               history={history}

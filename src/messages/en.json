@@ -178,10 +178,14 @@
     "minLength": "Must have at least {min} characters",
     "maxLength": "Must have at most {max} characters",
     "invalidDate": "Invalid date",
-    "serverError": "Server error",
-    "networkError": "Connection error",
-    "notFound": "Not found",
+    "serverError": "Server error. Please try again later",
+    "networkError": "Connection error. Check your internet connection",
+    "notFound": "The requested resource was not found",
     "invalidPhone": "Invalid phone",
-    "invalidDocument": "Invalid document"
+    "invalidDocument": "Invalid document",
+    "validationError": "The entered data is not valid",
+    "unauthorized": "You are not authorized. Please log in",
+    "forbidden": "You do not have permission to perform this action",
+    "unknownError": "An unexpected error has occurred"
   }
 }

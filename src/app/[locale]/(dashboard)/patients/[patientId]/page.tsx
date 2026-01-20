@@ -7,28 +7,14 @@ import { ArrowLeft, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/ui/molecules';
 import { PatientTabs } from '@/features/patients/ui';
-import type { Patient } from '@/features/patients/types/patient.types';
-
-const MOCK_PATIENT: Patient = {
-  id: '1',
-  firstName: 'Juan',
-  lastName: 'Pérez',
-  document: '12345678',
-  birthDate: '1990-05-15',
-  gender: 'male',
-  phone: '+591 70000001',
-  email: 'juan.perez@email.com',
-  address: 'Av. Principal 123',
-  createdAt: '2024-01-15T10:00:00Z',
-  updatedAt: '2024-01-15T10:00:00Z',
-};
+import { getMockPatientById, MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
 
 export default function PatientDetailPage() {
   const t = useTranslations();
   const router = useRouter();
   const params = useParams();
 
-  const patient = { ...MOCK_PATIENT, id: params.patientId as string };
+  const patient = getMockPatientById(params.patientId as string) ?? { ...MOCK_PATIENTS[0], id: params.patientId as string };
 
   return (
     <div className="space-y-6">

@@ -1,14 +1,21 @@
-export type AppointmentStatus = 'scheduled' | 'completed' | 'cancelled';
+export type { AppointmentStatus, Appointment, AppointmentFormData } from '../schemas/appointment.schema';
+import type { AppointmentStatus } from '../schemas/appointment.schema';
 
-export type Appointment = {
-  id: string;
-  patientName: string;
-  patientInitials: string;
-  date: Date;
+export type CreateAppointmentRequest = {
+  patientId: string;
+  date: string;
   startTime: string;
   endTime: string;
   reason: string;
-  status: AppointmentStatus;
+};
+
+export type UpdateAppointmentRequest = Partial<CreateAppointmentRequest>;
+
+export type AppointmentsListParams = {
+  page?: number;
+  pageSize?: number;
+  date?: string;
+  status?: AppointmentStatus;
 };
 
 export type CalendarView = 'day' | 'week' | 'month';

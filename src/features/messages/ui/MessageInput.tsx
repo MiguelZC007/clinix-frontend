@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
-import { messageSchema, type MessageFormData } from '../schemas/message.schema';
+import { messageFormSchema, type MessageFormData } from '../schemas/message.schema';
 
 type MessageInputProps = {
   onSendMessage: (content: string) => void;
@@ -26,7 +26,7 @@ export function MessageInput({ onSendMessage, onSendAudio, disabled }: MessageIn
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const form = useForm<MessageFormData>({
-    resolver: zodResolver(messageSchema),
+    resolver: zodResolver(messageFormSchema),
     defaultValues: {
       content: '',
     },

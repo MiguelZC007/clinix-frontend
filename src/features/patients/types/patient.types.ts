@@ -1,18 +1,5 @@
-export type Gender = 'male' | 'female' | 'other';
-
-export type Patient = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  document: string;
-  birthDate: string;
-  gender: Gender;
-  phone: string;
-  email: string;
-  address: string;
-  createdAt: string;
-  updatedAt: string;
-};
+export type { Gender, Patient, PatientFormData } from '../schemas/patient.schema';
+import type { Patient } from '../schemas/patient.schema';
 
 export type CreatePatientRequest = Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>;
 

@@ -7,6 +7,7 @@ export const vitalSignsSchema = z.object({
   weight: z.number(),
   height: z.number(),
 });
+export type VitalSigns = z.infer<typeof vitalSignsSchema>;
 
 export const clinicalHistorySchema = z.object({
   id: z.string(),
@@ -22,6 +23,7 @@ export const clinicalHistorySchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
 });
+export type ClinicalHistory = z.infer<typeof clinicalHistorySchema>;
 
 export const vitalSignsFormSchema = z.object({
   bloodPressure: z.string().min(1, 'errors.required'),
@@ -41,7 +43,6 @@ export const clinicalHistoryFormSchema = z.object({
   notes: z.string(),
   vitalSigns: vitalSignsFormSchema,
 });
-
 export type ClinicalHistoryFormData = z.infer<typeof clinicalHistoryFormSchema>;
 
 export const clinicalHistoriesListResponseSchema = z.object({

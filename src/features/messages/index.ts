@@ -1,3 +1,12 @@
 export * from './ui';
+export * from './api/messages.api';
+export * from './hooks';
 export * from './types/message.types';
-export * from './schemas/message.schema';
+export {
+  messageEntitySchema,
+  conversationSchema,
+  messageFormSchema,
+  audioMessageSchema,
+  messageTypeSchema,
+  messageStatusSchema,
+} from './schemas/message.schema';
