@@ -20,6 +20,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { loginSchema, type LoginFormData } from '../schemas/login.schema';
 import { LoadingSpinner } from '@/ui/atoms';
 import { toast } from 'sonner';
+import { showError } from '@/lib/utils/error-handler';
 
 export function LoginForm() {
   const t = useTranslations();
@@ -44,13 +45,25 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        toast.error(t('auth.invalidCredentials') || 'Credenciales inválidas');
+        // El error puede ser genérico de NextAuth o específico del backend
+        // Si es un error de red/conexión, ya se mostró en el interceptor
+        // Mostramos un mensaje genérico aquí
+        const errorMessage = result.error === 'CredentialsSignin' 
+          ? t('auth.invalidCredentials') || 'Credenciales inválidas'
+          : t('auth.loginError') || 'Error al iniciar sesión';
+        
+        toast.error(errorMessage);
+        form.reset();
       } else if (result?.ok) {
         toast.success(t('auth.loginSuccess') || 'Inicio de sesión exitoso');
-        router.push('/dashboard');
+        // Usar window.location para forzar recarga completa y actualizar la sesión
+        window.location.href = '/dashboard';
       }
     } catch (error) {
-      toast.error(t('auth.loginError') || 'Error al iniciar sesión');
+      // El error ya se mostrará en el interceptor de axios
+      // Pero mostramos un mensaje genérico aquí si es necesario
+      showError(error, { logError: true });
+      form.reset();
     } finally {
       setIsLoading(false);
     }

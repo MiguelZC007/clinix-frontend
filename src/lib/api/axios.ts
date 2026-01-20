@@ -25,17 +25,38 @@ export async function getAuthToken(): Promise<string | null> {
   return null;
 }
 
-// Interceptor de respuesta para manejar errores 401
+// Interceptor de respuesta para manejar errores
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Si el token expiró o es inválido, redirigir a login
-    if (error.response?.status === 401) {
-      // Solo redirigir en el cliente
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+    // Solo manejar errores en el cliente
+    if (typeof window !== 'undefined') {
+      const { showError } = await import('@/lib/utils/error-handler');
+      const { normalizeError } = await import('./errors');
+      
+      const appError = normalizeError(error);
+      
+      // Detectar si es una petición de login
+      const isAuthRequest = error.config?.url?.includes('/auth/login');
+      
+      // Mostrar errores de conexión incluso durante el login
+      // Para que el usuario sepa que el servidor no está disponible
+      if (appError.code === 'NETWORK_ERROR') {
+        showError(appError, { logError: true });
+      } else if (!isAuthRequest) {
+        // Mostrar otros errores solo si no es una petición de login
+        showError(appError, { logError: true });
+      }
+      
+      // Si el token expiró o es inválido, redirigir a login
+      if (error.response?.status === 401 && !isAuthRequest) {
+        // Esperar un momento para que el usuario vea el mensaje
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
       }
     }
+    
     return Promise.reject(error);
   }
 );

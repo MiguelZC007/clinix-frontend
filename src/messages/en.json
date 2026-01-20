@@ -184,13 +184,14 @@
     "maxLength": "Must have at most {max} characters",
     "invalidDate": "Invalid date",
     "serverError": "Server error. Please try again later",
-    "networkError": "Connection error. Check your internet connection",
+    "networkError": "Connection error. Check your internet connection or that the server is available",
     "notFound": "The requested resource was not found",
     "invalidPhone": "Invalid phone",
     "invalidDocument": "Invalid document",
     "validationError": "The entered data is not valid",
     "unauthorized": "You are not authorized. Please log in",
     "forbidden": "You do not have permission to perform this action",
-    "unknownError": "An unexpected error has occurred"
+    "unknownError": "An unexpected error has occurred",
+    "clientError": "Request error. Please verify the data."
   }
 }

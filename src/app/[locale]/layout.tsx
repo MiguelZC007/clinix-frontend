@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { SessionProvider } from '@/lib/auth/SessionProvider';
+import { Toaster } from '@/components/ui/sonner';
 import '../globals.css';
 
 const geistSans = Geist({
@@ -44,6 +45,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <SessionProvider>
           <NextIntlClientProvider messages={messages}>
             {children}
+            <Toaster />
           </NextIntlClientProvider>
         </SessionProvider>
       </body>

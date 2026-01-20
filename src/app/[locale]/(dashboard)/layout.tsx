@@ -1,9 +1,12 @@
 'use client';
 
-import { usePathname } from '@/i18n/navigation';
+import { useEffect } from 'react';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { useSession } from 'next-auth/react';
 import { DashboardLayout } from '@/ui/templates';
 import type { BreadcrumbItemData } from '@/ui/molecules';
+import { LoadingSpinner } from '@/ui/atoms';
 
 type DashboardLayoutPageProps = {
   children: React.ReactNode;
@@ -15,29 +18,28 @@ function useBreadcrumbs(): BreadcrumbItemData[] {
 
   const segments = pathname.split('/').filter(Boolean);
   const breadcrumbs: BreadcrumbItemData[] = [
-    { label: t('navigation.dashboard'), href: '/' },
+    { label: t('navigation.dashboard'), href: '/dashboard' },
   ];
 
-  let currentPath = '';
+  if (segments.length > 1) {
+    const currentPath: string[] = [];
+    for (let i = 0; i < segments.length; i++) {
+      currentPath.push(segments[i]);
+      const href = '/' + currentPath.join('/');
+      const segment = segments[i];
 
-  for (let i = 0; i < segments.length; i++) {
-    const segment = segments[i];
-    currentPath += `/${segment}`;
-
-    if (segment === 'patients') {
-      breadcrumbs.push({ label: t('navigation.patients'), href: '/patients' });
-    } else if (segment === 'appointments') {
-      breadcrumbs.push({ label: t('navigation.appointments'), href: '/appointments' });
-    } else if (segment === 'messages') {
-      breadcrumbs.push({ label: t('navigation.messages'), href: '/messages' });
-    } else if (segment === 'clinical-histories') {
-      breadcrumbs.push({ label: t('navigation.clinicalHistories'), href: '/clinical-histories' });
-    } else if (segment === 'new') {
-      breadcrumbs.push({ label: t('common.create') });
-    } else if (segment === 'edit') {
-      breadcrumbs.push({ label: t('common.edit') });
-    } else {
-      breadcrumbs.push({ label: `#${segment.slice(0, 8)}`, href: currentPath });
+      if (segment === 'patients') {
+        breadcrumbs.push({ label: t('navigation.patients'), href });
+      } else if (segment === 'appointments') {
+        breadcrumbs.push({ label: t('navigation.appointments'), href });
+      } else if (segment === 'clinical-histories') {
+        breadcrumbs.push({ label: t('navigation.clinicalHistories'), href });
+      } else if (segment === 'messages') {
+        breadcrumbs.push({ label: t('navigation.messages'), href });
+      } else if (i === segments.length - 1) {
+        // Último segmento (página actual)
+        breadcrumbs.push({ label: segment });
+      }
     }
   }
 
@@ -45,7 +47,30 @@ function useBreadcrumbs(): BreadcrumbItemData[] {
 }
 
 export default function DashboardLayoutPage({ children }: DashboardLayoutPageProps) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const breadcrumbs = useBreadcrumbs();
+
+  useEffect(() => {
+    // Si no hay sesión y ya terminó de cargar, redirigir a login
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
+
+  // Mostrar loading mientras se verifica la sesión
+  if (status === 'loading') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  // Si no está autenticado, no renderizar nada (el useEffect redirigirá)
+  if (status === 'unauthenticated' || !session) {
+    return null;
+  }
 
   return <DashboardLayout breadcrumbs={breadcrumbs}>{children}</DashboardLayout>;
 }

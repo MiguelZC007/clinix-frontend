@@ -67,6 +67,15 @@ export function normalizeError(error: unknown): AppError {
     const data = error.response?.data;
     const status = error.response?.status;
 
+    // Manejar errores de conexión (ECONNREFUSED, etc.)
+    if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND' || error.message.includes('ECONNREFUSED')) {
+      return new AppError(
+        'No se pudo conectar con el servidor. Verifica que el servidor esté disponible.',
+        'NETWORK_ERROR',
+        status
+      );
+    }
+
     const parsed = ProblemDetailsSchema.safeParse(data);
 
     if (parsed.success) {
@@ -85,6 +94,13 @@ export function normalizeError(error: unknown): AppError {
   }
 
   if (error instanceof Error) {
+    // Detectar errores de conexión en el mensaje
+    if (error.message.includes('ECONNREFUSED') || error.message.includes('ENOTFOUND')) {
+      return new AppError(
+        'No se pudo conectar con el servidor. Verifica que el servidor esté disponible.',
+        'NETWORK_ERROR'
+      );
+    }
     return new AppError(error.message, 'CLIENT_ERROR');
   }
 

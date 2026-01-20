@@ -184,13 +184,14 @@
     "maxLength": "Debe tener máximo {max} caracteres",
     "invalidDate": "Fecha inválida",
     "serverError": "Error del servidor. Por favor, intenta de nuevo más tarde",
-    "networkError": "Error de conexión. Verifica tu conexión a internet",
+    "networkError": "Error de conexión. Verifica tu conexión a internet o que el servidor esté disponible",
     "notFound": "El recurso solicitado no fue encontrado",
     "invalidPhone": "Teléfono inválido",
     "invalidDocument": "Documento inválido",
     "validationError": "Los datos ingresados no son válidos",
     "unauthorized": "No tienes autorización. Por favor, inicia sesión",
     "forbidden": "No tienes permisos para realizar esta acción",
-    "unknownError": "Ha ocurrido un error inesperado"
+    "unknownError": "Ha ocurrido un error inesperado",
+    "clientError": "Error en la solicitud. Por favor, verifica los datos."
   }
 }

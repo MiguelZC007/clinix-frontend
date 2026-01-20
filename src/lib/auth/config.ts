@@ -31,7 +31,8 @@ export const authOptions: NextAuthOptions = {
             accessToken: response.accessToken,
           };
         } catch (error) {
-          console.error('Login error:', error);
+          // El error ya se mostrará en el interceptor de axios
+          // Solo retornamos null para que NextAuth muestre el error genérico
           return null;
         }
       },
