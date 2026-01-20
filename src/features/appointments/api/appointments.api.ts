@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { client } from '@/lib/api/client';
 import { ApiResponseSchema } from '@/types/contracts/api-response';
 import { appointmentSchema, appointmentsListResponseSchema } from '../schemas/appointment.schema';
@@ -33,7 +34,7 @@ export async function createAppointment(data: CreateAppointmentRequest): Promise
 }
 
 export async function updateAppointment(id: string, data: UpdateAppointmentRequest): Promise<Appointment> {
-  const response = await client.put(
+  const response = await client.patch(
     `${ENDPOINT}/${id}`,
     data,
     ApiResponseSchema(appointmentSchema)
@@ -41,11 +42,19 @@ export async function updateAppointment(id: string, data: UpdateAppointmentReque
   return response.data;
 }
 
-export async function cancelAppointment(id: string, reason: string): Promise<Appointment> {
-  const response = await client.put(
+export async function cancelAppointment(id: string): Promise<Appointment> {
+  const response = await client.post(
     `${ENDPOINT}/${id}/cancel`,
-    { reason },
+    {},
     ApiResponseSchema(appointmentSchema)
+  );
+  return response.data;
+}
+
+export async function getAppointmentsByPatient(patientId: string): Promise<Appointment[]> {
+  const response = await client.get(
+    `/patients/${patientId}/appointments`,
+    ApiResponseSchema(z.array(appointmentSchema))
   );
   return response.data;
 }

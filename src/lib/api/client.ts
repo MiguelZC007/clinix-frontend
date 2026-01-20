@@ -65,6 +65,22 @@ async function put<T, B>(url: string, body: B, schema: z.ZodType<T>, config?: Re
   }
 }
 
+async function patch<T, B>(url: string, body: B, schema: z.ZodType<T>, config?: RequestConfig): Promise<T> {
+  try {
+    const authHeaders = await getAuthHeaders();
+    const response = await api.patch(url, body, {
+      ...config,
+      headers: {
+        ...authHeaders,
+        ...config?.headers,
+      },
+    });
+    return schema.parse(response.data);
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
 async function del<T>(url: string, schema: z.ZodType<T>, config?: RequestConfig): Promise<T> {
   try {
     const authHeaders = await getAuthHeaders();
@@ -85,5 +101,6 @@ export const client = {
   get,
   post,
   put,
+  patch,
   delete: del,
 };

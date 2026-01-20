@@ -37,3 +37,23 @@ export const patientsListResponseSchema = z.object({
   pageSize: z.number(),
   totalPages: z.number(),
 });
+
+export const patientAntecedentsSchema = z.object({
+  patientId: z.string(),
+  allergies: z.array(z.string()),
+  medications: z.array(z.string()),
+  medicalHistory: z.array(z.string()),
+  familyHistory: z.array(z.string()),
+  updatedAt: z.string(),
+});
+
+export type PatientAntecedents = z.infer<typeof patientAntecedentsSchema>;
+
+export const updatePatientAntecedentsRequestSchema = z.object({
+  allergies: z.array(z.string()).optional(),
+  medications: z.array(z.string()).optional(),
+  medicalHistory: z.array(z.string()).optional(),
+  familyHistory: z.array(z.string()).optional(),
+});
+
+export type UpdatePatientAntecedentsRequest = z.infer<typeof updatePatientAntecedentsRequestSchema>;
