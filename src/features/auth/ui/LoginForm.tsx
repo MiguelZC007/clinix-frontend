@@ -19,6 +19,7 @@ import {
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { loginSchema, type LoginFormData } from '../schemas/login.schema';
 import { LoadingSpinner } from '@/ui/atoms';
+import { PhoneInputWithCountry } from '@/ui/molecules/PhoneInputWithCountry';
 import { toast } from 'sonner';
 import { showError } from '@/lib/utils/error-handler';
 
@@ -84,10 +85,12 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>{t('auth.phone') || 'Teléfono'}</FormLabel>
                   <FormControl>
-                    <Input
-                      type="tel"
-                      placeholder="+584241234567"
-                      {...field}
+                    <PhoneInputWithCountry
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      placeholder="4241234567"
+                      defaultCountry="BO"
                     />
                   </FormControl>
                   <FormMessage />
