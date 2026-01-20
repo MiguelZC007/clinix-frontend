@@ -26,6 +26,7 @@
     "patients": "Pacientes",
     "appointments": "Citas",
     "clinicalHistories": "Historiales",
+    "messages": "Mensajes",
     "settings": "Configuración"
   },
   "auth": {
@@ -152,6 +153,24 @@
     "createdSuccess": "Historial creado exitosamente",
     "selectPatient": "Seleccionar paciente",
     "searchPatient": "Buscar paciente..."
+  },
+  "messages": {
+    "title": "Mensajes",
+    "description": "Comunicación con pacientes",
+    "searchConversations": "Buscar conversaciones...",
+    "typeMessage": "Escribe un mensaje...",
+    "send": "Enviar",
+    "recording": "Grabando...",
+    "holdToRecord": "Mantén presionado para grabar",
+    "noConversations": "No hay conversaciones",
+    "noMessages": "Selecciona una conversación para comenzar",
+    "startConversation": "Inicia la conversación",
+    "audio": "Mensaje de voz",
+    "you": "Tú",
+    "online": "En línea",
+    "offline": "Desconectado",
+    "typing": "Escribiendo...",
+    "voiceMessage": "Mensaje de voz"
   },
   "errors": {
     "required": "Este campo es requerido",

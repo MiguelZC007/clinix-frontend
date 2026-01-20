@@ -26,6 +26,7 @@
     "patients": "Patients",
     "appointments": "Appointments",
     "clinicalHistories": "Clinical Histories",
+    "messages": "Messages",
     "settings": "Settings"
   },
   "auth": {
@@ -152,6 +153,24 @@
     "createdSuccess": "History created successfully",
     "selectPatient": "Select patient",
     "searchPatient": "Search patient..."
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Communication with patients",
+    "searchConversations": "Search conversations...",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "recording": "Recording...",
+    "holdToRecord": "Hold to record",
+    "noConversations": "No conversations",
+    "noMessages": "Select a conversation to start",
+    "startConversation": "Start the conversation",
+    "audio": "Voice message",
+    "you": "You",
+    "online": "Online",
+    "offline": "Offline",
+    "typing": "Typing...",
+    "voiceMessage": "Voice message"
   },
   "errors": {
     "required": "This field is required",

@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, FileText, Calendar } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Calendar, MessageSquare } from 'lucide-react';
 
 export type NavItem = {
   titleKey: string;
@@ -26,6 +26,11 @@ export const sidebarNavItems: NavItem[] = [
     titleKey: 'navigation.appointments',
     href: '/appointments',
     icon: Calendar,
+  },
+  {
+    titleKey: 'navigation.messages',
+    href: '/messages',
+    icon: MessageSquare,
   },
   {
     titleKey: 'navigation.clinicalHistories',
