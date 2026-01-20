@@ -12,6 +12,42 @@ export const api = axios.create({
   },
 });
 
+// Contador de peticiones activas para manejar múltiples peticiones simultáneas
+let activeRequests = 0;
+let storeInstance: any = null;
+
+// Función para obtener o crear la instancia del store de Jotai
+async function getStore() {
+  if (typeof window === 'undefined') return null;
+  
+  if (!storeInstance) {
+    const { getDefaultStore } = await import('jotai');
+    storeInstance = getDefaultStore();
+  }
+  
+  return storeInstance;
+}
+
+// Función para actualizar el estado de loading
+async function updateApiLoading(isLoading: boolean) {
+  if (typeof window === 'undefined') return;
+  
+  const store = await getStore();
+  if (!store) return;
+  
+  const { apiLoadingAtom } = await import('@/lib/store/loading.atoms');
+  
+  if (isLoading) {
+    activeRequests++;
+    store.set(apiLoadingAtom, true);
+  } else {
+    activeRequests = Math.max(0, activeRequests - 1);
+    if (activeRequests === 0) {
+      store.set(apiLoadingAtom, false);
+    }
+  }
+}
+
 // Función helper para obtener token (usada en client.ts)
 export async function getAuthToken(): Promise<string | null> {
   // En el cliente, usar getSession de next-auth/react
@@ -25,19 +61,43 @@ export async function getAuthToken(): Promise<string | null> {
   return null;
 }
 
-// Interceptor de respuesta para manejar errores
-api.interceptors.response.use(
-  (response) => response,
+// Interceptor de request para activar loading
+api.interceptors.request.use(
+  async (config) => {
+    // Solo activar loading en el cliente y excluir peticiones de login
+    if (typeof window !== 'undefined' && !config.url?.includes('/auth/login')) {
+      await updateApiLoading(true);
+    }
+    return config;
+  },
   async (error) => {
+    // Si hay error en el request, desactivar loading
+    if (typeof window !== 'undefined' && !error.config?.url?.includes('/auth/login')) {
+      await updateApiLoading(false);
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor de respuesta para manejar errores y desactivar loading
+api.interceptors.response.use(
+  async (response) => {
+    // Desactivar loading cuando la petición termina exitosamente
+    if (typeof window !== 'undefined' && !response.config.url?.includes('/auth/login')) {
+      await updateApiLoading(false);
+    }
+    return response;
+  },
+  async (error) => {
+    // Detectar si es una petición de login (antes de cualquier otra lógica)
+    const isAuthRequest = error.config?.url?.includes('/auth/login');
+    
     // Solo manejar errores en el cliente
     if (typeof window !== 'undefined') {
       const { showError } = await import('@/lib/utils/error-handler');
       const { normalizeError } = await import('./errors');
       
       const appError = normalizeError(error);
-      
-      // Detectar si es una petición de login
-      const isAuthRequest = error.config?.url?.includes('/auth/login');
       
       // Mostrar errores de conexión incluso durante el login
       // Para que el usuario sepa que el servidor no está disponible
@@ -55,6 +115,11 @@ api.interceptors.response.use(
           window.location.href = '/login';
         }, 2000);
       }
+    }
+    
+    // Desactivar loading cuando hay error (excepto login)
+    if (typeof window !== 'undefined' && !isAuthRequest) {
+      await updateApiLoading(false);
     }
     
     return Promise.reject(error);
