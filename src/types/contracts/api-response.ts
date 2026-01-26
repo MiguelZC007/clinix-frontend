@@ -1,12 +1,19 @@
 import { z } from 'zod';
 
-export const ApiResponseSchema = <T extends z.ZodType>(dataSchema: T) =>
-  z.object({
-    success: z.boolean(),
-    data: dataSchema,
-    message: z.string().optional(),
-    timestamp: z.string().datetime(),
-  });
+export const ApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+  z.union([
+    z.object({
+      success: z.boolean(),
+      data: dataSchema,
+      message: z.string().optional(),
+      timestamp: z.string().datetime(),
+    }),
+    dataSchema.transform((data) => ({
+      success: true,
+      data,
+      timestamp: new Date().toISOString(),
+    })),
+  ]);
 
 export type ApiResponse<T> = {
   success: boolean;
@@ -15,19 +22,38 @@ export type ApiResponse<T> = {
   timestamp: string;
 };
 
-export const PaginatedResponseSchema = <T extends z.ZodType>(itemSchema: T) =>
-  z.object({
-    success: z.boolean(),
-    data: z.object({
+export const PaginatedDataSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+  z.union([
+    z.object({
       items: z.array(itemSchema),
       total: z.number(),
       page: z.number(),
       pageSize: z.number(),
       totalPages: z.number(),
     }),
-    message: z.string().optional(),
-    timestamp: z.string().datetime(),
-  });
+    z.array(itemSchema).transform((items) => ({
+      items,
+      total: items.length,
+      page: 1,
+      pageSize: items.length,
+      totalPages: 1,
+    })),
+  ]);
+
+export const PaginatedResponseSchema = <T extends z.ZodType>(itemSchema: T) =>
+  z.union([
+    z.object({
+      success: z.boolean(),
+      data: PaginatedDataSchema(itemSchema),
+      message: z.string().optional(),
+      timestamp: z.string().datetime(),
+    }),
+    PaginatedDataSchema(itemSchema).transform((data) => ({
+      success: true,
+      data,
+      timestamp: new Date().toISOString(),
+    })),
+  ]);
 
 export type PaginatedData<T> = {
   items: T[];

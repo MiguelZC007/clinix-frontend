@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { client } from '@/lib/api/client';
-import { ApiResponseSchema } from '@/types/contracts/api-response';
-import { clinicalHistorySchema, clinicalHistoriesListResponseSchema } from '../schemas/clinical-history.schema';
+import { ApiResponseSchema, PaginatedResponseSchema } from '@/types/contracts/api-response';
+import { clinicalHistorySchema } from '../schemas/clinical-history.schema';
 import type { ClinicalHistory, CreateClinicalHistoryRequest, ClinicalHistoriesListParams } from '../types/clinical-history.types';
 import type { PaginatedData } from '@/types/contracts/api-response';
 
@@ -10,7 +10,7 @@ const ENDPOINT = '/clinic-histories';
 export async function getClinicalHistories(params?: ClinicalHistoriesListParams): Promise<PaginatedData<ClinicalHistory>> {
   const response = await client.get(
     ENDPOINT,
-    ApiResponseSchema(clinicalHistoriesListResponseSchema),
+    PaginatedResponseSchema(clinicalHistorySchema),
     { params }
   );
   return response.data;

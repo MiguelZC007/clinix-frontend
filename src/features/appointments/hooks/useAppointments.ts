@@ -18,15 +18,33 @@ export function useAppointmentList(params?: AppointmentsListParams) {
     error: null,
   });
 
+  const page = params?.page;
+  const pageSize = params?.pageSize;
+  const limit = params?.limit;
+  const date = params?.date;
+  const startDate = params?.startDate;
+  const endDate = params?.endDate;
+  const status = params?.status;
+
   const fetchAppointments = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
-      const data = await getAppointments(params);
+      const requestParams: AppointmentsListParams | undefined =
+        page === undefined &&
+        pageSize === undefined &&
+        limit === undefined &&
+        date === undefined &&
+        startDate === undefined &&
+        endDate === undefined &&
+        status === undefined
+          ? undefined
+          : { page, pageSize, limit, date, startDate, endDate, status };
+      const data = await getAppointments(requestParams);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
       setState({ data: null, isLoading: false, error: error as Error });
     }
-  }, [params]);
+  }, [page, pageSize, limit, date, startDate, endDate, status]);
 
   useEffect(() => {
     fetchAppointments();

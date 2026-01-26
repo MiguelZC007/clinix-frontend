@@ -18,15 +18,23 @@ export function useClinicalHistoryList(params?: ClinicalHistoriesListParams) {
     error: null,
   });
 
+  const page = params?.page;
+  const pageSize = params?.pageSize;
+  const patientId = params?.patientId;
+
   const fetchHistories = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
-      const data = await getClinicalHistories(params);
+      const requestParams: ClinicalHistoriesListParams | undefined =
+        page === undefined && pageSize === undefined && patientId === undefined
+          ? undefined
+          : { page, pageSize, patientId };
+      const data = await getClinicalHistories(requestParams);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
       setState({ data: null, isLoading: false, error: error as Error });
     }
-  }, [params]);
+  }, [page, pageSize, patientId]);
 
   useEffect(() => {
     fetchHistories();

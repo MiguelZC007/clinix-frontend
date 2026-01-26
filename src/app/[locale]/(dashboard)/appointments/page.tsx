@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,12 +16,16 @@ function getStatusBadge(status: AppointmentStatus, t: ReturnType<typeof useTrans
     scheduled: 'default',
     completed: 'secondary',
     cancelled: 'destructive',
+    pending: 'default',
+    confirmed: 'default',
   };
 
   const labels: Record<AppointmentStatus, string> = {
     scheduled: t('appointments.scheduled'),
     completed: t('appointments.completed'),
     cancelled: t('appointments.cancelled'),
+    pending: t('appointments.pending') || 'Pendiente',
+    confirmed: t('appointments.confirmed') || 'Confirmada',
   };
 
   return <Badge variant={variants[status]}>{labels[status]}</Badge>;
@@ -32,8 +36,20 @@ export default function AppointmentsPage() {
   const locale = useLocale();
   const dateLocale = locale === 'es' ? 'es-ES' : 'en-US';
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [dateRange, setDateRange] = useState<{ startDate: string; endDate: string } | null>(null);
 
-  const { data, isLoading, error } = useAppointmentList();
+  const handleDateRangeChange = useCallback((startDate: string, endDate: string) => {
+    setDateRange((prev) => {
+      if (prev?.startDate === startDate && prev?.endDate === endDate) {
+        return prev;
+      }
+      return { startDate, endDate };
+    });
+  }, []);
+
+  const { data, isLoading, error } = useAppointmentList(
+    dateRange ? { startDate: dateRange.startDate, endDate: dateRange.endDate, limit: 100 } : { limit: 100 }
+  );
   const appointments = data?.items || [];
 
   return (
@@ -63,6 +79,7 @@ export default function AppointmentsPage() {
         <AppointmentCalendar
           appointments={appointments}
           onAppointmentClick={setSelectedAppointment}
+          onDateRangeChange={handleDateRangeChange}
         />
       )}
 

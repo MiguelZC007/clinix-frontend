@@ -1,16 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import {
-  appointmentSchema,
   appointmentFormSchema,
   appointmentStatusSchema,
-  appointmentsListResponseSchema,
 } from '../schemas/appointment.schema';
+import { mapAppointmentFromBackend } from '../utils/appointment.mapper';
+import type { AppointmentBackend } from '../types/appointment.types';
 
 describe('appointmentStatusSchema', () => {
   it('valida estados validos', () => {
     expect(appointmentStatusSchema.parse('scheduled')).toBe('scheduled');
     expect(appointmentStatusSchema.parse('completed')).toBe('completed');
     expect(appointmentStatusSchema.parse('cancelled')).toBe('cancelled');
+    expect(appointmentStatusSchema.parse('pending')).toBe('pending');
   });
 
   it('rechaza estados invalidos', () => {
@@ -19,37 +20,53 @@ describe('appointmentStatusSchema', () => {
   });
 });
 
-describe('appointmentSchema', () => {
-  const validAppointment = {
+describe('mapAppointmentFromBackend', () => {
+  const validAppointmentBackend: AppointmentBackend = {
     id: '1',
-    patientName: 'Juan Pérez',
-    patientInitials: 'JP',
-    date: new Date('2024-01-15'),
-    startTime: '09:00',
-    endTime: '09:30',
+    patientId: 'patient-1',
+    startAppointment: '2024-01-15T09:00:00.000Z',
+    endAppointment: '2024-01-15T09:30:00.000Z',
     reason: 'Control rutinario',
-    status: 'scheduled' as const,
+    status: 'SCHEDULED',
+    patient: {
+      id: 'patient-1',
+      name: 'Juan',
+      lastName: 'Pérez',
+    },
   };
 
-  it('valida cita completa correctamente', () => {
-    const result = appointmentSchema.parse({
-      ...validAppointment,
-      date: '2024-01-15',
-    });
+  it('mapea cita completa correctamente', () => {
+    const result = mapAppointmentFromBackend(validAppointmentBackend);
     expect(result.id).toBe('1');
     expect(result.patientName).toBe('Juan Pérez');
+    expect(result.patientInitials).toBe('JP');
   });
 
-  it('convierte fecha string a Date', () => {
-    const result = appointmentSchema.parse({
-      ...validAppointment,
-      date: '2024-01-15',
-    });
+  it('convierte startAppointment/endAppointment a date/startTime/endTime', () => {
+    const result = mapAppointmentFromBackend(validAppointmentBackend);
     expect(result.date).toBeInstanceOf(Date);
+    const startDate = new Date(validAppointmentBackend.startAppointment);
+    const endDate = new Date(validAppointmentBackend.endAppointment);
+    const expectedStartTime = `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`;
+    const expectedEndTime = `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`;
+    expect(result.startTime).toBe(expectedStartTime);
+    expect(result.endTime).toBe(expectedEndTime);
   });
 
-  it('rechaza cita sin campos requeridos', () => {
-    expect(() => appointmentSchema.parse({})).toThrow();
+  it('mapea status PENDING a pending', () => {
+    const result = mapAppointmentFromBackend({
+      ...validAppointmentBackend,
+      status: 'PENDING',
+    });
+    expect(result.status).toBe('pending');
+  });
+
+  it('mapea status SCHEDULED a scheduled', () => {
+    const result = mapAppointmentFromBackend({
+      ...validAppointmentBackend,
+      status: 'SCHEDULED',
+    });
+    expect(result.status).toBe('scheduled');
   });
 });
 
@@ -89,35 +106,3 @@ describe('appointmentFormSchema', () => {
   });
 });
 
-describe('appointmentsListResponseSchema', () => {
-  const validResponse = {
-    items: [
-      {
-        id: '1',
-        patientName: 'Juan Pérez',
-        patientInitials: 'JP',
-        date: new Date('2024-01-15'),
-        startTime: '09:00',
-        endTime: '09:30',
-        reason: 'Control rutinario',
-        status: 'scheduled' as const,
-      },
-    ],
-    total: 1,
-    page: 1,
-    pageSize: 10,
-    totalPages: 1,
-  };
-
-  it('valida respuesta de lista correctamente', () => {
-    const result = appointmentsListResponseSchema.parse({
-      ...validResponse,
-      items: validResponse.items.map((item) => ({
-        ...item,
-        date: '2024-01-15',
-      })),
-    });
-    expect(result.total).toBe(1);
-    expect(result.items).toHaveLength(1);
-  });
-});

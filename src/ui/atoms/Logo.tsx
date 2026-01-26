@@ -8,6 +8,7 @@ type LogoProps = {
   size?: LogoSize;
   className?: string;
   showText?: boolean;
+  textClassName?: string;
 };
 
 const sizeConfig: Record<LogoSize, { icon: string; text: string }> = {
@@ -16,7 +17,12 @@ const sizeConfig: Record<LogoSize, { icon: string; text: string }> = {
   lg: { icon: 'h-12 w-12', text: 'text-2xl' },
 };
 
-export function Logo({ size = 'md', className, showText = true }: LogoProps) {
+export function Logo({
+  size = 'md',
+  className,
+  showText = true,
+  textClassName,
+}: LogoProps) {
   const config = sizeConfig[size];
 
   return (
@@ -41,7 +47,7 @@ export function Logo({ size = 'md', className, showText = true }: LogoProps) {
       </div>
       {showText && (
         <div className="flex flex-col leading-none">
-          <span className={cn('font-semibold text-foreground', config.text)}>
+          <span className={cn('font-semibold', config.text, textClassName ?? 'text-foreground')}>
             Clínica San Miguel
           </span>
         </div>

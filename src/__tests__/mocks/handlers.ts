@@ -3,8 +3,51 @@ import { MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
 import { MOCK_APPOINTMENTS } from '@/features/appointments/__mocks__/appointments.mock';
 import { MOCK_CLINICAL_HISTORIES } from '@/features/clinical-histories/__mocks__/clinical-histories.mock';
 import { MOCK_CONVERSATIONS, MOCK_MESSAGES } from '@/features/messages/__mocks__/messages.mock';
+import type { Appointment } from '@/features/appointments/types/appointment.types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/v1';
+
+function convertAppointmentToBackendFormat(appointment: Appointment) {
+  const [startHours, startMinutes] = appointment.startTime.split(':').map(Number);
+  const [endHours, endMinutes] = appointment.endTime.split(':').map(Number);
+  
+  const startAppointment = new Date(appointment.date);
+  startAppointment.setHours(startHours, startMinutes, 0, 0);
+  
+  const endAppointment = new Date(appointment.date);
+  endAppointment.setHours(endHours, endMinutes, 0, 0);
+  
+  const [firstName, ...lastNameParts] = appointment.patientName.split(' ');
+  const lastName = lastNameParts.join(' ');
+  
+  const statusMap: Record<string, string> = {
+    scheduled: 'SCHEDULED',
+    completed: 'COMPLETED',
+    cancelled: 'CANCELLED',
+    pending: 'PENDING',
+  };
+  
+  const patientId = appointment.patientId || `patient-${appointment.id}`;
+  
+  return {
+    id: appointment.id,
+    patientId: patientId,
+    doctorId: appointment.doctorId,
+    specialtyId: appointment.specialtyId,
+    startAppointment: startAppointment.toISOString(),
+    endAppointment: endAppointment.toISOString(),
+    reason: appointment.reason,
+    status: statusMap[appointment.status] || 'PENDING',
+    patient: {
+      id: patientId,
+      name: firstName,
+      lastName: lastName,
+    },
+    doctor: appointment.doctor,
+    createdAt: appointment.createdAt,
+    updatedAt: appointment.updatedAt,
+  };
+}
 
 export const handlers = [
   http.get(`${API_BASE_URL}/patients`, () => {
@@ -93,11 +136,12 @@ export const handlers = [
   }),
 
   http.get(`${API_BASE_URL}/appointments`, () => {
+    const backendAppointments = MOCK_APPOINTMENTS.map(convertAppointmentToBackendFormat);
     return HttpResponse.json({
       success: true,
       data: {
-        items: MOCK_APPOINTMENTS,
-        total: MOCK_APPOINTMENTS.length,
+        items: backendAppointments,
+        total: backendAppointments.length,
         page: 1,
         pageSize: 10,
         totalPages: 1,
@@ -119,19 +163,30 @@ export const handlers = [
     }
     return HttpResponse.json({
       success: true,
-      data: appointment,
+      data: convertAppointmentToBackendFormat(appointment),
       timestamp: new Date().toISOString(),
     });
   }),
 
   http.post(`${API_BASE_URL}/appointments`, async ({ request }) => {
-    const body = await request.json();
+    const body = await request.json() as any;
     const newAppointment = {
-      ...body,
       id: String(MOCK_APPOINTMENTS.length + 1),
-      patientName: 'New Patient',
-      patientInitials: 'NP',
-      status: 'scheduled' as const,
+      patientId: body.patientId || '',
+      doctorId: body.doctorId,
+      specialtyId: body.specialtyId,
+      startAppointment: body.startAppointment || new Date().toISOString(),
+      endAppointment: body.endAppointment || new Date().toISOString(),
+      reason: body.reason || '',
+      status: 'PENDING',
+      patient: body.patient || {
+        id: body.patientId || '',
+        name: 'New',
+        lastName: 'Patient',
+      },
+      doctor: body.doctor,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     return HttpResponse.json({
       success: true,
@@ -293,8 +348,8 @@ export const handlers = [
     });
   }),
 
-  http.put(`${API_BASE_URL}/appointments/:id`, async ({ params, request }) => {
-    const body = await request.json();
+  http.patch(`${API_BASE_URL}/appointments/:id`, async ({ params, request }) => {
+    const body = await request.json() as any;
     const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
     if (!appointment) {
       return HttpResponse.json(
@@ -305,15 +360,16 @@ export const handlers = [
         { status: 404 }
       );
     }
+    const updated = { ...appointment, ...body };
     return HttpResponse.json({
       success: true,
-      data: { ...appointment, ...body },
+      data: convertAppointmentToBackendFormat(updated),
       timestamp: new Date().toISOString(),
     });
   }),
 
-  http.put(`${API_BASE_URL}/appointments/:id/cancel`, async ({ params, request }) => {
-    const body = await request.json();
+  http.put(`${API_BASE_URL}/appointments/:id`, async ({ params, request }) => {
+    const body = await request.json() as any;
     const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
     if (!appointment) {
       return HttpResponse.json(
@@ -324,9 +380,48 @@ export const handlers = [
         { status: 404 }
       );
     }
+    const updated = { ...appointment, ...body };
     return HttpResponse.json({
       success: true,
-      data: { ...appointment, status: 'cancelled', ...body },
+      data: convertAppointmentToBackendFormat(updated),
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.post(`${API_BASE_URL}/appointments/:id/cancel`, async ({ params }) => {
+    const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
+    if (!appointment) {
+      return HttpResponse.json(
+        {
+          success: false,
+          message: 'Appointment not found',
+        },
+        { status: 404 }
+      );
+    }
+    const cancelled = { ...appointment, status: 'cancelled' as const };
+    return HttpResponse.json({
+      success: true,
+      data: convertAppointmentToBackendFormat(cancelled),
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.put(`${API_BASE_URL}/appointments/:id/cancel`, async ({ params }) => {
+    const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
+    if (!appointment) {
+      return HttpResponse.json(
+        {
+          success: false,
+          message: 'Appointment not found',
+        },
+        { status: 404 }
+      );
+    }
+    const cancelled = { ...appointment, status: 'cancelled' as const };
+    return HttpResponse.json({
+      success: true,
+      data: convertAppointmentToBackendFormat(cancelled),
       timestamp: new Date().toISOString(),
     });
   }),

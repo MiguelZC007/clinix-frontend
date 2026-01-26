@@ -11,6 +11,7 @@ nextWeek.setDate(nextWeek.getDate() + 7);
 export const MOCK_APPOINTMENTS: Appointment[] = [
   {
     id: '1',
+    patientId: 'patient-1',
     patientName: 'Juan Pérez',
     patientInitials: 'JP',
     date: today,
@@ -21,6 +22,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '2',
+    patientId: 'patient-2',
     patientName: 'María González',
     patientInitials: 'MG',
     date: today,
@@ -31,6 +33,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '3',
+    patientId: 'patient-3',
     patientName: 'Carlos López',
     patientInitials: 'CL',
     date: today,
@@ -41,6 +44,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '4',
+    patientId: 'patient-4',
     patientName: 'Ana Martínez',
     patientInitials: 'AM',
     date: today,
@@ -51,6 +55,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '5',
+    patientId: 'patient-5',
     patientName: 'Roberto Sánchez',
     patientInitials: 'RS',
     date: tomorrow,
@@ -61,6 +66,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '6',
+    patientId: 'patient-6',
     patientName: 'Elena Rodríguez',
     patientInitials: 'ER',
     date: tomorrow,
@@ -71,6 +77,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '7',
+    patientId: 'patient-7',
     patientName: 'Pedro Fernández',
     patientInitials: 'PF',
     date: dayAfter,
@@ -81,6 +88,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '8',
+    patientId: 'patient-8',
     patientName: 'Lucía Morales',
     patientInitials: 'LM',
     date: dayAfter,
@@ -91,6 +99,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '9',
+    patientId: 'patient-9',
     patientName: 'Miguel Torres',
     patientInitials: 'MT',
     date: nextWeek,
@@ -101,6 +110,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
   {
     id: '10',
+    patientId: 'patient-10',
     patientName: 'Carmen Díaz',
     patientInitials: 'CD',
     date: today,

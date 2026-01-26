@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { api, getAuthToken } from './axios';
-import { normalizeError } from './errors';
+import { z } from "zod";
+import { api, getAuthToken } from "./axios";
+import { normalizeError } from "./errors";
 
 type RequestConfig = {
   headers?: Record<string, string>;
@@ -16,7 +16,11 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
   return headers;
 }
 
-async function get<T>(url: string, schema: z.ZodType<T>, config?: RequestConfig): Promise<T> {
+async function get<T>(
+  url: string,
+  schema?: z.ZodType<T>,
+  config?: RequestConfig,
+): Promise<T> {
   try {
     const authHeaders = await getAuthHeaders();
     const response = await api.get(url, {
@@ -26,14 +30,21 @@ async function get<T>(url: string, schema: z.ZodType<T>, config?: RequestConfig)
         ...config?.headers,
       },
     });
-    // Validar respuesta en runtime
-    return schema.parse(response.data);
+    if (schema) {
+      return schema.parse(response.data);
+    }
+    return response.data as T;
   } catch (error) {
     throw normalizeError(error);
   }
 }
 
-async function post<T, B>(url: string, body: B, schema: z.ZodType<T>, config?: RequestConfig): Promise<T> {
+async function post<T, B>(
+  url: string,
+  body: B,
+  schema?: z.ZodType<T>,
+  config?: RequestConfig,
+): Promise<T> {
   try {
     const authHeaders = await getAuthHeaders();
     const response = await api.post(url, body, {
@@ -43,13 +54,21 @@ async function post<T, B>(url: string, body: B, schema: z.ZodType<T>, config?: R
         ...config?.headers,
       },
     });
-    return schema.parse(response.data);
+    if (schema) {
+      return schema.parse(response.data);
+    }
+    return response.data as T;
   } catch (error) {
     throw normalizeError(error);
   }
 }
 
-async function put<T, B>(url: string, body: B, schema: z.ZodType<T>, config?: RequestConfig): Promise<T> {
+async function put<T, B>(
+  url: string,
+  body: B,
+  schema?: z.ZodType<T>,
+  config?: RequestConfig,
+): Promise<T> {
   try {
     const authHeaders = await getAuthHeaders();
     const response = await api.put(url, body, {
@@ -59,13 +78,21 @@ async function put<T, B>(url: string, body: B, schema: z.ZodType<T>, config?: Re
         ...config?.headers,
       },
     });
-    return schema.parse(response.data);
+    if (schema) {
+      return schema.parse(response.data);
+    }
+    return response.data as T;
   } catch (error) {
     throw normalizeError(error);
   }
 }
 
-async function patch<T, B>(url: string, body: B, schema: z.ZodType<T>, config?: RequestConfig): Promise<T> {
+async function patch<T, B>(
+  url: string,
+  body: B,
+  schema?: z.ZodType<T>,
+  config?: RequestConfig,
+): Promise<T> {
   try {
     const authHeaders = await getAuthHeaders();
     const response = await api.patch(url, body, {
@@ -75,13 +102,20 @@ async function patch<T, B>(url: string, body: B, schema: z.ZodType<T>, config?: 
         ...config?.headers,
       },
     });
-    return schema.parse(response.data);
+    if (schema) {
+      return schema.parse(response.data);
+    }
+    return response.data as T;
   } catch (error) {
     throw normalizeError(error);
   }
 }
 
-async function del<T>(url: string, schema: z.ZodType<T>, config?: RequestConfig): Promise<T> {
+async function del<T>(
+  url: string,
+  schema?: z.ZodType<T>,
+  config?: RequestConfig,
+): Promise<T> {
   try {
     const authHeaders = await getAuthHeaders();
     const response = await api.delete(url, {
@@ -91,7 +125,10 @@ async function del<T>(url: string, schema: z.ZodType<T>, config?: RequestConfig)
         ...config?.headers,
       },
     });
-    return schema.parse(response.data);
+    if (schema) {
+      return schema.parse(response.data);
+    }
+    return response.data as T;
   } catch (error) {
     throw normalizeError(error);
   }

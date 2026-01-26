@@ -18,15 +18,23 @@ export function usePatientList(params?: PatientsListParams) {
     error: null,
   });
 
+  const page = params?.page;
+  const pageSize = params?.pageSize;
+  const search = params?.search;
+
   const fetchPatients = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
-      const data = await getPatients(params);
+      const requestParams: PatientsListParams | undefined =
+        page === undefined && pageSize === undefined && search === undefined
+          ? undefined
+          : { page, pageSize, search };
+      const data = await getPatients(requestParams);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
       setState({ data: null, isLoading: false, error: error as Error });
     }
-  }, [params]);
+  }, [page, pageSize, search]);
 
   useEffect(() => {
     fetchPatients();

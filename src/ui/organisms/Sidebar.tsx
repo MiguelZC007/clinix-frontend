@@ -99,7 +99,7 @@ export function Sidebar({ className }: SidebarProps) {
       )}
     >
       <div className="flex h-16 items-center px-4">
-        <Logo size="md" />
+        <Logo size="md" textClassName="text-white" />
       </div>
 
       <Separator className="bg-sidebar-border" />

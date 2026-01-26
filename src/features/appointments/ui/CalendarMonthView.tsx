@@ -55,6 +55,10 @@ function getStatusColor(status: Appointment['status']) {
       return 'bg-emerald-500 hover:bg-emerald-600';
     case 'cancelled':
       return 'bg-red-500 hover:bg-red-600';
+    case 'pending':
+      return 'bg-yellow-500 hover:bg-yellow-600';
+    case 'confirmed':
+      return 'bg-green-500 hover:bg-green-600';
     default:
       return 'bg-blue-500 hover:bg-blue-600';
   }

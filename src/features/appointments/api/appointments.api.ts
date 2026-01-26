@@ -1,60 +1,158 @@
-import { z } from 'zod';
 import { client } from '@/lib/api/client';
-import { ApiResponseSchema } from '@/types/contracts/api-response';
-import { appointmentSchema, appointmentsListResponseSchema } from '../schemas/appointment.schema';
-import type { Appointment, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams } from '../types/appointment.types';
-import type { PaginatedData } from '@/types/contracts/api-response';
+import type { Appointment, AppointmentBackend, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams } from '../types/appointment.types';
+import type { PaginatedData, ApiResponse, PaginatedResponse } from '@/types/contracts/api-response';
+import { mapAppointmentFromBackend } from '../utils/appointment.mapper';
 
 const ENDPOINT = '/appointments';
 
+function unwrapResponse<T>(response: ApiResponse<T> | BackendPaginatedResponse<T> | T | unknown): T {
+  if (typeof response === 'object' && response !== null) {
+    if ('data' in response) {
+      const data = (response as any).data;
+      if (typeof data === 'object' && data !== null && 'data' in data && !('meta' in data)) {
+        return data.data as T;
+      }
+      return data as T;
+    }
+  }
+  return response as T;
+}
+
+interface BackendPaginatedResponse<T> {
+  success: boolean;
+  data: {
+    data: T[];
+    meta: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  };
+  timestamp: string;
+}
+
+function unwrapPaginatedResponse<T>(response: BackendPaginatedResponse<T> | PaginatedResponse<T> | PaginatedData<T> | unknown): PaginatedData<T> {
+  if (typeof response === 'object' && response !== null) {
+    if ('data' in response && typeof response.data === 'object' && response.data !== null) {
+      const data = response.data as any;
+      if ('data' in data && 'meta' in data && Array.isArray(data.data)) {
+        const backendResponse = response as BackendPaginatedResponse<T>;
+        return {
+          items: backendResponse.data.data,
+          total: backendResponse.data.meta.total,
+          page: backendResponse.data.meta.page,
+          pageSize: backendResponse.data.meta.limit,
+          totalPages: backendResponse.data.meta.totalPages,
+        };
+      }
+      if ('items' in data) {
+        return data as PaginatedData<T>;
+      }
+      if (Array.isArray(data)) {
+        return {
+          items: data,
+          total: data.length,
+          page: 1,
+          pageSize: data.length,
+          totalPages: 1,
+        };
+      }
+    }
+    if ('items' in response) {
+      return response as PaginatedData<T>;
+    }
+  }
+  return {
+    items: [],
+    total: 0,
+    page: 1,
+    pageSize: 10,
+    totalPages: 0,
+  } as PaginatedData<T>;
+}
+
 export async function getAppointments(params?: AppointmentsListParams): Promise<PaginatedData<Appointment>> {
-  const response = await client.get(
+  const queryParams: Record<string, unknown> = {};
+  
+  if (params?.page !== undefined) {
+    queryParams.page = params.page;
+  }
+  
+  if (params?.limit !== undefined) {
+    queryParams.limit = params.limit;
+  } else if (params?.pageSize !== undefined) {
+    queryParams.limit = params.pageSize;
+  }
+  
+  if (params?.startDate) {
+    queryParams.startDate = params.startDate;
+  }
+  
+  if (params?.endDate) {
+    queryParams.endDate = params.endDate;
+  }
+  
+  if (params?.status) {
+    queryParams.status = params.status;
+  }
+  
+  const response = await client.get<BackendPaginatedResponse<AppointmentBackend> | PaginatedResponse<AppointmentBackend> | PaginatedData<AppointmentBackend>>(
     ENDPOINT,
-    ApiResponseSchema(appointmentsListResponseSchema),
-    { params }
+    undefined,
+    { params: queryParams }
   );
-  return response.data;
+  const paginatedData = unwrapPaginatedResponse(response);
+  const items = Array.isArray(paginatedData?.items) ? paginatedData.items : [];
+  return {
+    items: items.map(mapAppointmentFromBackend),
+    total: paginatedData?.total ?? 0,
+    page: paginatedData?.page ?? 1,
+    pageSize: paginatedData?.pageSize ?? 10,
+    totalPages: paginatedData?.totalPages ?? 0,
+  };
 }
 
 export async function getAppointmentById(id: string): Promise<Appointment> {
-  const response = await client.get(
-    `${ENDPOINT}/${id}`,
-    ApiResponseSchema(appointmentSchema)
+  const response = await client.get<ApiResponse<AppointmentBackend> | AppointmentBackend>(
+    `${ENDPOINT}/${id}`
   );
-  return response.data;
+  const data = unwrapResponse(response);
+  return mapAppointmentFromBackend(data);
 }
 
 export async function createAppointment(data: CreateAppointmentRequest): Promise<Appointment> {
-  const response = await client.post(
+  const response = await client.post<ApiResponse<AppointmentBackend> | AppointmentBackend, CreateAppointmentRequest>(
     ENDPOINT,
-    data,
-    ApiResponseSchema(appointmentSchema)
+    data
   );
-  return response.data;
+  const backendData = unwrapResponse(response);
+  return mapAppointmentFromBackend(backendData);
 }
 
 export async function updateAppointment(id: string, data: UpdateAppointmentRequest): Promise<Appointment> {
-  const response = await client.patch(
+  const response = await client.patch<ApiResponse<AppointmentBackend> | AppointmentBackend, UpdateAppointmentRequest>(
     `${ENDPOINT}/${id}`,
-    data,
-    ApiResponseSchema(appointmentSchema)
+    data
   );
-  return response.data;
+  const backendData = unwrapResponse(response);
+  return mapAppointmentFromBackend(backendData);
 }
 
 export async function cancelAppointment(id: string): Promise<Appointment> {
-  const response = await client.post(
+  const response = await client.post<ApiResponse<AppointmentBackend> | AppointmentBackend, Record<string, never>>(
     `${ENDPOINT}/${id}/cancel`,
-    {},
-    ApiResponseSchema(appointmentSchema)
+    {}
   );
-  return response.data;
+  const backendData = unwrapResponse(response);
+  return mapAppointmentFromBackend(backendData);
 }
 
 export async function getAppointmentsByPatient(patientId: string): Promise<Appointment[]> {
-  const response = await client.get(
-    `/patients/${patientId}/appointments`,
-    ApiResponseSchema(z.array(appointmentSchema))
+  const response = await client.get<ApiResponse<AppointmentBackend[]> | AppointmentBackend[]>(
+    `/patients/${patientId}/appointments`
   );
-  return response.data;
+  const data = unwrapResponse(response);
+  const appointments = Array.isArray(data) ? data : [];
+  return appointments.map(mapAppointmentFromBackend);
 }

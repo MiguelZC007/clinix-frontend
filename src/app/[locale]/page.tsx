@@ -1,14 +1,23 @@
-import { redirect } from '@/i18n/navigation';
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/config';
+import { routing } from '@/i18n/routing';
 
 export default async function HomePage() {
+  let locale: string;
+  try {
+    locale = await getLocale();
+  } catch {
+    locale = routing.defaultLocale;
+  }
+
   const session = await getServerSession(authOptions);
 
-  if (session) {
-    // Redirigir a pacientes que es una ruta que definitivamente existe
-    redirect('/patients');
-  } else {
-    redirect('/login');
-  }
+  const normalizedLocale = routing.locales.includes(locale as 'es' | 'en')
+    ? (locale as 'es' | 'en')
+    : routing.defaultLocale;
+
+  const target = session ? '/dashboard' : '/login';
+  redirect(`/${normalizedLocale}${target}`);
 }
