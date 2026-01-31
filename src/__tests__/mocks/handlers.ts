@@ -129,8 +129,7 @@ export const handlers = [
     }
     return HttpResponse.json({
       success: true,
-      data: patient,
-      message: 'Patient deleted',
+      data: { deleted: true, id: params.id as string },
       timestamp: new Date().toISOString(),
     });
   }),

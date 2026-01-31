@@ -80,7 +80,8 @@ describe('updatePatient', () => {
 
 describe('deletePatient', () => {
   it('elimina paciente correctamente', async () => {
-    await expect(deletePatient('1')).resolves.toBeUndefined();
+    const result = await deletePatient('1');
+    expect(result).toEqual({ deleted: true, id: '1' });
   });
 
   it('lanza error si paciente no existe', async () => {

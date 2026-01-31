@@ -175,7 +175,10 @@ describe('useUpdatePatient', () => {
 
 describe('useDeletePatient', () => {
   it('elimina paciente correctamente', async () => {
-    vi.mocked(patientsApi.deletePatient).mockResolvedValue(undefined);
+    vi.mocked(patientsApi.deletePatient).mockResolvedValue({
+      deleted: true,
+      id: '1',
+    });
 
     const { result } = renderHook(() => useDeletePatient());
 
