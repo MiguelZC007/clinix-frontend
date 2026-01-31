@@ -17,11 +17,12 @@ export type LoginResponse = {
 };
 
 export type ForgotPasswordRequest = {
-  email: string;
+  phone: string;
 };
 
 export type ResetPasswordRequest = {
-  token: string;
-  password: string;
+  phone: string;
+  code: string;
+  newPassword: string;
   confirmPassword: string;
 };

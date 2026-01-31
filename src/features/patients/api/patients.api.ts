@@ -38,7 +38,7 @@ export async function createPatient(data: CreatePatientRequest): Promise<Patient
 }
 
 export async function updatePatient(id: string, data: UpdatePatientRequest): Promise<Patient> {
-  const response = await client.put(
+  const response = await client.patch(
     `${PATIENTS_ENDPOINT}/${id}`,
     data,
     ApiResponseSchema(patientSchema)

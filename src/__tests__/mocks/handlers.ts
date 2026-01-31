@@ -97,7 +97,7 @@ export const handlers = [
     });
   }),
 
-  http.put(`${API_BASE_URL}/patients/:id`, async ({ params, request }) => {
+  http.patch(`${API_BASE_URL}/patients/:id`, async ({ params, request }) => {
     const body = await request.json();
     const patient = MOCK_PATIENTS.find((p) => p.id === params.id);
     if (!patient) {
@@ -292,22 +292,19 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE_URL}/auth/login`, async ({ request }) => {
-    const body = await request.json() as { email: string; password: string };
-    if (body.email === 'test@test.com' && body.password === 'password123') {
+    const body = await request.json() as { phone: string; password: string };
+    if (body.phone === '+584241234567' && body.password === 'password123') {
       return HttpResponse.json({
         success: true,
         data: {
           user: {
             id: '1',
-            email: body.email,
-            firstName: 'Test',
+            name: 'Test',
             lastName: 'User',
-            role: 'doctor' as const,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            phone: body.phone,
+            email: 'test@test.com',
           },
           accessToken: 'mock-token',
-          refreshToken: 'mock-refresh-token',
         },
         timestamp: new Date().toISOString(),
       });
@@ -324,8 +321,10 @@ export const handlers = [
   http.post(`${API_BASE_URL}/auth/forgot-password`, async () => {
     return HttpResponse.json({
       success: true,
-      data: null,
-      message: 'Reset link sent',
+      data: {
+        message:
+          'Si el número está registrado, recibirás un código por WhatsApp en los próximos minutos.',
+      },
       timestamp: new Date().toISOString(),
     });
   }),
@@ -333,8 +332,7 @@ export const handlers = [
   http.post(`${API_BASE_URL}/auth/reset-password`, async () => {
     return HttpResponse.json({
       success: true,
-      data: null,
-      message: 'Password reset successfully',
+      data: { message: 'Contraseña actualizada correctamente' },
       timestamp: new Date().toISOString(),
     });
   }),
