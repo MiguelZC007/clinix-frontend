@@ -1,3 +1,4 @@
+import React from 'react';
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, afterAll, vi } from 'vitest';
@@ -18,18 +19,18 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
+type LinkProps = { children: React.ReactNode; href: string } & Record<string, unknown>;
+
 vi.mock('next-intl/navigation', () => ({
   useRouter: () => mockRouter,
   usePathname: () => '/',
-  Link: ({ children, href, ...props }: any) => {
-    const React = require('react');
+  Link: ({ children, href, ...props }: LinkProps) => {
     return React.createElement('a', { href, ...props }, children);
   },
   createNavigation: () => ({
     useRouter: () => mockRouter,
     usePathname: () => '/',
-    Link: ({ children, href, ...props }: any) => {
-      const React = require('react');
+    Link: ({ children, href, ...props }: LinkProps) => {
       return React.createElement('a', { href, ...props }, children);
     },
   }),
@@ -56,11 +57,13 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+global.ResizeObserver = vi.fn().mockImplementation(function ResizeObserver() {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+});
 
 vi.mock('next-intl', async () => {
   const actual = await vi.importActual('next-intl');

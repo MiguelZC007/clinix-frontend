@@ -48,7 +48,7 @@ export default function PatientDetailPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={`${patient.firstName} ${patient.lastName}`}
+        title={`${patient.name} ${patient.lastName}`}
         description={t('patients.patientDetails')}
         actions={
           <div className="flex gap-2">

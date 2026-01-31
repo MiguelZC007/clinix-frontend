@@ -8,7 +8,7 @@ describe('ConversationList', () => {
   const defaultProps = {
     conversations: MOCK_CONVERSATIONS,
     activeConversationId: null,
-    onSelectConversation: vi.fn(),
+    onSelectConversation: vi.fn(() => {}),
   };
 
   it('renderiza correctamente', () => {
@@ -33,7 +33,7 @@ describe('ConversationList', () => {
 
   it('llama onSelectConversation al seleccionar', async () => {
     const user = userEvent.setup();
-    const onSelectConversation = vi.fn();
+    const onSelectConversation = vi.fn(() => {});
     render(<ConversationList {...defaultProps} onSelectConversation={onSelectConversation} />);
 
     const conversation = screen.getByText(MOCK_CONVERSATIONS[0].participantName);

@@ -168,7 +168,7 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE_URL}/appointments`, async ({ request }) => {
-    const body = await request.json() as any;
+    const body = (await request.json()) as Record<string, unknown>;
     const newAppointment = {
       id: String(MOCK_APPOINTMENTS.length + 1),
       patientId: body.patientId || '',
@@ -194,7 +194,7 @@ export const handlers = [
     });
   }),
 
-  http.get(`${API_BASE_URL}/clinical-histories`, () => {
+  http.get(`${API_BASE_URL}/clinic-histories`, () => {
     return HttpResponse.json({
       success: true,
       data: {
@@ -208,7 +208,7 @@ export const handlers = [
     });
   }),
 
-  http.get(`${API_BASE_URL}/clinical-histories/:id`, ({ params }) => {
+  http.get(`${API_BASE_URL}/clinic-histories/:id`, ({ params }) => {
     const history = MOCK_CLINICAL_HISTORIES.find((h) => h.id === params.id);
     if (!history) {
       return HttpResponse.json(
@@ -226,7 +226,7 @@ export const handlers = [
     });
   }),
 
-  http.post(`${API_BASE_URL}/clinical-histories`, async ({ request }) => {
+  http.post(`${API_BASE_URL}/clinic-histories`, async ({ request }) => {
     const body = await request.json();
     const newHistory = {
       ...body,
@@ -271,7 +271,7 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE_URL}/messages`, async ({ request }) => {
-    const body = await request.json() as any;
+    const body = (await request.json()) as Record<string, unknown>;
     const newMessage = {
       id: `m-${Date.now()}`,
       conversationId: body.conversationId,
@@ -346,7 +346,7 @@ export const handlers = [
   }),
 
   http.patch(`${API_BASE_URL}/appointments/:id`, async ({ params, request }) => {
-    const body = await request.json() as any;
+    const body = (await request.json()) as Record<string, unknown>;
     const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
     if (!appointment) {
       return HttpResponse.json(
@@ -366,7 +366,7 @@ export const handlers = [
   }),
 
   http.put(`${API_BASE_URL}/appointments/:id`, async ({ params, request }) => {
-    const body = await request.json() as any;
+    const body = (await request.json()) as Record<string, unknown>;
     const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
     if (!appointment) {
       return HttpResponse.json(

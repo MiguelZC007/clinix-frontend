@@ -86,7 +86,7 @@ export function ClinicalHistoryForm({
                   <SelectContent>
                     {patients.map((patient) => (
                       <SelectItem key={patient.id} value={patient.id}>
-                        {patient.firstName} {patient.lastName} - {patient.document}
+                        {patient.name} {patient.lastName} - {patient.email}
                       </SelectItem>
                     ))}
                   </SelectContent>
