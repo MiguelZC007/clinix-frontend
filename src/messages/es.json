@@ -96,6 +96,7 @@
     "newPatient": "Nuevo Paciente",
     "editPatient": "Editar Paciente",
     "patientDetails": "Detalles del Paciente",
+    "name": "Nombre",
     "firstName": "Nombre",
     "lastName": "Apellido",
     "fullName": "Nombre completo",

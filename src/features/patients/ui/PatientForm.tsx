@@ -38,9 +38,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
   const form = useForm<PatientFormData>({
     resolver: zodResolver(patientFormSchema),
     defaultValues: {
-      firstName: patient?.firstName ?? '',
+      name: patient?.name ?? '',
       lastName: patient?.lastName ?? '',
-      document: patient?.document ?? '',
       birthDate: patient?.birthDate ?? '',
       gender: patient?.gender ?? 'male',
       phone: patient?.phone ?? '',
@@ -63,10 +62,10 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
           <div className="grid gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
-              name="firstName"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('patients.firstName')}</FormLabel>
+                  <FormLabel>{t('patients.name')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -81,20 +80,6 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('patients.lastName')}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="document"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('patients.document')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>

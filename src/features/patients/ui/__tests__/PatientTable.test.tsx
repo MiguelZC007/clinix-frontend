@@ -22,7 +22,7 @@ describe('PatientTable', () => {
 
   it('muestra pacientes', () => {
     render(<PatientTable {...defaultProps} />);
-    expect(screen.getByText(MOCK_PATIENTS[0].firstName)).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(MOCK_PATIENTS[0].name))).toBeInTheDocument();
   });
 
   it('llama onView al hacer click en ver', async () => {

@@ -25,7 +25,7 @@ describe('getPatients', () => {
   it('retorna pacientes correctamente tipados', async () => {
     const result = await getPatients();
     expect(result.items[0]).toHaveProperty('id');
-    expect(result.items[0]).toHaveProperty('firstName');
+    expect(result.items[0]).toHaveProperty('name');
     expect(result.items[0]).toHaveProperty('email');
   });
 });
@@ -34,7 +34,7 @@ describe('getPatientById', () => {
   it('retorna paciente por id', async () => {
     const patient = await getPatientById('1');
     expect(patient.id).toBe('1');
-    expect(patient.firstName).toBe('Juan');
+    expect(patient.name).toBe('Juan');
   });
 
   it('lanza error si paciente no existe', async () => {
@@ -45,9 +45,8 @@ describe('getPatientById', () => {
 describe('createPatient', () => {
   it('crea paciente correctamente', async () => {
     const newPatient = {
-      firstName: 'Nuevo',
+      name: 'Nuevo',
       lastName: 'Paciente',
-      document: '99999999',
       birthDate: '2000-01-01',
       gender: 'male' as const,
       phone: '+591 70000099',
@@ -56,7 +55,7 @@ describe('createPatient', () => {
     };
 
     const result = await createPatient(newPatient);
-    expect(result.firstName).toBe('Nuevo');
+    expect(result.name).toBe('Nuevo');
     expect(result.id).toBeDefined();
     expect(result.createdAt).toBeDefined();
   });
@@ -65,16 +64,16 @@ describe('createPatient', () => {
 describe('updatePatient', () => {
   it('actualiza paciente correctamente', async () => {
     const updates = {
-      firstName: 'Juan Actualizado',
+      name: 'Juan Actualizado',
     };
 
     const result = await updatePatient('1', updates);
-    expect(result.firstName).toBe('Juan Actualizado');
+    expect(result.name).toBe('Juan Actualizado');
     expect(result.updatedAt).toBeDefined();
   });
 
   it('lanza error si paciente no existe', async () => {
-    await expect(updatePatient('999', { firstName: 'Test' })).rejects.toThrow();
+    await expect(updatePatient('999', { name: 'Test' })).rejects.toThrow();
   });
 });
 
