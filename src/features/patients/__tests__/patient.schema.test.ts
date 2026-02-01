@@ -10,10 +10,10 @@ describe('genderSchema', () => {
   it('valida generos validos', () => {
     expect(genderSchema.parse('male')).toBe('male');
     expect(genderSchema.parse('female')).toBe('female');
-    expect(genderSchema.parse('other')).toBe('other');
   });
 
   it('rechaza generos invalidos', () => {
+    expect(() => genderSchema.parse('other')).toThrow();
     expect(() => genderSchema.parse('invalid')).toThrow();
     expect(() => genderSchema.parse('')).toThrow();
     expect(() => genderSchema.parse(null)).toThrow();
@@ -23,14 +23,13 @@ describe('genderSchema', () => {
 describe('patientSchema', () => {
   const validPatient = {
     id: '1',
-    firstName: 'Juan',
-    lastName: 'Pérez',
-    document: '12345678',
-    birthDate: '1990-05-15',
-    gender: 'male',
-    phone: '+591 70000001',
     email: 'juan@example.com',
+    name: 'Juan',
+    lastName: 'Pérez',
+    phone: '+591 70000001',
     address: 'Av. Principal 123',
+    birthDate: '1990-05-15',
+    gender: 'male' as const,
     createdAt: '2024-01-15T10:00:00Z',
     updatedAt: '2024-01-15T10:00:00Z',
   };
@@ -53,9 +52,8 @@ describe('patientSchema', () => {
 
 describe('patientFormSchema', () => {
   const validFormData = {
-    firstName: 'Juan',
+    name: 'Juan',
     lastName: 'Pérez',
-    document: '12345678',
     birthDate: '1990-05-15',
     gender: 'male' as const,
     phone: '+591 70000001',
@@ -67,15 +65,15 @@ describe('patientFormSchema', () => {
     expect(patientFormSchema.parse(validFormData)).toEqual(validFormData);
   });
 
-  it('rechaza firstName vacio', () => {
+  it('rechaza name vacio', () => {
     expect(() =>
-      patientFormSchema.parse({ ...validFormData, firstName: '' })
+      patientFormSchema.parse({ ...validFormData, name: '' })
     ).toThrow();
   });
 
-  it('rechaza firstName muy corto', () => {
+  it('rechaza name muy corto', () => {
     expect(() =>
-      patientFormSchema.parse({ ...validFormData, firstName: 'A' })
+      patientFormSchema.parse({ ...validFormData, name: 'A' })
     ).toThrow();
   });
 
@@ -88,7 +86,7 @@ describe('patientFormSchema', () => {
   it('rechaza campos requeridos faltantes', () => {
     expect(() => patientFormSchema.parse({})).toThrow();
     expect(() =>
-      patientFormSchema.parse({ firstName: 'Juan' })
+      patientFormSchema.parse({ name: 'Juan' })
     ).toThrow();
   });
 });
@@ -98,14 +96,13 @@ describe('patientsListResponseSchema', () => {
     items: [
       {
         id: '1',
-        firstName: 'Juan',
+        email: 'juan@example.com',
+        name: 'Juan',
         lastName: 'Pérez',
-        document: '12345678',
+        phone: '+591 70000001',
+        address: 'Av. Principal 123',
         birthDate: '1990-05-15',
         gender: 'male' as const,
-        phone: '+591 70000001',
-        email: 'juan@example.com',
-        address: 'Av. Principal 123',
         createdAt: '2024-01-15T10:00:00Z',
         updatedAt: '2024-01-15T10:00:00Z',
       },

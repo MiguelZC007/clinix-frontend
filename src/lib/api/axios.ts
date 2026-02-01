@@ -5,7 +5,7 @@ import axios from "axios";
 // Si no está definida, verifica NEXT_API_URL (solo servidor)
 // Valor por defecto: http://localhost:4000/v1
 export const api = axios.create({
-  baseURL: "http://localhost:4000/v1",
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/v1",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -14,7 +14,8 @@ export const api = axios.create({
 
 // Contador de peticiones activas para manejar múltiples peticiones simultáneas
 let activeRequests = 0;
-let storeInstance: any = null;
+type JotaiStore = ReturnType<(typeof import('jotai'))['getDefaultStore']>;
+let storeInstance: JotaiStore | null = null;
 
 // Función para obtener o crear la instancia del store de Jotai
 async function getStore() {

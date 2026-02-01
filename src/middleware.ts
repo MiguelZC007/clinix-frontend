@@ -25,7 +25,7 @@ function stripLocale(pathname: string) {
 }
 
 function isAuthPage(p: string) {
-  return p === "/login" || p === "/forgot-password";
+  return p === "/login" || p === "/forgot-password" || p === "/reset-password";
 }
 
 function isProtected(p: string) {

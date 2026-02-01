@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { AxiosError } from 'axios';
+import { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { AppError, normalizeError, ERROR_TRANSLATION_KEYS } from '../api/errors';
-import { ProblemDetailsSchema } from '@/types/contracts/errors';
 
 describe('AppError', () => {
   it('crea error con mensaje', () => {
@@ -53,7 +52,7 @@ describe('normalizeError', () => {
       status: 422,
       statusText: 'Unprocessable Entity',
       headers: {},
-      config: {} as any,
+      config: {} as InternalAxiosRequestConfig,
     };
 
     const normalized = normalizeError(axiosError);
@@ -71,7 +70,7 @@ describe('normalizeError', () => {
       status: 500,
       statusText: 'Internal Server Error',
       headers: {},
-      config: {} as any,
+      config: {} as InternalAxiosRequestConfig,
     };
 
     const normalized = normalizeError(axiosError);
@@ -120,7 +119,7 @@ describe('normalizeError', () => {
         status,
         statusText: 'Error',
         headers: {},
-        config: {} as any,
+        config: {} as InternalAxiosRequestConfig,
       };
       const normalized = normalizeError(axiosError);
       expect(normalized.code).toBe(expectedCode);

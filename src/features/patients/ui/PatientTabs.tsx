@@ -13,10 +13,9 @@ type PatientTabsProps = {
 export function PatientTabs({ patient }: PatientTabsProps) {
   const t = useTranslations();
 
-  const genderLabel = {
+  const genderLabel: Record<'male' | 'female', string> = {
     male: t('patients.male'),
     female: t('patients.female'),
-    other: t('patients.other'),
   };
 
   return (
@@ -36,24 +35,20 @@ export function PatientTabs({ patient }: PatientTabsProps) {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('patients.firstName')}</p>
-                  <p className="font-medium">{patient.firstName}</p>
+                  <p className="text-sm text-muted-foreground">{t('patients.name')}</p>
+                  <p className="font-medium">{patient.name}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t('patients.lastName')}</p>
                   <p className="font-medium">{patient.lastName}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('patients.document')}</p>
-                  <p className="font-medium">{patient.document}</p>
-                </div>
-                <div>
                   <p className="text-sm text-muted-foreground">{t('patients.birthDate')}</p>
-                  <p className="font-medium">{patient.birthDate}</p>
+                  <p className="font-medium">{patient.birthDate ?? '—'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t('patients.gender')}</p>
-                  <Badge variant="secondary">{genderLabel[patient.gender]}</Badge>
+                  <Badge variant="secondary">{patient.gender ? genderLabel[patient.gender] : '—'}</Badge>
                 </div>
               </div>
             </CardContent>
@@ -74,7 +69,7 @@ export function PatientTabs({ patient }: PatientTabsProps) {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">{t('patients.address')}</p>
-                <p className="font-medium">{patient.address}</p>
+                <p className="font-medium">{patient.address ?? '—'}</p>
               </div>
             </CardContent>
           </Card>

@@ -1,12 +1,17 @@
 import { defineConfig } from 'vitest/config';
+import { loadEnv } from 'vite';
 import path from 'path';
 import react from '@vitejs/plugin-react';
+
+const envDir = path.resolve(process.cwd());
+const env = loadEnv('', envDir, '');
 
 export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
     environment: 'jsdom',
+    env: env,
     setupFiles: ['./src/__tests__/setup.ts'],
     css: true,
     coverage: {

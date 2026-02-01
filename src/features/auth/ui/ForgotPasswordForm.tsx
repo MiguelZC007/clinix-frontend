@@ -2,7 +2,8 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,20 +18,30 @@ import {
 } from '@/components/ui/form';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '../schemas/login.schema';
+import { forgotPassword } from '../api/auth.api';
 import { LoadingSpinner } from '@/ui/atoms';
+import toast from 'react-hot-toast';
 
 export function ForgotPasswordForm() {
   const t = useTranslations();
+  const locale = useLocale();
+  const router = useRouter();
 
   const form = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
-      email: '',
+      phone: '',
     },
   });
 
-  const onSubmit = (data: ForgotPasswordFormData) => {
-    console.log('Forgot password data:', data);
+  const onSubmit = async (data: ForgotPasswordFormData) => {
+    try {
+      await forgotPassword({ phone: data.phone.trim() });
+      toast.success(t('auth.forgotPasswordSuccess'));
+      router.push(`/${locale}/reset-password?phone=${encodeURIComponent(data.phone.trim())}`);
+    } catch {
+      toast.error(t('auth.forgotPasswordError'));
+    }
   };
 
   return (
@@ -46,14 +57,14 @@ export function ForgotPasswordForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="email"
+              name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.email')}</FormLabel>
+                  <FormLabel>{t('auth.phone')}</FormLabel>
                   <FormControl>
                     <Input
-                      type="email"
-                      placeholder="doctor@clinicasanmiguel.com"
+                      type="tel"
+                      placeholder="+584241234567"
                       {...field}
                     />
                   </FormControl>
@@ -70,7 +81,7 @@ export function ForgotPasswordForm() {
               {form.formState.isSubmitting ? (
                 <LoadingSpinner size="sm" className="mr-2" />
               ) : null}
-              {t('auth.sendResetLink')}
+              {t('auth.sendOtpByWhatsApp')}
             </Button>
           </form>
         </Form>

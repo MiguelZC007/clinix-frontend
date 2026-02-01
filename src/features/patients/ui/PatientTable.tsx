@@ -37,11 +37,7 @@ export function PatientTable({
     {
       key: 'fullName',
       headerKey: 'patients.fullName',
-      render: (patient) => `${patient.firstName} ${patient.lastName}`,
-    },
-    {
-      key: 'document',
-      headerKey: 'patients.document',
+      render: (patient) => `${patient.name} ${patient.lastName}`,
     },
     {
       key: 'phone',

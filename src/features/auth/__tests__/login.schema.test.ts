@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { loginSchema, forgotPasswordSchema } from '../schemas/login.schema';
+import { loginSchema, forgotPasswordSchema, resetPasswordSchema } from '../schemas/login.schema';
 
 describe('loginSchema', () => {
   const validLogin = {
-    email: 'test@example.com',
+    phone: '+584241234567',
     password: 'password123',
   };
 
@@ -11,14 +11,8 @@ describe('loginSchema', () => {
     expect(loginSchema.parse(validLogin)).toEqual(validLogin);
   });
 
-  it('rechaza email vacio', () => {
-    expect(() => loginSchema.parse({ ...validLogin, email: '' })).toThrow();
-  });
-
-  it('rechaza email invalido', () => {
-    expect(() =>
-      loginSchema.parse({ ...validLogin, email: 'invalid-email' })
-    ).toThrow();
+  it('rechaza phone vacio', () => {
+    expect(() => loginSchema.parse({ ...validLogin, phone: '' })).toThrow();
   });
 
   it('rechaza password muy corto', () => {
@@ -33,30 +27,53 @@ describe('loginSchema', () => {
 
   it('rechaza campos faltantes', () => {
     expect(() => loginSchema.parse({})).toThrow();
-    expect(() => loginSchema.parse({ email: 'test@example.com' })).toThrow();
+    expect(() => loginSchema.parse({ phone: '+584241234567' })).toThrow();
   });
 });
 
 describe('forgotPasswordSchema', () => {
-  const validEmail = {
-    email: 'test@example.com',
-  };
+  const validPhone = { phone: '+584241234567' };
 
-  it('valida email correcto', () => {
-    expect(forgotPasswordSchema.parse(validEmail)).toEqual(validEmail);
+  it('valida phone correcto', () => {
+    expect(forgotPasswordSchema.parse(validPhone)).toEqual(validPhone);
   });
 
-  it('rechaza email vacio', () => {
-    expect(() => forgotPasswordSchema.parse({ email: '' })).toThrow();
-  });
-
-  it('rechaza email invalido', () => {
-    expect(() =>
-      forgotPasswordSchema.parse({ email: 'invalid-email' })
-    ).toThrow();
+  it('rechaza phone vacio', () => {
+    expect(() => forgotPasswordSchema.parse({ phone: '' })).toThrow();
   });
 
   it('rechaza campo faltante', () => {
     expect(() => forgotPasswordSchema.parse({})).toThrow();
+  });
+});
+
+describe('resetPasswordSchema', () => {
+  const validReset = {
+    phone: '+584241234567',
+    code: '123456',
+    newPassword: 'newpass123',
+    confirmPassword: 'newpass123',
+  };
+
+  it('valida reset correcto', () => {
+    expect(resetPasswordSchema.parse(validReset)).toEqual(validReset);
+  });
+
+  it('rechaza code distinto de 6 digitos', () => {
+    expect(() =>
+      resetPasswordSchema.parse({ ...validReset, code: '12345' })
+    ).toThrow();
+    expect(() =>
+      resetPasswordSchema.parse({ ...validReset, code: '1234567' })
+    ).toThrow();
+  });
+
+  it('rechaza cuando contraseñas no coinciden', () => {
+    expect(() =>
+      resetPasswordSchema.parse({
+        ...validReset,
+        confirmPassword: 'otherpass123',
+      })
+    ).toThrow();
   });
 });

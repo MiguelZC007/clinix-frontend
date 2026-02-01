@@ -97,7 +97,7 @@ export const handlers = [
     });
   }),
 
-  http.put(`${API_BASE_URL}/patients/:id`, async ({ params, request }) => {
+  http.patch(`${API_BASE_URL}/patients/:id`, async ({ params, request }) => {
     const body = await request.json();
     const patient = MOCK_PATIENTS.find((p) => p.id === params.id);
     if (!patient) {
@@ -129,8 +129,75 @@ export const handlers = [
     }
     return HttpResponse.json({
       success: true,
-      data: patient,
-      message: 'Patient deleted',
+      data: { deleted: true, id: params.id as string },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/patients/:id/antecedents`, ({ params }) => {
+    const patient = MOCK_PATIENTS.find((p) => p.id === params.id);
+    if (!patient) {
+      return HttpResponse.json(
+        { success: false, message: 'Patient not found' },
+        { status: 404 }
+      );
+    }
+    return HttpResponse.json({
+      success: true,
+      data: {
+        patientId: params.id as string,
+        allergies: ['Penicilina'],
+        medications: [],
+        medicalHistory: [],
+        familyHistory: [],
+        updatedAt: new Date().toISOString(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.put(`${API_BASE_URL}/patients/:id/antecedents`, async ({ params, request }) => {
+    const patient = MOCK_PATIENTS.find((p) => p.id === params.id);
+    if (!patient) {
+      return HttpResponse.json(
+        { success: false, message: 'Patient not found' },
+        { status: 404 }
+      );
+    }
+    const body = (await request.json()) as Record<string, unknown>;
+    const allergies = Array.isArray(body.allergies) ? body.allergies : [];
+    const medications = Array.isArray(body.medications) ? body.medications : [];
+    const medicalHistory = Array.isArray(body.medicalHistory) ? body.medicalHistory : [];
+    const familyHistory = Array.isArray(body.familyHistory) ? body.familyHistory : [];
+    return HttpResponse.json({
+      success: true,
+      data: {
+        patientId: params.id as string,
+        allergies,
+        medications,
+        medicalHistory,
+        familyHistory,
+        updatedAt: new Date().toISOString(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/patients/:id/clinic-histories`, ({ params }) => {
+    const byPatient = MOCK_CLINICAL_HISTORIES.filter((h) => h.patientId === params.id);
+    return HttpResponse.json({
+      success: true,
+      data: byPatient,
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/patients/:id/appointments`, ({ params }) => {
+    const byPatient = MOCK_APPOINTMENTS.filter((a) => a.patientId === params.id);
+    const backendAppointments = byPatient.map(convertAppointmentToBackendFormat);
+    return HttpResponse.json({
+      success: true,
+      data: backendAppointments,
       timestamp: new Date().toISOString(),
     });
   }),
@@ -169,7 +236,7 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE_URL}/appointments`, async ({ request }) => {
-    const body = await request.json() as any;
+    const body = (await request.json()) as Record<string, unknown>;
     const newAppointment = {
       id: String(MOCK_APPOINTMENTS.length + 1),
       patientId: body.patientId || '',
@@ -195,7 +262,7 @@ export const handlers = [
     });
   }),
 
-  http.get(`${API_BASE_URL}/clinical-histories`, () => {
+  http.get(`${API_BASE_URL}/clinic-histories`, () => {
     return HttpResponse.json({
       success: true,
       data: {
@@ -209,7 +276,7 @@ export const handlers = [
     });
   }),
 
-  http.get(`${API_BASE_URL}/clinical-histories/:id`, ({ params }) => {
+  http.get(`${API_BASE_URL}/clinic-histories/:id`, ({ params }) => {
     const history = MOCK_CLINICAL_HISTORIES.find((h) => h.id === params.id);
     if (!history) {
       return HttpResponse.json(
@@ -227,7 +294,7 @@ export const handlers = [
     });
   }),
 
-  http.post(`${API_BASE_URL}/clinical-histories`, async ({ request }) => {
+  http.post(`${API_BASE_URL}/clinic-histories`, async ({ request }) => {
     const body = await request.json();
     const newHistory = {
       ...body,
@@ -272,7 +339,7 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE_URL}/messages`, async ({ request }) => {
-    const body = await request.json() as any;
+    const body = (await request.json()) as Record<string, unknown>;
     const newMessage = {
       id: `m-${Date.now()}`,
       conversationId: body.conversationId,
@@ -292,22 +359,19 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE_URL}/auth/login`, async ({ request }) => {
-    const body = await request.json() as { email: string; password: string };
-    if (body.email === 'test@test.com' && body.password === 'password123') {
+    const body = await request.json() as { phone: string; password: string };
+    if (body.phone === '+584241234567' && body.password === 'password123') {
       return HttpResponse.json({
         success: true,
         data: {
           user: {
             id: '1',
-            email: body.email,
-            firstName: 'Test',
+            name: 'Test',
             lastName: 'User',
-            role: 'doctor' as const,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            phone: body.phone,
+            email: 'test@test.com',
           },
           accessToken: 'mock-token',
-          refreshToken: 'mock-refresh-token',
         },
         timestamp: new Date().toISOString(),
       });
@@ -324,8 +388,10 @@ export const handlers = [
   http.post(`${API_BASE_URL}/auth/forgot-password`, async () => {
     return HttpResponse.json({
       success: true,
-      data: null,
-      message: 'Reset link sent',
+      data: {
+        message:
+          'Si el número está registrado, recibirás un código por WhatsApp en los próximos minutos.',
+      },
       timestamp: new Date().toISOString(),
     });
   }),
@@ -333,8 +399,7 @@ export const handlers = [
   http.post(`${API_BASE_URL}/auth/reset-password`, async () => {
     return HttpResponse.json({
       success: true,
-      data: null,
-      message: 'Password reset successfully',
+      data: { message: 'Contraseña actualizada correctamente' },
       timestamp: new Date().toISOString(),
     });
   }),
@@ -349,7 +414,7 @@ export const handlers = [
   }),
 
   http.patch(`${API_BASE_URL}/appointments/:id`, async ({ params, request }) => {
-    const body = await request.json() as any;
+    const body = (await request.json()) as Record<string, unknown>;
     const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
     if (!appointment) {
       return HttpResponse.json(
@@ -369,7 +434,7 @@ export const handlers = [
   }),
 
   http.put(`${API_BASE_URL}/appointments/:id`, async ({ params, request }) => {
-    const body = await request.json() as any;
+    const body = (await request.json()) as Record<string, unknown>;
     const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
     if (!appointment) {
       return HttpResponse.json(
@@ -429,6 +494,52 @@ export const handlers = [
   http.put(`${API_BASE_URL}/conversations/:id/read`, async () => {
     return HttpResponse.json({
       success: true,
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.post(`${API_BASE_URL}/twilio/whatsapp/send`, async ({ request }) => {
+    const body = (await request.json()) as { to?: string; body?: string };
+    if (!body.to || !body.body) {
+      return HttpResponse.json(
+        { success: false, message: 'to and body are required' },
+        { status: 400 }
+      );
+    }
+    return HttpResponse.json({
+      success: true,
+      data: {
+        messageSid: `SM${Date.now()}`,
+        status: 'queued',
+        to: body.to,
+        from: 'whatsapp:+15675871709',
+        body: body.body,
+        dateCreated: new Date().toISOString(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/twilio/message/:messageSid/status`, ({ params }) => {
+    const messageSid = params.messageSid as string;
+    if (!messageSid || messageSid.length < 10) {
+      return HttpResponse.json(
+        { success: false, message: 'Invalid messageSid' },
+        { status: 400 }
+      );
+    }
+    return HttpResponse.json({
+      success: true,
+      data: {
+        sid: messageSid,
+        status: 'delivered',
+        to: 'whatsapp:+59170000001',
+        from: 'whatsapp:+15675871709',
+        body: 'Test message',
+        dateCreated: new Date().toISOString(),
+        dateSent: new Date().toISOString(),
+        dateUpdated: new Date().toISOString(),
+      },
       timestamp: new Date().toISOString(),
     });
   }),

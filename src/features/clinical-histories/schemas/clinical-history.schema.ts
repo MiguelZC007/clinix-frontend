@@ -52,3 +52,85 @@ export const clinicalHistoriesListResponseSchema = z.object({
   pageSize: z.number(),
   totalPages: z.number(),
 });
+
+const diagnosticBackendSchema = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string(),
+  createdAt: z.union([z.string(), z.date()]).optional(),
+});
+
+const physicalExamBackendSchema = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string(),
+  createdAt: z.union([z.string(), z.date()]).optional(),
+});
+
+const vitalSignBackendSchema = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  value: z.string(),
+  unit: z.string(),
+  measurement: z.string(),
+  description: z.string().optional(),
+  createdAt: z.union([z.string(), z.date()]).optional(),
+});
+
+export const clinicalHistoryBackendSchema = z.object({
+  id: z.string(),
+  patientId: z.string(),
+  doctorId: z.string().optional(),
+  specialtyId: z.string().optional(),
+  appointmentId: z.string(),
+  consultationReason: z.string(),
+  symptoms: z.array(z.string()),
+  treatment: z.string(),
+  diagnostics: z.array(diagnosticBackendSchema),
+  physicalExams: z.array(physicalExamBackendSchema),
+  vitalSigns: z.array(vitalSignBackendSchema),
+  prescription: z.unknown().optional(),
+  patient: z.object({ id: z.string(), name: z.string(), lastName: z.string() }).optional(),
+  doctor: z.object({ id: z.string(), name: z.string(), lastName: z.string(), specialty: z.string().optional() }).optional(),
+  createdAt: z.union([z.string(), z.date()]),
+  updatedAt: z.union([z.string(), z.date()]),
+});
+
+export type ClinicalHistoryBackend = z.infer<typeof clinicalHistoryBackendSchema>;
+
+function formatDate(v: string | Date): string {
+  return typeof v === 'string' ? v : v.toISOString();
+}
+
+export function mapClinicalHistoryFromBackend(b: ClinicalHistoryBackend): ClinicalHistory {
+  const bloodPressure = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('presión') || vs.name?.toLowerCase().includes('presion'))?.value ?? '';
+  const heartRate = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('cardíac') || vs.name?.toLowerCase().includes('cardiac'))?.value ?? '0';
+  const temperature = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('temperatura'))?.value ?? '0';
+  const weight = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('peso'))?.value ?? '0';
+  const height = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('talla') || vs.name?.toLowerCase().includes('altura'))?.value ?? '0';
+  const parseNum = (s: string): number => {
+    const n = parseFloat(s.replace(',', '.'));
+    return Number.isFinite(n) ? n : 0;
+  };
+  const patientName = b.patient ? `${b.patient.name} ${b.patient.lastName}`.trim() : undefined;
+  return {
+    id: b.id,
+    patientId: b.patientId,
+    patientName,
+    reason: b.consultationReason,
+    symptoms: Array.isArray(b.symptoms) ? b.symptoms.join(', ') : '',
+    physicalExam: b.physicalExams.map((e) => `${e.name}: ${e.description}`).join('; ') || '',
+    diagnosis: b.diagnostics.map((d) => `${d.name}: ${d.description}`).join('; ') || '',
+    treatment: b.treatment,
+    notes: '',
+    vitalSigns: {
+      bloodPressure,
+      heartRate: parseNum(heartRate),
+      temperature: parseNum(temperature),
+      weight: parseNum(weight),
+      height: parseNum(height),
+    },
+    createdAt: formatDate(b.createdAt),
+    updatedAt: formatDate(b.updatedAt),
+  };
+}

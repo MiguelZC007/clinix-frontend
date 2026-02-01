@@ -36,8 +36,18 @@
     "phone": "Teléfono",
     "password": "Contraseña",
     "forgotPassword": "¿Olvidaste tu contraseña?",
-    "forgotPasswordDescription": "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+    "forgotPasswordDescription": "Ingresa tu número de teléfono. Si está registrado, recibirás un código por WhatsApp para restablecer tu contraseña.",
     "sendResetLink": "Enviar enlace",
+    "sendOtpByWhatsApp": "Enviar código por WhatsApp",
+    "forgotPasswordSuccess": "Si el número está registrado, recibirás un código por WhatsApp.",
+    "forgotPasswordError": "No se pudo enviar el código. Intenta de nuevo más tarde.",
+    "otpCode": "Código OTP",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "resetPassword": "Restablecer contraseña",
+    "resetPasswordDescription": "Ingresa el código que recibiste por WhatsApp y tu nueva contraseña.",
+    "resetPasswordSuccess": "Contraseña actualizada correctamente.",
+    "resetPasswordError": "No se pudo restablecer la contraseña. Verifica el código o intenta de nuevo.",
     "backToLogin": "Volver al inicio de sesión",
     "loginError": "Error al iniciar sesión",
     "loginSuccess": "Inicio de sesión exitoso",
@@ -86,6 +96,7 @@
     "newPatient": "Nuevo Paciente",
     "editPatient": "Editar Paciente",
     "patientDetails": "Detalles del Paciente",
+    "name": "Nombre",
     "firstName": "Nombre",
     "lastName": "Apellido",
     "fullName": "Nombre completo",
@@ -192,6 +203,8 @@
     "unauthorized": "No tienes autorización. Por favor, inicia sesión",
     "forbidden": "No tienes permisos para realizar esta acción",
     "unknownError": "Ha ocurrido un error inesperado",
-    "clientError": "Error en la solicitud. Por favor, verifica los datos."
+    "clientError": "Error en la solicitud. Por favor, verifica los datos.",
+    "invalidOtp": "El código debe tener 6 dígitos",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden"
   }
 }

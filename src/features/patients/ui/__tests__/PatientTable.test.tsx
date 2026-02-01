@@ -9,10 +9,10 @@ describe('PatientTable', () => {
     patients: MOCK_PATIENTS.slice(0, 2),
     page: 1,
     totalPages: 1,
-    onPageChange: vi.fn(),
-    onView: vi.fn(),
-    onEdit: vi.fn(),
-    onDelete: vi.fn(),
+    onPageChange: vi.fn(() => {}),
+    onView: vi.fn(() => {}),
+    onEdit: vi.fn(() => {}),
+    onDelete: vi.fn(() => {}),
   };
 
   it('renderiza correctamente', () => {
@@ -22,18 +22,20 @@ describe('PatientTable', () => {
 
   it('muestra pacientes', () => {
     render(<PatientTable {...defaultProps} />);
-    expect(screen.getByText(MOCK_PATIENTS[0].firstName)).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(MOCK_PATIENTS[0].name))).toBeInTheDocument();
   });
 
   it('llama onView al hacer click en ver', async () => {
     const user = userEvent.setup();
-    const onView = vi.fn();
+    const onView = vi.fn(() => {});
     render(<PatientTable {...defaultProps} onView={onView} />);
 
-    const buttons = screen.getAllByRole('button');
-    const menuButton = buttons.find(btn => btn.getAttribute('aria-haspopup') === 'menu');
-    if (menuButton) {
-      await user.click(menuButton);
+    const menuButtons = screen.getAllByRole('button').filter(btn => btn.getAttribute('aria-haspopup') === 'menu');
+    if (menuButtons.length > 0) {
+      await user.click(menuButtons[0]);
+      const viewItem = await screen.findByText('common.view');
+      await user.click(viewItem);
+      expect(onView).toHaveBeenCalledWith(MOCK_PATIENTS[0]);
     }
   });
 

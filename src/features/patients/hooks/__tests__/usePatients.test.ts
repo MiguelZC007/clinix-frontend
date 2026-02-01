@@ -38,14 +38,13 @@ describe('usePatientList', () => {
       items: [
         {
           id: '1',
-          firstName: 'Juan',
+          email: 'juan@example.com',
+          name: 'Juan',
           lastName: 'Pérez',
-          document: '12345678',
+          phone: '+591 70000001',
+          address: 'Av. Principal 123',
           birthDate: '1990-05-15',
           gender: 'male' as const,
-          phone: '+591 70000001',
-          email: 'juan@example.com',
-          address: 'Av. Principal 123',
           createdAt: '2024-01-15T10:00:00Z',
           updatedAt: '2024-01-15T10:00:00Z',
         },
@@ -91,14 +90,13 @@ describe('usePatient', () => {
   it('carga paciente por id', async () => {
     const mockPatient = {
       id: '1',
-      firstName: 'Juan',
+      email: 'juan@example.com',
+      name: 'Juan',
       lastName: 'Pérez',
-      document: '12345678',
+      phone: '+591 70000001',
+      address: 'Av. Principal 123',
       birthDate: '1990-05-15',
       gender: 'male' as const,
-      phone: '+591 70000001',
-      email: 'juan@example.com',
-      address: 'Av. Principal 123',
       createdAt: '2024-01-15T10:00:00Z',
       updatedAt: '2024-01-15T10:00:00Z',
     };
@@ -118,9 +116,8 @@ describe('usePatient', () => {
 describe('useCreatePatient', () => {
   it('crea paciente correctamente', async () => {
     const newPatient = {
-      firstName: 'Nuevo',
+      name: 'Nuevo',
       lastName: 'Paciente',
-      document: '99999999',
       birthDate: '2000-01-01',
       gender: 'male' as const,
       phone: '+591 70000099',
@@ -148,17 +145,16 @@ describe('useCreatePatient', () => {
 
 describe('useUpdatePatient', () => {
   it('actualiza paciente correctamente', async () => {
-    const updates = { firstName: 'Actualizado' };
+    const updates = { name: 'Actualizado' };
     const updatedPatient = {
       id: '1',
-      firstName: 'Actualizado',
+      email: 'juan@example.com',
+      name: 'Actualizado',
       lastName: 'Pérez',
-      document: '12345678',
+      phone: '+591 70000001',
+      address: 'Av. Principal 123',
       birthDate: '1990-05-15',
       gender: 'male' as const,
-      phone: '+591 70000001',
-      email: 'juan@example.com',
-      address: 'Av. Principal 123',
       createdAt: '2024-01-15T10:00:00Z',
       updatedAt: '2024-01-20T10:00:00Z',
     };
@@ -169,13 +165,16 @@ describe('useUpdatePatient', () => {
 
     const patient = await result.current.mutate('1', updates);
 
-    expect(patient.firstName).toBe('Actualizado');
+    expect(patient.name).toBe('Actualizado');
   });
 });
 
 describe('useDeletePatient', () => {
   it('elimina paciente correctamente', async () => {
-    vi.mocked(patientsApi.deletePatient).mockResolvedValue(undefined);
+    vi.mocked(patientsApi.deletePatient).mockResolvedValue({
+      deleted: true,
+      id: '1',
+    });
 
     const { result } = renderHook(() => useDeletePatient());
 

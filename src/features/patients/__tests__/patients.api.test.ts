@@ -5,6 +5,8 @@ import {
   createPatient,
   updatePatient,
   deletePatient,
+  getPatientAntecedents,
+  updatePatientAntecedents,
 } from '../api/patients.api';
 import { MOCK_PATIENTS } from '../__mocks__/patients.mock';
 
@@ -25,7 +27,7 @@ describe('getPatients', () => {
   it('retorna pacientes correctamente tipados', async () => {
     const result = await getPatients();
     expect(result.items[0]).toHaveProperty('id');
-    expect(result.items[0]).toHaveProperty('firstName');
+    expect(result.items[0]).toHaveProperty('name');
     expect(result.items[0]).toHaveProperty('email');
   });
 });
@@ -34,7 +36,7 @@ describe('getPatientById', () => {
   it('retorna paciente por id', async () => {
     const patient = await getPatientById('1');
     expect(patient.id).toBe('1');
-    expect(patient.firstName).toBe('Juan');
+    expect(patient.name).toBe('Juan');
   });
 
   it('lanza error si paciente no existe', async () => {
@@ -45,9 +47,8 @@ describe('getPatientById', () => {
 describe('createPatient', () => {
   it('crea paciente correctamente', async () => {
     const newPatient = {
-      firstName: 'Nuevo',
+      name: 'Nuevo',
       lastName: 'Paciente',
-      document: '99999999',
       birthDate: '2000-01-01',
       gender: 'male' as const,
       phone: '+591 70000099',
@@ -56,7 +57,7 @@ describe('createPatient', () => {
     };
 
     const result = await createPatient(newPatient);
-    expect(result.firstName).toBe('Nuevo');
+    expect(result.name).toBe('Nuevo');
     expect(result.id).toBeDefined();
     expect(result.createdAt).toBeDefined();
   });
@@ -65,25 +66,60 @@ describe('createPatient', () => {
 describe('updatePatient', () => {
   it('actualiza paciente correctamente', async () => {
     const updates = {
-      firstName: 'Juan Actualizado',
+      name: 'Juan Actualizado',
     };
 
     const result = await updatePatient('1', updates);
-    expect(result.firstName).toBe('Juan Actualizado');
+    expect(result.name).toBe('Juan Actualizado');
     expect(result.updatedAt).toBeDefined();
   });
 
   it('lanza error si paciente no existe', async () => {
-    await expect(updatePatient('999', { firstName: 'Test' })).rejects.toThrow();
+    await expect(updatePatient('999', { name: 'Test' })).rejects.toThrow();
   });
 });
 
 describe('deletePatient', () => {
   it('elimina paciente correctamente', async () => {
-    await expect(deletePatient('1')).resolves.toBeUndefined();
+    const result = await deletePatient('1');
+    expect(result).toEqual({ deleted: true, id: '1' });
   });
 
   it('lanza error si paciente no existe', async () => {
     await expect(deletePatient('999')).rejects.toThrow();
+  });
+});
+
+describe('getPatientAntecedents', () => {
+  it('retorna antecedentes del paciente', async () => {
+    const result = await getPatientAntecedents('1');
+    expect(result.patientId).toBe('1');
+    expect(Array.isArray(result.allergies)).toBe(true);
+    expect(Array.isArray(result.medications)).toBe(true);
+    expect(Array.isArray(result.medicalHistory)).toBe(true);
+    expect(Array.isArray(result.familyHistory)).toBe(true);
+    expect(result.updatedAt).toBeDefined();
+  });
+
+  it('lanza error si paciente no existe', async () => {
+    await expect(getPatientAntecedents('999')).rejects.toThrow();
+  });
+});
+
+describe('updatePatientAntecedents', () => {
+  it('actualiza antecedentes correctamente', async () => {
+    const result = await updatePatientAntecedents('1', {
+      allergies: ['Penicilina', 'Polen'],
+    });
+    expect(result.patientId).toBe('1');
+    expect(result.allergies).toContain('Penicilina');
+    expect(result.allergies).toContain('Polen');
+    expect(result.updatedAt).toBeDefined();
+  });
+
+  it('lanza error si paciente no existe', async () => {
+    await expect(
+      updatePatientAntecedents('999', { allergies: ['Polen'] })
+    ).rejects.toThrow();
   });
 });

@@ -36,8 +36,18 @@
     "phone": "Phone",
     "password": "Password",
     "forgotPassword": "Forgot your password?",
-    "forgotPasswordDescription": "Enter your email and we will send you a link to reset your password.",
+    "forgotPasswordDescription": "Enter your phone number. If it is registered, you will receive a code via WhatsApp to reset your password.",
     "sendResetLink": "Send reset link",
+    "sendOtpByWhatsApp": "Send code via WhatsApp",
+    "forgotPasswordSuccess": "If the number is registered, you will receive a code via WhatsApp.",
+    "forgotPasswordError": "Could not send the code. Please try again later.",
+    "otpCode": "OTP code",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "resetPassword": "Reset password",
+    "resetPasswordDescription": "Enter the code you received via WhatsApp and your new password.",
+    "resetPasswordSuccess": "Password updated successfully.",
+    "resetPasswordError": "Could not reset password. Check the code or try again.",
     "backToLogin": "Back to login",
     "loginError": "Error signing in",
     "loginSuccess": "Successfully signed in",
@@ -86,6 +96,7 @@
     "newPatient": "New Patient",
     "editPatient": "Edit Patient",
     "patientDetails": "Patient Details",
+    "name": "Name",
     "firstName": "First Name",
     "lastName": "Last Name",
     "fullName": "Full Name",
@@ -192,6 +203,8 @@
     "unauthorized": "You are not authorized. Please log in",
     "forbidden": "You do not have permission to perform this action",
     "unknownError": "An unexpected error has occurred",
-    "clientError": "Request error. Please verify the data."
+    "clientError": "Request error. Please verify the data.",
+    "invalidOtp": "The code must be 6 digits",
+    "passwordsDoNotMatch": "Passwords do not match"
   }
 }

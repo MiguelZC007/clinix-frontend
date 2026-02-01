@@ -60,7 +60,7 @@ export default function EditPatientPage() {
   return (
     <FormPageTemplate
       title={t('patients.editPatient')}
-      description={`${patient.firstName} ${patient.lastName}`}
+      description={`${patient.name} ${patient.lastName}`}
     >
       <PatientForm
         patient={patient}

@@ -8,7 +8,7 @@ const ENDPOINT = '/appointments';
 function unwrapResponse<T>(response: ApiResponse<T> | BackendPaginatedResponse<T> | T | unknown): T {
   if (typeof response === 'object' && response !== null) {
     if ('data' in response) {
-      const data = (response as any).data;
+      const data = (response as { data: unknown }).data;
       if (typeof data === 'object' && data !== null && 'data' in data && !('meta' in data)) {
         return data.data as T;
       }
@@ -35,7 +35,7 @@ interface BackendPaginatedResponse<T> {
 function unwrapPaginatedResponse<T>(response: BackendPaginatedResponse<T> | PaginatedResponse<T> | PaginatedData<T> | unknown): PaginatedData<T> {
   if (typeof response === 'object' && response !== null) {
     if ('data' in response && typeof response.data === 'object' && response.data !== null) {
-      const data = response.data as any;
+      const data = response.data as Record<string, unknown>;
       if ('data' in data && 'meta' in data && Array.isArray(data.data)) {
         const backendResponse = response as BackendPaginatedResponse<T>;
         return {
@@ -102,8 +102,8 @@ export async function getAppointments(params?: AppointmentsListParams): Promise<
     undefined,
     { params: queryParams }
   );
-  const paginatedData = unwrapPaginatedResponse(response);
-  const items = Array.isArray(paginatedData?.items) ? paginatedData.items : [];
+  const paginatedData = unwrapPaginatedResponse<AppointmentBackend>(response);
+  const items: AppointmentBackend[] = Array.isArray(paginatedData?.items) ? (paginatedData.items as AppointmentBackend[]) : [];
   return {
     items: items.map(mapAppointmentFromBackend),
     total: paginatedData?.total ?? 0,
@@ -117,7 +117,7 @@ export async function getAppointmentById(id: string): Promise<Appointment> {
   const response = await client.get<ApiResponse<AppointmentBackend> | AppointmentBackend>(
     `${ENDPOINT}/${id}`
   );
-  const data = unwrapResponse(response);
+  const data = unwrapResponse<AppointmentBackend>(response);
   return mapAppointmentFromBackend(data);
 }
 
@@ -126,7 +126,7 @@ export async function createAppointment(data: CreateAppointmentRequest): Promise
     ENDPOINT,
     data
   );
-  const backendData = unwrapResponse(response);
+  const backendData = unwrapResponse<AppointmentBackend>(response);
   return mapAppointmentFromBackend(backendData);
 }
 
@@ -135,7 +135,7 @@ export async function updateAppointment(id: string, data: UpdateAppointmentReque
     `${ENDPOINT}/${id}`,
     data
   );
-  const backendData = unwrapResponse(response);
+  const backendData = unwrapResponse<AppointmentBackend>(response);
   return mapAppointmentFromBackend(backendData);
 }
 
@@ -144,7 +144,7 @@ export async function cancelAppointment(id: string): Promise<Appointment> {
     `${ENDPOINT}/${id}/cancel`,
     {}
   );
-  const backendData = unwrapResponse(response);
+  const backendData = unwrapResponse<AppointmentBackend>(response);
   return mapAppointmentFromBackend(backendData);
 }
 
@@ -152,7 +152,7 @@ export async function getAppointmentsByPatient(patientId: string): Promise<Appoi
   const response = await client.get<ApiResponse<AppointmentBackend[]> | AppointmentBackend[]>(
     `/patients/${patientId}/appointments`
   );
-  const data = unwrapResponse(response);
+  const data = unwrapResponse<AppointmentBackend[]>(response);
   const appointments = Array.isArray(data) ? data : [];
   return appointments.map(mapAppointmentFromBackend);
 }

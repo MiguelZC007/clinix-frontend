@@ -17,9 +17,9 @@ describe('PatientForm', () => {
       <PatientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />
     );
 
-    expect(screen.getByLabelText(/firstName/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/lastName/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('patients.name')).toBeInTheDocument();
+    expect(screen.getByLabelText('patients.lastName')).toBeInTheDocument();
+    expect(screen.getByLabelText('patients.email')).toBeInTheDocument();
   });
 
   it('prellena formulario con datos del paciente', () => {
@@ -32,8 +32,8 @@ describe('PatientForm', () => {
       />
     );
 
-    const firstNameInput = screen.getByLabelText(/firstName/i) as HTMLInputElement;
-    expect(firstNameInput.value).toBe(patient.firstName);
+    const nameInput = screen.getByLabelText('patients.name') as HTMLInputElement;
+    expect(nameInput.value).toBe(patient.name);
   });
 
   it('muestra errores de validacion', async () => {
@@ -54,13 +54,12 @@ describe('PatientForm', () => {
       <PatientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />
     );
 
-    await user.type(screen.getByLabelText(/firstName/i), 'Juan');
-    await user.type(screen.getByLabelText(/lastName/i), 'Pérez');
-    await user.type(screen.getByLabelText(/document/i), '12345678');
-    await user.type(screen.getByLabelText(/birthDate/i), '1990-05-15');
-    await user.type(screen.getByLabelText(/phone/i), '+591 70000001');
-    await user.type(screen.getByLabelText(/email/i), 'juan@example.com');
-    await user.type(screen.getByLabelText(/address/i), 'Av. Principal 123');
+    await user.type(screen.getByLabelText('patients.name'), 'Juan');
+    await user.type(screen.getByLabelText('patients.lastName'), 'Pérez');
+    await user.type(screen.getByLabelText('patients.birthDate'), '1990-05-15');
+    await user.type(screen.getByLabelText('patients.phone'), '+591 70000001');
+    await user.type(screen.getByLabelText('patients.email'), 'juan@example.com');
+    await user.type(screen.getByLabelText('patients.address'), 'Av. Principal 123');
 
     const submitButton = screen.getByRole('button', { name: /save/i });
     await user.click(submitButton);

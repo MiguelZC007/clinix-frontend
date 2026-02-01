@@ -10,6 +10,9 @@ const SinglePatientSchema = z.union([
   patientSchema,
   z.array(patientSchema).min(1).transform(([patient]) => patient),
 ]);
+const deletePatientResponseSchema = ApiResponseSchema(
+  z.object({ deleted: z.literal(true), id: z.string() }),
+);
 
 export async function getPatients(params?: PatientsListParams): Promise<PaginatedData<Patient>> {
   const response = await client.get(
@@ -38,7 +41,7 @@ export async function createPatient(data: CreatePatientRequest): Promise<Patient
 }
 
 export async function updatePatient(id: string, data: UpdatePatientRequest): Promise<Patient> {
-  const response = await client.put(
+  const response = await client.patch(
     `${PATIENTS_ENDPOINT}/${id}`,
     data,
     ApiResponseSchema(patientSchema)
@@ -46,11 +49,14 @@ export async function updatePatient(id: string, data: UpdatePatientRequest): Pro
   return response.data;
 }
 
-export async function deletePatient(id: string): Promise<void> {
-  await client.delete(
+export async function deletePatient(
+  id: string,
+): Promise<{ deleted: true; id: string }> {
+  const response = await client.delete(
     `${PATIENTS_ENDPOINT}/${id}`,
-    ApiResponseSchema(patientSchema)
+    deletePatientResponseSchema,
   );
+  return response.data;
 }
 
 export async function getPatientAntecedents(id: string): Promise<PatientAntecedents> {
