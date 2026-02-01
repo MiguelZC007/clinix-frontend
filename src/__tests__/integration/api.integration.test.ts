@@ -259,9 +259,13 @@ describe.sequential('E2E integración frontend-backend', () => {
     expectAuthHeader(token);
     expect(Array.isArray(listByPatient)).toBe(true);
 
-    const list = await getClinicalHistories();
+    const list = await getClinicalHistories({ page: 1, pageSize: 10 });
     expectAuthHeader(token);
     expect(list.items.length).toBeGreaterThan(0);
+    expect(list.page).toBe(1);
+    expect(list.pageSize).toBe(10);
+    expect(typeof list.total).toBe('number');
+    expect(typeof list.totalPages).toBe('number');
   }, 30000);
 
   it('mensajes: conversaciones, mensajes y lectura', async () => {

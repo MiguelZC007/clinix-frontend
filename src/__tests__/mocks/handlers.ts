@@ -7,6 +7,41 @@ import type { Appointment } from '@/features/appointments/types/appointment.type
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/v1';
 
+function toBackendClinicalHistory(h: {
+  id: string;
+  patientId: string;
+  patientName?: string;
+  reason: string;
+  symptoms: string;
+  physicalExam: string;
+  diagnosis: string;
+  treatment: string;
+  vitalSigns: { bloodPressure: string; heartRate: number; temperature: number; weight: number; height: number };
+  createdAt: string;
+  updatedAt: string;
+}) {
+  return {
+    id: h.id,
+    patientId: h.patientId,
+    appointmentId: `apt-${h.id}`,
+    consultationReason: h.reason,
+    symptoms: h.symptoms.split(',').map((s) => s.trim()) || [h.symptoms],
+    treatment: h.treatment,
+    diagnostics: [{ name: h.diagnosis, description: '' }],
+    physicalExams: [{ name: 'Examen', description: h.physicalExam }],
+    vitalSigns: [
+      { name: 'Presión arterial', value: h.vitalSigns.bloodPressure, unit: 'mmHg', measurement: '', description: '' },
+      { name: 'Frecuencia cardíaca', value: String(h.vitalSigns.heartRate), unit: 'lpm', measurement: '', description: '' },
+      { name: 'Temperatura', value: String(h.vitalSigns.temperature), unit: '°C', measurement: '', description: '' },
+      { name: 'Peso', value: String(h.vitalSigns.weight), unit: 'kg', measurement: '', description: '' },
+      { name: 'Talla', value: String(h.vitalSigns.height), unit: 'cm', measurement: '', description: '' },
+    ],
+    patient: h.patientName ? { id: h.patientId, name: h.patientName.split(' ')[0] ?? '', lastName: h.patientName.split(' ').slice(1).join(' ') ?? '' } : undefined,
+    createdAt: h.createdAt,
+    updatedAt: h.updatedAt,
+  };
+}
+
 function convertAppointmentToBackendFormat(appointment: Appointment) {
   const [startHours, startMinutes] = appointment.startTime.split(':').map(Number);
   const [endHours, endMinutes] = appointment.endTime.split(':').map(Number);
@@ -262,15 +297,23 @@ export const handlers = [
     });
   }),
 
-  http.get(`${API_BASE_URL}/clinic-histories`, () => {
+  http.get(`${API_BASE_URL}/clinic-histories`, ({ request }) => {
+    const url = new URL(request.url);
+    const page = Math.max(1, parseInt(url.searchParams.get('page') ?? '1', 10));
+    const pageSize = Math.max(1, Math.min(100, parseInt(url.searchParams.get('pageSize') ?? '10', 10)));
+    const backendItems = MOCK_CLINICAL_HISTORIES.map(toBackendClinicalHistory);
+    const total = backendItems.length;
+    const totalPages = total === 0 ? 0 : Math.ceil(total / pageSize);
+    const start = (page - 1) * pageSize;
+    const items = backendItems.slice(start, start + pageSize);
     return HttpResponse.json({
       success: true,
       data: {
-        items: MOCK_CLINICAL_HISTORIES,
-        total: MOCK_CLINICAL_HISTORIES.length,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
+        items,
+        total,
+        page,
+        pageSize,
+        totalPages,
       },
       timestamp: new Date().toISOString(),
     });
@@ -287,24 +330,43 @@ export const handlers = [
         { status: 404 }
       );
     }
+    const backendItem = toBackendClinicalHistory(history);
     return HttpResponse.json({
       success: true,
-      data: history,
+      data: backendItem,
       timestamp: new Date().toISOString(),
     });
   }),
 
   http.post(`${API_BASE_URL}/clinic-histories`, async ({ request }) => {
-    const body = await request.json();
-    const newHistory = {
-      ...body,
-      id: String(MOCK_CLINICAL_HISTORIES.length + 1),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+    const body = (await request.json()) as Record<string, unknown>;
+    const id = String(MOCK_CLINICAL_HISTORIES.length + 1);
+    const createdAt = new Date().toISOString();
+    const updatedAt = new Date().toISOString();
+    const vitalSigns = (body.vitalSigns as { bloodPressure: string; heartRate: number; temperature: number; weight: number; height: number }) ?? {};
+    const backendItem = {
+      id,
+      patientId: body.patientId as string,
+      appointmentId: (body.appointmentId as string) ?? `apt-${id}`,
+      consultationReason: (body.reason as string) ?? '',
+      symptoms: Array.isArray(body.symptoms) ? (body.symptoms as string[]) : [String(body.symptoms ?? '')],
+      treatment: (body.treatment as string) ?? '',
+      diagnostics: [{ name: (body.diagnosis as string) ?? '', description: '' }],
+      physicalExams: [{ name: 'Examen', description: (body.physicalExam as string) ?? '' }],
+      vitalSigns: [
+        { name: 'Presión arterial', value: vitalSigns.bloodPressure ?? '', unit: 'mmHg', measurement: '', description: '' },
+        { name: 'Frecuencia cardíaca', value: String(vitalSigns.heartRate ?? 0), unit: 'lpm', measurement: '', description: '' },
+        { name: 'Temperatura', value: String(vitalSigns.temperature ?? 0), unit: '°C', measurement: '', description: '' },
+        { name: 'Peso', value: String(vitalSigns.weight ?? 0), unit: 'kg', measurement: '', description: '' },
+        { name: 'Talla', value: String(vitalSigns.height ?? 0), unit: 'cm', measurement: '', description: '' },
+      ],
+      patient: { id: body.patientId as string, name: 'Patient', lastName: '' },
+      createdAt,
+      updatedAt,
     };
     return HttpResponse.json({
       success: true,
-      data: newHistory,
+      data: backendItem,
       timestamp: new Date().toISOString(),
     });
   }),

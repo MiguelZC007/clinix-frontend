@@ -172,4 +172,14 @@ describe('clinicalHistoriesListResponseSchema', () => {
       validResponse
     );
   });
+
+  it('valida contrato paginado con items, total, page, pageSize, totalPages', () => {
+    const parsed = clinicalHistoriesListResponseSchema.parse(validResponse);
+    expect(parsed).toHaveProperty('items');
+    expect(parsed).toHaveProperty('total', 1);
+    expect(parsed).toHaveProperty('page', 1);
+    expect(parsed).toHaveProperty('pageSize', 10);
+    expect(parsed).toHaveProperty('totalPages', 1);
+    expect(Array.isArray(parsed.items)).toBe(true);
+  });
 });

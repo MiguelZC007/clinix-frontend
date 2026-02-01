@@ -67,7 +67,7 @@ export type PaginatedResponse<T> = ApiResponse<PaginatedData<T>>;
 
 export const MessageResponseSchema = z.object({
   success: z.boolean(),
-  data: z.union([z.null(), z.record(z.unknown())]),
+  data: z.union([z.null(), z.record(z.string(), z.unknown())]),
   message: z.string().optional(),
   timestamp: z.union([z.string(), z.string().datetime()]).optional(),
 });

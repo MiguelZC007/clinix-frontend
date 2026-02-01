@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { client } from '@/lib/api/client';
-import { ApiResponseSchema } from '@/types/contracts/api-response';
+import { ApiResponseSchema, PaginatedResponseSchema } from '@/types/contracts/api-response';
 import {
   clinicalHistoryBackendSchema,
   mapClinicalHistoryFromBackend,
@@ -17,17 +17,13 @@ function parseApiData<T>(response: { data: T }): T {
 export async function getClinicalHistories(params?: ClinicalHistoriesListParams): Promise<PaginatedData<ClinicalHistory>> {
   const response = await client.get(
     ENDPOINT,
-    ApiResponseSchema(z.array(clinicalHistoryBackendSchema)),
+    PaginatedResponseSchema(clinicalHistoryBackendSchema),
     { params }
   );
-  const data = parseApiData(response);
-  const list = Array.isArray(data) ? data : [];
+  const paginated = response.data;
   return {
-    items: list.map(mapClinicalHistoryFromBackend),
-    total: list.length,
-    page: 1,
-    pageSize: list.length,
-    totalPages: list.length > 0 ? 1 : 0,
+    ...paginated,
+    items: paginated.items.map(mapClinicalHistoryFromBackend),
   };
 }
 

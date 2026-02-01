@@ -11,6 +11,18 @@ describe('getClinicalHistories', () => {
     const result = await getClinicalHistories();
     expect(result.items).toHaveLength(MOCK_CLINICAL_HISTORIES.length);
     expect(result.total).toBe(MOCK_CLINICAL_HISTORIES.length);
+    expect(result.page).toBe(1);
+    expect(result.pageSize).toBe(10);
+    expect(result.totalPages).toBe(1);
+  });
+
+  it('retorna página solicitada con page y pageSize', async () => {
+    const result = await getClinicalHistories({ page: 1, pageSize: 1 });
+    expect(result.items).toHaveLength(1);
+    expect(result.total).toBe(MOCK_CLINICAL_HISTORIES.length);
+    expect(result.page).toBe(1);
+    expect(result.pageSize).toBe(1);
+    expect(result.totalPages).toBe(2);
   });
 
   it('filtra por patientId', async () => {
