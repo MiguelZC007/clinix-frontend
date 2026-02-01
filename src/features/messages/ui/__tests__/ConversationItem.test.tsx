@@ -1,8 +1,8 @@
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import userEvent from '@testing-library/user-event';
-import { ConversationItem } from '../ConversationItem';
 import { MOCK_CONVERSATIONS } from '../../__mocks__/messages.mock';
+import { ConversationItem } from '../ConversationItem';
 
 describe('ConversationItem', () => {
   it('renderiza correctamente', () => {

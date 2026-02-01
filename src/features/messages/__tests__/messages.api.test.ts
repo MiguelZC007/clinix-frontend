@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
+import { MOCK_CONVERSATIONS } from '../__mocks__/messages.mock';
 import {
   getConversations,
   getMessages,
   sendMessage,
   markAsRead,
 } from '../api/messages.api';
-import { MOCK_CONVERSATIONS, MOCK_MESSAGES } from '../__mocks__/messages.mock';
 
 describe('getConversations', () => {
   it('retorna lista de conversaciones paginada', async () => {

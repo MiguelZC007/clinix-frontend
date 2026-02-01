@@ -1,10 +1,10 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/navigation';
 import { Users, FileText, Calendar, TrendingUp, Plus, ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useRouter } from '@/i18n/navigation';
 import { PageHeader } from '@/ui/molecules';
 
 type StatCardProps = {

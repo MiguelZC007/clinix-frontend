@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import { ClinicalHistoryForm } from '../ClinicalHistoryForm';
 import { MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
+import { ClinicalHistoryForm } from '../ClinicalHistoryForm';
 
 describe('ClinicalHistoryForm', () => {
   const defaultProps = {

@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import type { PaginatedData } from '@/types/contracts/api-response';
 import { getAppointments, getAppointmentById, createAppointment, updateAppointment, cancelAppointment } from '../api/appointments.api';
 import type { Appointment, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams } from '../types/appointment.types';
-import type { PaginatedData } from '@/types/contracts/api-response';
 
 type UseAppointmentListState = {
   data: PaginatedData<Appointment> | null;

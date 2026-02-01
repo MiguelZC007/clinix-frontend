@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
 import { Plus } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { PageHeader, ErrorState } from '@/ui/molecules';
 import { AppointmentCalendar } from '@/features/appointments';
-import { useAppointmentList } from '@/features/appointments/hooks/useAppointments';
 import type { Appointment, AppointmentStatus } from '@/features/appointments';
+import { useAppointmentList } from '@/features/appointments/hooks/useAppointments';
+import { PageHeader, ErrorState } from '@/ui/molecules';
 
 function getStatusBadge(status: AppointmentStatus, t: ReturnType<typeof useTranslations>) {
   const variants: Record<AppointmentStatus, 'default' | 'secondary' | 'destructive'> = {

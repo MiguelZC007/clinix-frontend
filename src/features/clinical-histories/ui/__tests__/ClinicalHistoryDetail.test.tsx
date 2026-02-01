@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import { ClinicalHistoryDetail } from '../ClinicalHistoryDetail';
 import { MOCK_CLINICAL_HISTORIES } from '../../__mocks__/clinical-histories.mock';
+import { ClinicalHistoryDetail } from '../ClinicalHistoryDetail';
 
 describe('ClinicalHistoryDetail', () => {
   it('renderiza correctamente', () => {

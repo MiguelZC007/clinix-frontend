@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import type { PaginatedData } from '@/types/contracts/api-response';
 import { getPatients, getPatientById, createPatient, updatePatient, deletePatient } from '../api/patients.api';
 import type { Patient, CreatePatientRequest, UpdatePatientRequest, PatientsListParams } from '../types/patient.types';
-import type { PaginatedData } from '@/types/contracts/api-response';
 
 type UsePatientListState = {
   data: PaginatedData<Patient> | null;

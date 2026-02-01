@@ -2,9 +2,9 @@
 
 import { useSession as useNextAuthSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
-import { useRouter } from '@/i18n/navigation';
-import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+import { useRouter } from '@/i18n/navigation';
 
 export function useAuth() {
   const { data: session, status } = useNextAuthSession();
@@ -16,7 +16,7 @@ export function useAuth() {
       await signOut({ redirect: false });
       toast.success(t('auth.logoutSuccess') || 'Sesión cerrada correctamente');
       router.push('/login');
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('auth.logoutError') || 'Error al cerrar sesión');
     }
   };

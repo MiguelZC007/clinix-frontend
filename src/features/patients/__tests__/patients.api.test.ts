@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { MOCK_PATIENTS } from '../__mocks__/patients.mock';
 import {
   getPatients,
   getPatientById,
@@ -8,7 +9,6 @@ import {
   getPatientAntecedents,
   updatePatientAntecedents,
 } from '../api/patients.api';
-import { MOCK_PATIENTS } from '../__mocks__/patients.mock';
 
 describe('getPatients', () => {
   it('retorna lista de pacientes paginada', async () => {

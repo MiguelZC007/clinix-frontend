@@ -2,13 +2,13 @@
 
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
 import { ArrowLeft, Pencil } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { PageHeader, ErrorState } from '@/ui/molecules';
-import { PatientTabs } from '@/features/patients/ui';
 import { usePatient } from '@/features/patients/hooks/usePatients';
+import { PatientTabs } from '@/features/patients/ui';
+import { useRouter } from '@/i18n/navigation';
+import { PageHeader, ErrorState } from '@/ui/molecules';
 
 export default function PatientDetailPage() {
   const t = useTranslations();

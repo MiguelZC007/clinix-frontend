@@ -1,15 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { ListPageTemplate } from '@/ui/templates';
-import { EmptyState, ErrorState } from '@/ui/molecules';
-import { ClinicalHistoryCard } from '@/features/clinical-histories/ui';
 import { useClinicalHistoryList } from '@/features/clinical-histories/hooks/useClinicalHistories';
 import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
+import { ClinicalHistoryCard } from '@/features/clinical-histories/ui';
+import { useRouter } from '@/i18n/navigation';
+import { EmptyState, ErrorState } from '@/ui/molecules';
+import { ListPageTemplate } from '@/ui/templates';
 
 const PAGE_SIZE = 10;
 

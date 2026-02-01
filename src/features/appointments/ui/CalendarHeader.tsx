@@ -1,8 +1,8 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useTranslations, useLocale } from 'next-intl';
+import { Button } from '@/components/ui/button';
 import type { CalendarView } from '../types/appointment.types';
 
 type CalendarHeaderProps = {

@@ -54,7 +54,7 @@ describe('clinicalHistorySchema', () => {
   });
 
   it('acepta patientName opcional', () => {
-    const { patientName, ...historyWithoutName } = validHistory;
+    const { patientName: _patientName, ...historyWithoutName } = validHistory;
     expect(
       clinicalHistorySchema.parse(historyWithoutName)
     ).not.toHaveProperty('patientName');

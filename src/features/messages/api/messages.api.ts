@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { client } from '@/lib/api/client';
 import { ApiResponseSchema, PaginatedResponseSchema } from '@/types/contracts/api-response';
+import type { PaginatedData } from '@/types/contracts/api-response';
 import { messageEntitySchema, conversationSchema } from '../schemas/message.schema';
 import type { Message, Conversation, SendMessageRequest } from '../types/message.types';
-import type { PaginatedData } from '@/types/contracts/api-response';
 
 const CONVERSATIONS_ENDPOINT = '/conversations';
 const MESSAGES_ENDPOINT = '/messages';

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import { DashboardLayout } from '../DashboardLayout';
 import type { BreadcrumbItemData } from '@/ui/molecules';
+import { DashboardLayout } from '../DashboardLayout';
 
 describe('DashboardLayout', () => {
   const breadcrumbs: BreadcrumbItemData[] = [

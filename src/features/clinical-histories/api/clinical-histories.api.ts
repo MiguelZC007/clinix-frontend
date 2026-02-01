@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { client } from '@/lib/api/client';
 import { ApiResponseSchema, PaginatedResponseSchema } from '@/types/contracts/api-response';
+import type { PaginatedData } from '@/types/contracts/api-response';
 import {
   clinicalHistoryBackendSchema,
   mapClinicalHistoryFromBackend,
 } from '../schemas/clinical-history.schema';
 import type { ClinicalHistory, CreateClinicalHistoryRequest, ClinicalHistoriesListParams } from '../types/clinical-history.types';
-import type { PaginatedData } from '@/types/contracts/api-response';
 
 const ENDPOINT = '/clinic-histories';
 

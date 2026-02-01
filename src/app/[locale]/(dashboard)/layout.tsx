@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePathname, useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import { DashboardLayout } from '@/ui/templates';
-import type { BreadcrumbItemData } from '@/ui/molecules';
+import { useTranslations } from 'next-intl';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { LoadingSpinner } from '@/ui/atoms';
+import type { BreadcrumbItemData } from '@/ui/molecules';
+import { DashboardLayout } from '@/ui/templates';
 
 type DashboardLayoutPageProps = {
   children: React.ReactNode;

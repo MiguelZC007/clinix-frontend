@@ -14,7 +14,8 @@ export const api = axios.create({
 
 // Contador de peticiones activas para manejar múltiples peticiones simultáneas
 let activeRequests = 0;
-type JotaiStore = ReturnType<(typeof import('jotai'))['getDefaultStore']>;
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports -- dynamic import type for jotai store
+type JotaiStore = ReturnType<(typeof import("jotai"))["getDefaultStore"]>;
 let storeInstance: JotaiStore | null = null;
 
 // Función para obtener o crear la instancia del store de Jotai

@@ -1,23 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname } from '@/i18n/navigation';
-import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
 import { ChevronDown, LogOut } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Logo } from '@/ui/atoms';
+import { useTranslations } from 'next-intl';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { usePathname } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
 import { sidebarNavItems, type NavItem } from '@/lib/config/navigation';
+import { cn } from '@/lib/utils';
+import { Logo } from '@/ui/atoms';
 
 type SidebarProps = {
   className?: string;

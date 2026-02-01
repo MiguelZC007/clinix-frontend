@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import { Play, Pause, Check, CheckCheck } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import type { Message } from '../types/message.types';
 
 type MessageBubbleProps = {
@@ -13,7 +13,7 @@ type MessageBubbleProps = {
 };
 
 export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
-  const t = useTranslations();
+  const _t = useTranslations();
   const [isPlaying, setIsPlaying] = useState(false);
 
   const formatTime = (date: Date) => {

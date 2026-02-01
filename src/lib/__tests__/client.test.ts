@@ -1,9 +1,14 @@
+import { AxiosError } from 'axios';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { z } from 'zod';
-import { AxiosError } from 'axios';
-import { client } from '../api/client';
 import { api } from '../api/axios';
-import { AppError } from '../api/errors';
+import { client } from '../api/client';
+import type { AppError } from '../api/errors';
+
+type ErrorsModule = {
+  AppError: typeof AppError;
+  normalizeError: (error: Error) => AppError;
+};
 
 vi.mock('../api/axios', () => ({
   api: {
@@ -16,7 +21,7 @@ vi.mock('../api/axios', () => ({
 }));
 
 vi.mock('../api/errors', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../api/errors')>();
+  const actual = (await importOriginal()) as ErrorsModule;
   return {
     ...actual,
     normalizeError: vi.fn((error: Error) => {

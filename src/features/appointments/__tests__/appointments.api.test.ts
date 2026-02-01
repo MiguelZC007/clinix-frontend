@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { MOCK_APPOINTMENTS } from '../__mocks__/appointments.mock';
 import {
   getAppointments,
   getAppointmentById,
@@ -6,7 +7,6 @@ import {
   updateAppointment,
   cancelAppointment,
 } from '../api/appointments.api';
-import { MOCK_APPOINTMENTS } from '../__mocks__/appointments.mock';
 
 describe('getAppointments', () => {
   it('retorna lista de citas paginada', async () => {

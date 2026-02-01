@@ -1,9 +1,9 @@
+import { z } from 'zod';
 import { client } from '@/lib/api/client';
 import { ApiResponseSchema, PaginatedResponseSchema } from '@/types/contracts/api-response';
-import { patientSchema, patientAntecedentsSchema } from '../schemas/patient.schema';
-import { z } from 'zod';
-import type { Patient, CreatePatientRequest, UpdatePatientRequest, PatientsListParams, PatientAntecedents, UpdatePatientAntecedentsRequest } from '../types/patient.types';
 import type { PaginatedData } from '@/types/contracts/api-response';
+import { patientSchema, patientAntecedentsSchema } from '../schemas/patient.schema';
+import type { Patient, CreatePatientRequest, UpdatePatientRequest, PatientsListParams, PatientAntecedents, UpdatePatientAntecedentsRequest } from '../types/patient.types';
 
 const PATIENTS_ENDPOINT = '/patients';
 const SinglePatientSchema = z.union([

@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import type { PaginatedData } from '@/types/contracts/api-response';
 import { getClinicalHistories, getClinicalHistoryById, createClinicalHistory } from '../api/clinical-histories.api';
 import type { ClinicalHistory, CreateClinicalHistoryRequest, ClinicalHistoriesListParams } from '../types/clinical-history.types';
-import type { PaginatedData } from '@/types/contracts/api-response';
 
 type UseClinicalHistoryListState = {
   data: PaginatedData<ClinicalHistory> | null;

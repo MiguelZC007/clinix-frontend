@@ -1,8 +1,8 @@
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import userEvent from '@testing-library/user-event';
-import { ClinicalHistoryCard } from '../ClinicalHistoryCard';
 import { MOCK_CLINICAL_HISTORIES } from '../../__mocks__/clinical-histories.mock';
+import { ClinicalHistoryCard } from '../ClinicalHistoryCard';
 
 describe('ClinicalHistoryCard', () => {
   it('renderiza correctamente', () => {

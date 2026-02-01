@@ -1,7 +1,7 @@
 import { client } from '@/lib/api/client';
-import type { Appointment, AppointmentBackend, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams } from '../types/appointment.types';
 import type { PaginatedData, ApiResponse, PaginatedResponse } from '@/types/contracts/api-response';
 import { mapAppointmentFromBackend } from '../utils/appointment.mapper';
+import type { Appointment, AppointmentBackend, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams } from '../types/appointment.types';
 
 const ENDPOINT = '/appointments';
 

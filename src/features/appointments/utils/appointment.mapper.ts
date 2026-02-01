@@ -1,5 +1,5 @@
-import type { Appointment, AppointmentBackend } from '../types/appointment.types';
 import type { AppointmentStatus } from '../schemas/appointment.schema';
+import type { Appointment, AppointmentBackend } from '../types/appointment.types';
 
 function getInitials(name: string, lastName: string): string {
   const firstInitial = name.charAt(0).toUpperCase();

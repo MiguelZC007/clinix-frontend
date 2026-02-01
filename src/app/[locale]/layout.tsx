@@ -1,13 +1,13 @@
-import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
 import { SessionProvider } from '@/lib/auth/SessionProvider';
-import { Toaster } from '@/components/ui/sonner';
-import { GlobalLoading } from '@/ui/organisms/GlobalLoading';
 import { NavigationLoadingProvider } from '@/lib/providers/NavigationLoadingProvider';
+import { GlobalLoading } from '@/ui/organisms/GlobalLoading';
+import type { Metadata } from 'next';
 import '../globals.css';
 
 const geistSans = Geist({

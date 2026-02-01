@@ -1,8 +1,8 @@
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import userEvent from '@testing-library/user-event';
-import { PatientTable } from '../PatientTable';
 import { MOCK_PATIENTS } from '../../__mocks__/patients.mock';
+import { PatientTable } from '../PatientTable';
 
 describe('PatientTable', () => {
   const defaultProps = {

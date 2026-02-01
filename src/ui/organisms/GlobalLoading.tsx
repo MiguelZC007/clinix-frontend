@@ -1,9 +1,9 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
+import { useTranslations } from 'next-intl';
 import { navigationLoadingAtom, apiLoadingAtom, loadingMessageAtom } from '@/lib/store/loading.atoms';
 import { LoadingSpinner } from '@/ui/atoms';
-import { useTranslations } from 'next-intl';
 
 export function GlobalLoading() {
   const navigationLoading = useAtomValue(navigationLoadingAtom);

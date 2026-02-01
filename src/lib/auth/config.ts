@@ -1,7 +1,7 @@
-import { NextAuthOptions } from 'next-auth';
+import { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { login } from '@/features/auth/api/auth.api';
-import type { JWT } from 'next-auth/jwt';
+import type { JWT as _JWT } from 'next-auth/jwt';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
             email: response.user.email,
             accessToken: response.accessToken,
           };
-        } catch (error) {
+        } catch (_error) {
           // El error ya se mostrará en el interceptor de axios
           // Solo retornamos null para que NextAuth muestre el error genérico
           return null;

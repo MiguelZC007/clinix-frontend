@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname } from '@/i18n/navigation';
 import { useSetAtom } from 'jotai';
+import { usePathname } from '@/i18n/navigation';
 import { navigationLoadingAtom } from '@/lib/store/loading.atoms';
 
 export function useNavigationLoading() {

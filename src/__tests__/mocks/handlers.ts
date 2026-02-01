@@ -1,9 +1,9 @@
 import { http, HttpResponse } from 'msw';
-import { MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
 import { MOCK_APPOINTMENTS } from '@/features/appointments/__mocks__/appointments.mock';
+import type { Appointment } from '@/features/appointments/types/appointment.types';
 import { MOCK_CLINICAL_HISTORIES } from '@/features/clinical-histories/__mocks__/clinical-histories.mock';
 import { MOCK_CONVERSATIONS, MOCK_MESSAGES } from '@/features/messages/__mocks__/messages.mock';
-import type { Appointment } from '@/features/appointments/types/appointment.types';
+import { MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/v1';
 

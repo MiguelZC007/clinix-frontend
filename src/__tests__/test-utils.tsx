@@ -1,6 +1,6 @@
+import { type ReactElement } from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
-import { ReactElement } from 'react';
 import esMessages from '@/messages/es.json';
 
 function AllTheProviders({ children }: { children: React.ReactNode }) {

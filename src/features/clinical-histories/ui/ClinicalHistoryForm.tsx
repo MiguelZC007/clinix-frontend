@@ -1,11 +1,9 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
   FormControl,
@@ -14,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -21,10 +20,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FormSection } from '@/ui/molecules';
-import { LoadingSpinner } from '@/ui/atoms';
-import { clinicalHistoryFormSchema, type ClinicalHistoryFormData } from '../schemas/clinical-history.schema';
+import { Textarea } from '@/components/ui/textarea';
 import type { Patient } from '@/features/patients/types/patient.types';
+import { LoadingSpinner } from '@/ui/atoms';
+import { FormSection } from '@/ui/molecules';
+import { clinicalHistoryFormSchema, type ClinicalHistoryFormData } from '../schemas/clinical-history.schema';
 
 type ClinicalHistoryFormProps = {
   patients: Patient[];

@@ -1,14 +1,14 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { FormPageTemplate } from '@/ui/templates';
-import { PatientForm } from '@/features/patients/ui';
-import { ErrorState } from '@/ui/molecules';
+import { toast } from 'sonner';
 import { usePatient, useUpdatePatient } from '@/features/patients/hooks/usePatients';
 import type { PatientFormData } from '@/features/patients/schemas/patient.schema';
-import { toast } from 'sonner';
+import { PatientForm } from '@/features/patients/ui';
+import { useRouter } from '@/i18n/navigation';
+import { ErrorState } from '@/ui/molecules';
+import { FormPageTemplate } from '@/ui/templates';
 
 export default function EditPatientPage() {
   const t = useTranslations();
@@ -26,7 +26,7 @@ export default function EditPatientPage() {
       await updatePatient(patientId, data);
       toast.success(t('patients.updateSuccess') || 'Paciente actualizado correctamente');
       router.push(`/patients/${patientId}`);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('patients.updateError') || 'Error al actualizar paciente');
     }
   };

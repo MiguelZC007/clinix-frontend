@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import { describe, it, expect } from 'vitest';
 import { AppError, normalizeError, ERROR_TRANSLATION_KEYS } from '../api/errors';
 
 describe('AppError', () => {

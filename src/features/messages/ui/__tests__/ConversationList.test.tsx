@@ -1,8 +1,8 @@
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import userEvent from '@testing-library/user-event';
-import { ConversationList } from '../ConversationList';
 import { MOCK_CONVERSATIONS } from '../../__mocks__/messages.mock';
+import { ConversationList } from '../ConversationList';
 
 describe('ConversationList', () => {
   const defaultProps = {

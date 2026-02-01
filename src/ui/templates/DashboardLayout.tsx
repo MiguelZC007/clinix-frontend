@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Sidebar, MobileSidebar, Header } from '@/ui/organisms';
 import type { BreadcrumbItemData } from '@/ui/molecules';
+import { Sidebar, MobileSidebar, Header } from '@/ui/organisms';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;

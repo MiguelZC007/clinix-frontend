@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { toast } from 'sonner';
 import { ConversationList, ChatWindow } from '@/features/messages';
+import type { Conversation } from '@/features/messages';
 import { useConversations, useMessages, useSendMessage } from '@/features/messages/hooks/useMessages';
 import { useAuth } from '@/lib/auth/hooks';
-import type { Conversation, Message } from '@/features/messages';
-import { toast } from 'sonner';
 
 export default function MessagesPage() {
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
@@ -13,8 +13,8 @@ export default function MessagesPage() {
   const currentUserId = user?.id || '';
 
   const { data: conversationsData, isLoading: isLoadingConversations, error: conversationsError } = useConversations();
-  const { data: messagesData, isLoading: isLoadingMessages, error: messagesError, refetch: refetchMessages } = useMessages(activeConversation?.id || null);
-  const { mutate: sendMessageMutation, isLoading: isSending } = useSendMessage();
+  const { data: messagesData, isLoading: isLoadingMessages, error: _messagesError, refetch: refetchMessages } = useMessages(activeConversation?.id || null);
+  const { mutate: sendMessageMutation, isLoading: _isSending } = useSendMessage();
 
   const conversations = conversationsData?.items || [];
   const messages = messagesData?.items || [];
@@ -23,7 +23,7 @@ export default function MessagesPage() {
     if (activeConversation && messagesData) {
       refetchMessages();
     }
-  }, [activeConversation?.id]);
+  }, [activeConversation, activeConversation?.id, messagesData, refetchMessages]);
 
   const handleSendMessage = useCallback(async (content: string) => {
     if (!activeConversation || !currentUserId) return;
@@ -35,7 +35,7 @@ export default function MessagesPage() {
         content,
       });
       refetchMessages();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al enviar mensaje');
     }
   }, [activeConversation, currentUserId, sendMessageMutation, refetchMessages]);
@@ -54,7 +54,7 @@ export default function MessagesPage() {
         audioDuration: duration,
       });
       refetchMessages();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al enviar mensaje de audio');
     }
   }, [activeConversation, currentUserId, sendMessageMutation, refetchMessages]);

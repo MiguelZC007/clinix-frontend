@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { type z } from "zod";
 import { api, getAuthToken } from "./axios";
 import { normalizeError } from "./errors";
 

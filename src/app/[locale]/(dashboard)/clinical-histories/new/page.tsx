@@ -1,13 +1,13 @@
 'use client';
 
-import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { FormPageTemplate } from '@/ui/templates';
-import { ClinicalHistoryForm } from '@/features/clinical-histories/ui';
-import { usePatientList } from '@/features/patients/hooks/usePatients';
+import { toast } from 'sonner';
 import { useCreateClinicalHistory } from '@/features/clinical-histories/hooks/useClinicalHistories';
 import type { ClinicalHistoryFormData } from '@/features/clinical-histories/schemas/clinical-history.schema';
-import { toast } from 'sonner';
+import { ClinicalHistoryForm } from '@/features/clinical-histories/ui';
+import { usePatientList } from '@/features/patients/hooks/usePatients';
+import { useRouter } from '@/i18n/navigation';
+import { FormPageTemplate } from '@/ui/templates';
 
 export default function NewClinicalHistoryPage() {
   const t = useTranslations();
@@ -23,7 +23,7 @@ export default function NewClinicalHistoryPage() {
       await createClinicalHistory(data);
       toast.success(t('clinicalHistories.createSuccess') || 'Historia clínica creada correctamente');
       router.push('/clinical-histories');
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('clinicalHistories.createError') || 'Error al crear historia clínica');
     }
   };

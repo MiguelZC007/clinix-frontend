@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from '@/i18n/navigation';
 import { useSession } from 'next-auth/react';
-import { AuthLayout } from '@/ui/templates';
+import { useRouter } from '@/i18n/navigation';
 import { LoadingSpinner } from '@/ui/atoms';
+import { AuthLayout } from '@/ui/templates';
 
 type AuthLayoutPageProps = {
   children: React.ReactNode;

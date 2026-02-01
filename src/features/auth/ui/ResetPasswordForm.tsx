@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Link } from '@/i18n/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -17,11 +17,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas/login.schema';
-import { resetPassword } from '../api/auth.api';
+import { Input } from '@/components/ui/input';
+import { Link } from '@/i18n/navigation';
 import { LoadingSpinner } from '@/ui/atoms';
-import toast from 'react-hot-toast';
+import { resetPassword } from '../api/auth.api';
+import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas/login.schema';
 
 export function ResetPasswordForm() {
   const t = useTranslations();

@@ -2,14 +2,14 @@
 
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
 import { ArrowLeft, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
-import { PageHeader, ErrorState } from '@/ui/molecules';
-import { ClinicalHistoryDetail } from '@/features/clinical-histories/ui';
+import { Button } from '@/components/ui/button';
 import { useClinicalHistory } from '@/features/clinical-histories/hooks/useClinicalHistories';
+import { ClinicalHistoryDetail } from '@/features/clinical-histories/ui';
+import { useRouter } from '@/i18n/navigation';
+import { PageHeader, ErrorState } from '@/ui/molecules';
 
 export default function ClinicalHistoryDetailPage() {
   const t = useTranslations();

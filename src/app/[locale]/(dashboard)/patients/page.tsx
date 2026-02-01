@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
 import { Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { ListPageTemplate } from '@/ui/templates';
-import { EmptyState, ConfirmDialog, ErrorState } from '@/ui/molecules';
-import { PatientTable, PatientFilters } from '@/features/patients/ui';
 import { usePatientList, useDeletePatient } from '@/features/patients/hooks/usePatients';
 import type { Patient } from '@/features/patients/types/patient.types';
-import { toast } from 'sonner';
+import { PatientTable, PatientFilters } from '@/features/patients/ui';
+import { useRouter } from '@/i18n/navigation';
+import { EmptyState, ConfirmDialog, ErrorState } from '@/ui/molecules';
+import { ListPageTemplate } from '@/ui/templates';
 
 export default function PatientsPage() {
   const t = useTranslations();
@@ -41,7 +41,7 @@ export default function PatientsPage() {
       toast.success(t('patients.deleteSuccess') || 'Paciente eliminado correctamente');
       setDeletePatient(null);
       refetch();
-    } catch (error) {
+    } catch (_error) {
       toast.error(t('patients.deleteError') || 'Error al eliminar paciente');
     }
   };

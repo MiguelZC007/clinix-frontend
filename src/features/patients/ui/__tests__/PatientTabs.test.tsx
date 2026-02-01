@@ -1,8 +1,8 @@
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import userEvent from '@testing-library/user-event';
-import { PatientTabs } from '../PatientTabs';
 import { MOCK_PATIENTS } from '../../__mocks__/patients.mock';
+import { PatientTabs } from '../PatientTabs';
 
 describe('PatientTabs', () => {
   it('renderiza correctamente', () => {

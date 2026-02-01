@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { CalendarHeader } from './CalendarHeader';
 import { CalendarDayView } from './CalendarDayView';
-import { CalendarWeekView } from './CalendarWeekView';
+import { CalendarHeader } from './CalendarHeader';
 import { CalendarMonthView } from './CalendarMonthView';
+import { CalendarWeekView } from './CalendarWeekView';
 import type { Appointment, CalendarView } from '../types/appointment.types';
 
 type AppointmentCalendarProps = {

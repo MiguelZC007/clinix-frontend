@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import * as patientsApi from '../../api/patients.api';
 import {
   usePatientList,
   usePatient,
@@ -7,7 +8,6 @@ import {
   useUpdatePatient,
   useDeletePatient,
 } from '../usePatients';
-import * as patientsApi from '../../api/patients.api';
 
 vi.mock('../../api/patients.api');
 

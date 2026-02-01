@@ -1,6 +1,28 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import { api } from '@/lib/api/axios';
+import {
+  getAppointments,
+  getAppointmentById,
+  createAppointment,
+  updateAppointment,
+  cancelAppointment,
+  getAppointmentsByPatient,
+} from '@/features/appointments/api/appointments.api';
+import type { CreateAppointmentRequest } from '@/features/appointments/types/appointment.types';
 import { login, logout } from '@/features/auth/api/auth.api';
+import {
+  getClinicalHistories,
+  getClinicalHistoryById,
+  createClinicalHistory,
+  getClinicalHistoriesByPatient,
+} from '@/features/clinical-histories/api/clinical-histories.api';
+import type { CreateClinicalHistoryRequest } from '@/features/clinical-histories/types/clinical-history.types';
+import {
+  getConversations,
+  getMessages,
+  sendMessage,
+  markAsRead,
+} from '@/features/messages/api/messages.api';
+import type { SendMessageRequest } from '@/features/messages/types/message.types';
 import {
   getPatients,
   createPatient,
@@ -10,40 +32,18 @@ import {
   updatePatientAntecedents,
   deletePatient,
 } from '@/features/patients/api/patients.api';
-import {
-  getClinicalHistories,
-  getClinicalHistoryById,
-  createClinicalHistory,
-  getClinicalHistoriesByPatient,
-} from '@/features/clinical-histories/api/clinical-histories.api';
-import {
-  getAppointments,
-  getAppointmentById,
-  createAppointment,
-  updateAppointment,
-  cancelAppointment,
-  getAppointmentsByPatient,
-} from '@/features/appointments/api/appointments.api';
-import {
-  getConversations,
-  getMessages,
-  sendMessage,
-  markAsRead,
-} from '@/features/messages/api/messages.api';
+import type { CreatePatientRequest } from '@/features/patients/types/patient.types';
 import {
   sendWhatsAppMessage,
   getMessageStatus,
 } from '@/features/twilio/api/whatsapp.api';
-import type { CreatePatientRequest } from '@/features/patients/types/patient.types';
-import type { CreateClinicalHistoryRequest } from '@/features/clinical-histories/types/clinical-history.types';
-import type { CreateAppointmentRequest } from '@/features/appointments/types/appointment.types';
-import type { SendMessageRequest } from '@/features/messages/types/message.types';
+import { api } from '@/lib/api/axios';
 import { server } from '../mocks/server';
 
 vi.mock('@/lib/api/axios', async (importOriginal) => {
-  const original = await importOriginal<typeof import('@/lib/api/axios')>();
+  const original = await importOriginal();
   return {
-    ...original,
+    ...(original as object),
     getAuthToken: async () => process.env.TEST_ACCESS_TOKEN ?? null,
   };
 });

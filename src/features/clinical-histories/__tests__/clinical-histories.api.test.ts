@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
+import { MOCK_CLINICAL_HISTORIES } from '../__mocks__/clinical-histories.mock';
 import {
   getClinicalHistories,
   getClinicalHistoryById,
   createClinicalHistory,
 } from '../api/clinical-histories.api';
-import { MOCK_CLINICAL_HISTORIES } from '../__mocks__/clinical-histories.mock';
 
 describe('getClinicalHistories', () => {
   it('retorna lista de historiales paginada', async () => {

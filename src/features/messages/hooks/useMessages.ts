@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import type { PaginatedData } from '@/types/contracts/api-response';
 import { getConversations, getMessages, sendMessage, markAsRead } from '../api/messages.api';
 import type { Conversation, Message, SendMessageRequest } from '../types/message.types';
-import type { PaginatedData } from '@/types/contracts/api-response';
 
 type UseConversationsState = {
   data: PaginatedData<Conversation> | null;
