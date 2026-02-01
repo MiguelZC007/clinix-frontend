@@ -8,6 +8,9 @@ module.exports = {
       watch: false,
       autorestart: true,
       max_memory_restart: "512M",
+      env: {
+        PORT: process.env.PORT || "4301",
+      },
     },
   ],
 };
