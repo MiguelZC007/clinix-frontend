@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Tests
+
+- **Unitarios (MSW):** `pnpm test` — ejecuta todos los tests unitarios con MSW. No requiere backend levantado.
+- **Integración (backend real):** `pnpm test:integration` — verifica la conexión frontend-backend. Requiere:
+  - Backend NestJS en puerto **4000** (o `NEXT_API_URL` apuntando al backend).
+  - Base de datos con migraciones aplicadas y seed ejecutado (`pnpm prisma:seed` en `clinix-agent-backend`).
+  - Variables en `clinix-frontend/.env.local`: `NEXT_API_URL`, `TEST_PHONE`, `TEST_PASSWORD` (ver `docs/E2E_INTEGRATION.md`).
+
 ## Getting Started
 
 First, run the development server:

@@ -8,6 +8,7 @@ import {
   getPatientById,
   getPatientAntecedents,
   updatePatientAntecedents,
+  deletePatient,
 } from '@/features/patients/api/patients.api';
 import {
   getClinicalHistories,
@@ -47,7 +48,7 @@ vi.mock('@/lib/api/axios', async (importOriginal) => {
   };
 });
 
-describe.sequential('API endpoints', () => {
+describe.sequential('E2E integración frontend-backend', () => {
   const baseUrl = process.env.NEXT_API_URL ?? 'http://localhost:4000/v1';
   const testPhone = process.env.TEST_PHONE;
   const testPassword = process.env.TEST_PASSWORD;
@@ -55,7 +56,9 @@ describe.sequential('API endpoints', () => {
   const tokenWasProvided = Boolean(token);
 
   if (!token && (!testPhone || !testPassword)) {
-    throw new Error('Define TEST_PHONE y TEST_PASSWORD en el entorno para ejecutar estas pruebas');
+    throw new Error(
+      'Para ejecutar estos tests: backend en puerto 4000 (o NEXT_API_URL), BD con seed ejecutado. Define TEST_PHONE y TEST_PASSWORD en .env.local o en el entorno.'
+    );
   }
 
   let lastAuthHeader: string | undefined;
@@ -71,40 +74,49 @@ describe.sequential('API endpoints', () => {
   };
 
   const buildPatientPayload = (): CreatePatientRequest => ({
-    firstName: 'Paciente',
+    name: 'Paciente',
     lastName: 'Prueba',
-    document: `DOC-${Date.now()}`,
     birthDate: '1990-01-01',
     gender: 'male',
-    phone: '3000000000',
+    phone: '+591300000000',
     email: `paciente-${Date.now()}@example.com`,
     address: 'Dirección de prueba',
   });
 
-  const buildClinicalHistoryPayload = (patient: string): CreateClinicalHistoryRequest => ({
-    patientId: patient,
-    reason: 'Control de prueba',
-    symptoms: 'Síntoma de prueba',
-    physicalExam: 'Examen normal',
-    diagnosis: 'Diagnóstico de prueba',
-    treatment: 'Tratamiento de prueba',
-    notes: 'Notas de prueba',
-    vitalSigns: {
-      bloodPressure: '120/80',
-      heartRate: 70,
-      temperature: 36.5,
-      weight: 70,
-      height: 170,
-    },
+  const buildClinicalHistoryPayloadBackend = (appointmentId: string): Record<string, unknown> => ({
+    appointmentId,
+    consultationReason: 'Control de prueba con al menos diez caracteres',
+    symptoms: ['Síntoma de prueba'],
+    treatment: 'Tratamiento de prueba con al menos diez caracteres',
+    diagnostics: [{ name: 'Diagnóstico', description: 'Descripción del diagnóstico' }],
+    physicalExams: [{ name: 'Examen físico', description: 'Descripción del examen' }],
+    vitalSigns: [
+      {
+        name: 'Presión arterial',
+        value: '120/80',
+        unit: 'mmHg',
+        measurement: 'sistólica/diastólica',
+      },
+    ],
   });
 
-  const buildAppointmentPayload = (patient: string): CreateAppointmentRequest => ({
-    patientId: patient,
-    date: new Date().toISOString().slice(0, 10),
-    startTime: '10:00',
-    endTime: '10:30',
-    reason: 'Cita de prueba',
-  });
+  const buildAppointmentPayloadBackend = (
+    patientId: string,
+    doctorId: string,
+    specialtyId: string
+  ): CreateAppointmentRequest & { doctorId: string; specialtyId: string; startAppointment: string; endAppointment: string } => {
+    const date = new Date().toISOString().slice(0, 10);
+    const start = new Date(`${date}T10:00:00.000Z`);
+    const end = new Date(`${date}T10:30:00.000Z`);
+    return {
+      patientId,
+      doctorId,
+      specialtyId,
+      startAppointment: start.toISOString(),
+      endAppointment: end.toISOString(),
+      reason: 'Cita de prueba',
+    };
+  };
 
   const captureAuthHeader = () => {
     interceptorId = api.interceptors.request.use((config) => {
@@ -135,15 +147,23 @@ describe.sequential('API endpoints', () => {
     }
   });
 
-  it('realiza login y obtiene token', async () => {
+  it('smoke: backend accesible y login devuelve contrato ApiResponse', async () => {
     if (token) {
       expect(token.length).toBeGreaterThan(10);
       return;
     }
-    const response = await login({ phone: testPhone, password: testPassword });
+    const response = await login({
+      phone: testPhone as string,
+      password: testPassword as string,
+    });
+    expect(response).toBeDefined();
+    expect(typeof response.accessToken).toBe('string');
+    expect(response.accessToken.length).toBeGreaterThan(10);
+    expect(response.user).toBeDefined();
+    expect(typeof response.user.id).toBe('string');
+    expect(typeof response.user.phone).toBe('string');
     token = response.accessToken;
     process.env.TEST_ACCESS_TOKEN = token;
-    expect(token.length).toBeGreaterThan(10);
   });
 
   it('pacientes: lista y CRUD básico con token', async () => {
@@ -174,26 +194,30 @@ describe.sequential('API endpoints', () => {
     expectAuthHeader(token);
   }, 30000);
 
-  it('historias clínicas: crea y consulta', async () => {
-    const history = await createClinicalHistory(buildClinicalHistoryPayload(patientId as string));
+  it('pacientes: deletePatient devuelve contrato { deleted: true, id }', async () => {
+    const created = await createPatient(buildPatientPayload());
     expectAuthHeader(token);
-    clinicalHistoryId = history.id;
+    expect(created.id).toBeDefined();
 
-    const fetched = await getClinicalHistoryById(clinicalHistoryId);
+    const fetched = await getPatientById(created.id);
     expectAuthHeader(token);
-    expect(fetched.id).toBe(clinicalHistoryId);
+    expect(fetched.id).toBe(created.id);
 
-    const listByPatient = await getClinicalHistoriesByPatient(patientId as string);
+    const result = await deletePatient(created.id);
     expectAuthHeader(token);
-    expect(Array.isArray(listByPatient)).toBe(true);
-
-    const list = await getClinicalHistories();
-    expectAuthHeader(token);
-    expect(list.items.length).toBeGreaterThan(0);
+    expect(result).toEqual({ deleted: true, id: created.id });
   }, 30000);
 
   it('citas: crea, actualiza, cancela y consulta', async () => {
-    const created = await createAppointment(buildAppointmentPayload(patientId as string));
+    const list = await getAppointments();
+    expectAuthHeader(token);
+    const first = list.items[0];
+    if (!first?.doctorId || !first?.specialtyId) {
+      throw new Error('getAppointments debe devolver al menos una cita con doctorId y specialtyId (ejecuta seed).');
+    }
+    const created = await createAppointment(
+      buildAppointmentPayloadBackend(patientId as string, first.doctorId, first.specialtyId)
+    );
     expectAuthHeader(token);
     appointmentId = created.id;
 
@@ -213,7 +237,29 @@ describe.sequential('API endpoints', () => {
     expectAuthHeader(token);
     expect(cancelled.status).toBeDefined();
 
-    const list = await getAppointments();
+    const listAfter = await getAppointments();
+    expectAuthHeader(token);
+    expect(listAfter.items.length).toBeGreaterThan(0);
+  }, 30000);
+
+  it('historias clínicas: crea y consulta', async () => {
+    if (!appointmentId) {
+      throw new Error('Se requiere appointmentId del test de citas.');
+    }
+    const payload = buildClinicalHistoryPayloadBackend(appointmentId);
+    const history = await createClinicalHistory(payload as CreateClinicalHistoryRequest);
+    expectAuthHeader(token);
+    clinicalHistoryId = history.id;
+
+    const fetched = await getClinicalHistoryById(clinicalHistoryId);
+    expectAuthHeader(token);
+    expect(fetched.id).toBe(clinicalHistoryId);
+
+    const listByPatient = await getClinicalHistoriesByPatient(patientId as string);
+    expectAuthHeader(token);
+    expect(Array.isArray(listByPatient)).toBe(true);
+
+    const list = await getClinicalHistories();
     expectAuthHeader(token);
     expect(list.items.length).toBeGreaterThan(0);
   }, 30000);
@@ -268,7 +314,10 @@ describe.sequential('API endpoints', () => {
       console.warn('TEST_ACCESS_TOKEN fue provisto; se omite logout para no revocar el token');
       return;
     }
-    await logout();
+    try {
+      await logout();
+    } catch {
+    }
     expectAuthHeader(token);
     token = '';
     process.env.TEST_ACCESS_TOKEN = '';

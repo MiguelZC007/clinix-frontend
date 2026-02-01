@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { ProblemDetailsSchema } from '@/types/contracts/errors';
+import { ProblemDetailsSchema, type ProblemDetails } from '@/types/contracts/errors';
 
 export type ErrorCode =
   | 'UNKNOWN_ERROR'
@@ -76,7 +76,18 @@ export function normalizeError(error: unknown): AppError {
       );
     }
 
-    const parsed = ProblemDetailsSchema.safeParse(data);
+    let parsed: { success: true; data: ProblemDetails } | { success: false; data: undefined };
+    const isObject = typeof data === 'object' && data !== null;
+    if (isObject) {
+      try {
+        const result = ProblemDetailsSchema.safeParse(data);
+        parsed = result.success ? { success: true, data: result.data } : { success: false, data: undefined };
+      } catch {
+        parsed = { success: false, data: undefined };
+      }
+    } else {
+      parsed = { success: false, data: undefined };
+    }
 
     if (parsed.success) {
       const { detail, code, errors } = parsed.data;
@@ -94,14 +105,14 @@ export function normalizeError(error: unknown): AppError {
   }
 
   if (error instanceof Error) {
-    // Detectar errores de conexión en el mensaje
-    if (error.message.includes('ECONNREFUSED') || error.message.includes('ENOTFOUND')) {
+    const message = typeof error.message === 'string' ? error.message : 'Unknown error';
+    if (message.includes('ECONNREFUSED') || message.includes('ENOTFOUND')) {
       return new AppError(
         'No se pudo conectar con el servidor. Verifica que el servidor esté disponible.',
         'NETWORK_ERROR'
       );
     }
-    return new AppError(error.message, 'CLIENT_ERROR');
+    return new AppError(message, 'CLIENT_ERROR');
   }
 
   return new AppError('Unknown error', 'UNKNOWN_ERROR');

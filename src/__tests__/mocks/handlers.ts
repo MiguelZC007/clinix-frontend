@@ -134,6 +134,74 @@ export const handlers = [
     });
   }),
 
+  http.get(`${API_BASE_URL}/patients/:id/antecedents`, ({ params }) => {
+    const patient = MOCK_PATIENTS.find((p) => p.id === params.id);
+    if (!patient) {
+      return HttpResponse.json(
+        { success: false, message: 'Patient not found' },
+        { status: 404 }
+      );
+    }
+    return HttpResponse.json({
+      success: true,
+      data: {
+        patientId: params.id as string,
+        allergies: ['Penicilina'],
+        medications: [],
+        medicalHistory: [],
+        familyHistory: [],
+        updatedAt: new Date().toISOString(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.put(`${API_BASE_URL}/patients/:id/antecedents`, async ({ params, request }) => {
+    const patient = MOCK_PATIENTS.find((p) => p.id === params.id);
+    if (!patient) {
+      return HttpResponse.json(
+        { success: false, message: 'Patient not found' },
+        { status: 404 }
+      );
+    }
+    const body = (await request.json()) as Record<string, unknown>;
+    const allergies = Array.isArray(body.allergies) ? body.allergies : [];
+    const medications = Array.isArray(body.medications) ? body.medications : [];
+    const medicalHistory = Array.isArray(body.medicalHistory) ? body.medicalHistory : [];
+    const familyHistory = Array.isArray(body.familyHistory) ? body.familyHistory : [];
+    return HttpResponse.json({
+      success: true,
+      data: {
+        patientId: params.id as string,
+        allergies,
+        medications,
+        medicalHistory,
+        familyHistory,
+        updatedAt: new Date().toISOString(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/patients/:id/clinic-histories`, ({ params }) => {
+    const byPatient = MOCK_CLINICAL_HISTORIES.filter((h) => h.patientId === params.id);
+    return HttpResponse.json({
+      success: true,
+      data: byPatient,
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/patients/:id/appointments`, ({ params }) => {
+    const byPatient = MOCK_APPOINTMENTS.filter((a) => a.patientId === params.id);
+    const backendAppointments = byPatient.map(convertAppointmentToBackendFormat);
+    return HttpResponse.json({
+      success: true,
+      data: backendAppointments,
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
   http.get(`${API_BASE_URL}/appointments`, () => {
     const backendAppointments = MOCK_APPOINTMENTS.map(convertAppointmentToBackendFormat);
     return HttpResponse.json({
@@ -426,6 +494,52 @@ export const handlers = [
   http.put(`${API_BASE_URL}/conversations/:id/read`, async () => {
     return HttpResponse.json({
       success: true,
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.post(`${API_BASE_URL}/twilio/whatsapp/send`, async ({ request }) => {
+    const body = (await request.json()) as { to?: string; body?: string };
+    if (!body.to || !body.body) {
+      return HttpResponse.json(
+        { success: false, message: 'to and body are required' },
+        { status: 400 }
+      );
+    }
+    return HttpResponse.json({
+      success: true,
+      data: {
+        messageSid: `SM${Date.now()}`,
+        status: 'queued',
+        to: body.to,
+        from: 'whatsapp:+15675871709',
+        body: body.body,
+        dateCreated: new Date().toISOString(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/twilio/message/:messageSid/status`, ({ params }) => {
+    const messageSid = params.messageSid as string;
+    if (!messageSid || messageSid.length < 10) {
+      return HttpResponse.json(
+        { success: false, message: 'Invalid messageSid' },
+        { status: 400 }
+      );
+    }
+    return HttpResponse.json({
+      success: true,
+      data: {
+        sid: messageSid,
+        status: 'delivered',
+        to: 'whatsapp:+59170000001',
+        from: 'whatsapp:+15675871709',
+        body: 'Test message',
+        dateCreated: new Date().toISOString(),
+        dateSent: new Date().toISOString(),
+        dateUpdated: new Date().toISOString(),
+      },
       timestamp: new Date().toISOString(),
     });
   }),
