@@ -89,6 +89,7 @@
     "createNewHistory": "Create a new clinical history",
     "viewPatientsList": "View patients list",
     "viewAllHistories": "View all histories",
+    "noRecentConsultations": "No recent consultations",
     "appointmentCount": "{count} appointment",
     "appointmentsCount": "{count} appointments"
   },

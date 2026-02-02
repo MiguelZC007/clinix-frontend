@@ -45,25 +45,25 @@ function toBackendClinicalHistory(h: {
 function convertAppointmentToBackendFormat(appointment: Appointment) {
   const [startHours, startMinutes] = appointment.startTime.split(':').map(Number);
   const [endHours, endMinutes] = appointment.endTime.split(':').map(Number);
-  
+
   const startAppointment = new Date(appointment.date);
   startAppointment.setHours(startHours, startMinutes, 0, 0);
-  
+
   const endAppointment = new Date(appointment.date);
   endAppointment.setHours(endHours, endMinutes, 0, 0);
-  
+
   const [firstName, ...lastNameParts] = appointment.patientName.split(' ');
   const lastName = lastNameParts.join(' ');
-  
+
   const statusMap: Record<string, string> = {
     scheduled: 'SCHEDULED',
     completed: 'COMPLETED',
     cancelled: 'CANCELLED',
     pending: 'PENDING',
   };
-  
+
   const patientId = appointment.patientId || `patient-${appointment.id}`;
-  
+
   return {
     id: appointment.id,
     patientId: patientId,
@@ -213,6 +213,30 @@ export const handlers = [
         medicalHistory,
         familyHistory,
         updatedAt: new Date().toISOString(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/dashboard/summary`, () => {
+    const recentConsultations = MOCK_CLINICAL_HISTORIES.slice(0, 5).map((h) => {
+      const [patientName, ...lastNameParts] = (h.patientName ?? '').split(' ');
+      return {
+        id: h.id,
+        patientName: patientName ?? '',
+        patientLastName: lastNameParts.join(' ') ?? '',
+        consultationReason: h.reason,
+        createdAt: h.createdAt,
+      };
+    });
+    return HttpResponse.json({
+      success: true,
+      data: {
+        patientsCount: MOCK_PATIENTS.length,
+        appointmentsThisWeek: MOCK_APPOINTMENTS.length,
+        totalHistories: MOCK_CLINICAL_HISTORIES.length,
+        consultationsToday: 0,
+        recentConsultations,
       },
       timestamp: new Date().toISOString(),
     });

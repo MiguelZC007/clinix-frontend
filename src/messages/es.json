@@ -89,6 +89,7 @@
     "createNewHistory": "Crear un nuevo historial clínico",
     "viewPatientsList": "Ver lista de pacientes",
     "viewAllHistories": "Ver todos los historiales",
+    "noRecentConsultations": "No hay consultas recientes",
     "appointmentCount": "{count} cita",
     "appointmentsCount": "{count} citas"
   },
