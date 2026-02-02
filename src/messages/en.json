@@ -176,6 +176,11 @@
   "messages": {
     "title": "Messages",
     "description": "Communication with patients",
+    "conversation": "Conversation",
+    "assistant": "Assistant",
+    "assistantWriting": "The assistant is writing...",
+    "contextLimit": "Context (messages)",
+    "newConversation": "New conversation",
     "searchConversations": "Search conversations...",
     "typeMessage": "Type a message...",
     "send": "Send",

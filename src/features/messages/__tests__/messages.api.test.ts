@@ -5,6 +5,7 @@ import {
   getMessages,
   sendMessage,
   markAsRead,
+  patchConversation,
 } from '../api/messages.api';
 
 describe('getConversations', () => {
@@ -17,8 +18,9 @@ describe('getConversations', () => {
   it('retorna conversaciones correctamente tipadas', async () => {
     const result = await getConversations();
     expect(result.items[0]).toHaveProperty('id');
-    expect(result.items[0]).toHaveProperty('participantName');
-    expect(result.items[0]).toHaveProperty('unreadCount');
+    expect(result.items[0]).toHaveProperty('title');
+    expect(result.items[0]).toHaveProperty('lastActivityAt');
+    expect(result.items[0]).toHaveProperty('contextMessageLimit');
   });
 });
 
@@ -28,6 +30,7 @@ describe('getMessages', () => {
     expect(result.items.length).toBeGreaterThan(0);
     expect(result.items[0]).toHaveProperty('id');
     expect(result.items[0]).toHaveProperty('content');
+    expect(result.items[0]).toHaveProperty('role');
   });
 
   it('retorna lista vacia si no hay mensajes', async () => {
@@ -46,23 +49,16 @@ describe('sendMessage', () => {
 
     const result = await sendMessage(message);
     expect(result.content).toBe('Nuevo mensaje');
-    expect(result.type).toBe('text');
+    expect(result.role).toBe('user');
     expect(result.id).toBeDefined();
   });
+});
 
-  it('envia mensaje de audio correctamente', async () => {
-    const message = {
-      conversationId: '1',
-      type: 'audio' as const,
-      content: '',
-      audioUrl: 'https://example.com/audio.webm',
-      audioDuration: 10,
-    };
-
-    const result = await sendMessage(message);
-    expect(result.type).toBe('audio');
-    expect(result.audioUrl).toBeDefined();
-    expect(result.senderId).toBeDefined();
+describe('patchConversation', () => {
+  it('actualiza contextMessageLimit', async () => {
+    const result = await patchConversation('1', { contextMessageLimit: 20 });
+    expect(result.contextMessageLimit).toBe(20);
+    expect(result.id).toBe('1');
   });
 });
 

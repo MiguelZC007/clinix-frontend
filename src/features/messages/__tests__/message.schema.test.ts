@@ -36,31 +36,32 @@ describe('messageEntitySchema', () => {
   const validMessage = {
     id: '1',
     conversationId: '1',
-    senderId: 'user-1',
-    type: 'text' as const,
+    role: 'user' as const,
     content: 'Hello',
-    status: 'sent' as const,
+    tokenCount: 5,
     createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   it('valida mensaje completo correctamente', () => {
     const result = messageEntitySchema.parse({
       ...validMessage,
       createdAt: validMessage.createdAt.toISOString(),
+      updatedAt: validMessage.updatedAt.toISOString(),
     });
     expect(result.id).toBe('1');
     expect(result.content).toBe('Hello');
+    expect(result.role).toBe('user');
   });
 
-  it('acepta audioUrl opcional', () => {
-    const messageWithAudio = {
+  it('acepta readAt opcional', () => {
+    const messageWithReadAt = {
       ...validMessage,
-      type: 'audio' as const,
-      audioUrl: 'https://example.com/audio.webm',
-      audioDuration: 10,
+      readAt: new Date().toISOString(),
       createdAt: validMessage.createdAt.toISOString(),
+      updatedAt: validMessage.updatedAt.toISOString(),
     };
-    expect(messageEntitySchema.parse(messageWithAudio)).toBeDefined();
+    expect(messageEntitySchema.parse(messageWithReadAt)).toBeDefined();
   });
 
   it('rechaza mensaje sin campos requeridos', () => {
@@ -71,26 +72,36 @@ describe('messageEntitySchema', () => {
 describe('conversationSchema', () => {
   const validConversation = {
     id: '1',
-    participantId: 'user-1',
-    participantName: 'Juan Pérez',
-    participantInitials: 'JP',
-    unreadCount: 0,
-    isOnline: true,
+    model: 'gpt-4o-mini',
+    systemPrompt: 'Eres el asistente.',
+    lastActivityAt: new Date(),
+    isActive: true,
+    doctorId: 'doctor-1',
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   it('valida conversacion completa correctamente', () => {
-    expect(conversationSchema.parse(validConversation)).toEqual(
-      validConversation
-    );
+    const parsed = conversationSchema.parse({
+      ...validConversation,
+      lastActivityAt: validConversation.lastActivityAt.toISOString(),
+      createdAt: validConversation.createdAt.toISOString(),
+      updatedAt: validConversation.updatedAt.toISOString(),
+    });
+    expect(parsed.id).toBe('1');
+    expect(parsed.model).toBe('gpt-4o-mini');
+    expect(parsed.doctorId).toBe('doctor-1');
   });
 
   it('acepta campos opcionales', () => {
     const conversationWithOptional = {
       ...validConversation,
-      participantAvatar: 'https://example.com/avatar.jpg',
-      lastMessage: 'Hello',
-      lastMessageType: 'text' as const,
-      lastMessageTime: new Date().toISOString(),
+      summary: 'Resumen',
+      contextMessageLimit: 20,
+      title: 'Conversación 1 ene',
+      lastActivityAt: validConversation.lastActivityAt.toISOString(),
+      createdAt: validConversation.createdAt.toISOString(),
+      updatedAt: validConversation.updatedAt.toISOString(),
     };
     expect(conversationSchema.parse(conversationWithOptional)).toBeDefined();
   });

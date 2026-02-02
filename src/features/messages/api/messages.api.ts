@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { client } from '@/lib/api/client';
-import { ApiResponseSchema, PaginatedResponseSchema } from '@/types/contracts/api-response';
+import { ApiResponseSchema } from '@/types/contracts/api-response';
 import type { PaginatedData } from '@/types/contracts/api-response';
 import { messageEntitySchema, conversationSchema } from '../schemas/message.schema';
 import type { Message, Conversation, SendMessageRequest } from '../types/message.types';
@@ -8,27 +8,76 @@ import type { Message, Conversation, SendMessageRequest } from '../types/message
 const CONVERSATIONS_ENDPOINT = '/conversations';
 const MESSAGES_ENDPOINT = '/messages';
 
+const conversationsArrayResponseSchema = z
+  .object({
+    success: z.boolean(),
+    data: z.array(conversationSchema),
+    timestamp: z.string().optional(),
+  })
+  .transform((res) => ({
+    items: res.data,
+    total: res.data.length,
+    page: 1,
+    pageSize: res.data.length,
+    totalPages: res.data.length > 0 ? 1 : 0,
+  }));
+
+const messagesArrayResponseSchema = z
+  .object({
+    success: z.boolean(),
+    data: z.array(messageEntitySchema),
+    timestamp: z.string().optional(),
+  })
+  .transform((res) => ({
+    items: res.data,
+    total: res.data.length,
+    page: 1,
+    pageSize: res.data.length,
+    totalPages: res.data.length > 0 ? 1 : 0,
+  }));
+
 export async function getConversations(): Promise<PaginatedData<Conversation>> {
-  const response = await client.get(
+  return client.get(CONVERSATIONS_ENDPOINT, conversationsArrayResponseSchema);
+}
+
+export async function createConversation(): Promise<Conversation> {
+  const response = await client.post(
     CONVERSATIONS_ENDPOINT,
-    PaginatedResponseSchema(conversationSchema)
+    {},
+    ApiResponseSchema(conversationSchema)
   );
   return response.data;
 }
 
 export async function getMessages(conversationId: string): Promise<PaginatedData<Message>> {
-  const response = await client.get(
+  return client.get(
     `${CONVERSATIONS_ENDPOINT}/${conversationId}${MESSAGES_ENDPOINT}`,
-    PaginatedResponseSchema(messageEntitySchema)
+    messagesArrayResponseSchema
+  );
+}
+
+export async function sendMessage(data: SendMessageRequest): Promise<Message> {
+  const payload = {
+    conversationId: data.conversationId,
+    role: 'user' as const,
+    content: data.content,
+  };
+  const response = await client.post(
+    MESSAGES_ENDPOINT,
+    payload,
+    ApiResponseSchema(messageEntitySchema)
   );
   return response.data;
 }
 
-export async function sendMessage(data: SendMessageRequest): Promise<Message> {
-  const response = await client.post(
-    MESSAGES_ENDPOINT,
+export async function patchConversation(
+  conversationId: string,
+  data: { contextMessageLimit?: number }
+): Promise<Conversation> {
+  const response = await client.patch(
+    `${CONVERSATIONS_ENDPOINT}/${conversationId}`,
     data,
-    ApiResponseSchema(messageEntitySchema)
+    ApiResponseSchema(conversationSchema)
   );
   return response.data;
 }
@@ -37,6 +86,6 @@ export async function markAsRead(conversationId: string): Promise<void> {
   await client.put(
     `${CONVERSATIONS_ENDPOINT}/${conversationId}/read`,
     {},
-    z.object({ success: z.boolean() })
+    z.object({ success: z.boolean(), data: z.unknown().optional(), timestamp: z.string().optional() })
   );
 }

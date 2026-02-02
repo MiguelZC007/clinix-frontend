@@ -1,11 +1,11 @@
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@/__tests__/test-utils';
-import { MOCK_CONVERSATIONS } from '../../__mocks__/messages.mock';
-import { ConversationItem } from '../ConversationItem';
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@/__tests__/test-utils";
+import { MOCK_CONVERSATIONS } from "../../__mocks__/messages.mock";
+import { ConversationItem } from "../ConversationItem";
 
-describe('ConversationItem', () => {
-  it('renderiza correctamente', () => {
+describe("ConversationItem", () => {
+  it("renderiza correctamente", () => {
     render(
       <ConversationItem
         conversation={MOCK_CONVERSATIONS[0]}
@@ -13,10 +13,12 @@ describe('ConversationItem', () => {
         onClick={vi.fn()}
       />
     );
-    expect(screen.getByText(MOCK_CONVERSATIONS[0].participantName)).toBeInTheDocument();
+    const title =
+      MOCK_CONVERSATIONS[0].title ?? MOCK_CONVERSATIONS[0].summary ?? "";
+    expect(screen.getByText(title)).toBeInTheDocument();
   });
 
-  it('muestra estado activo', () => {
+  it("muestra estado activo", () => {
     const { container } = render(
       <ConversationItem
         conversation={MOCK_CONVERSATIONS[0]}
@@ -24,22 +26,10 @@ describe('ConversationItem', () => {
         onClick={vi.fn()}
       />
     );
-    expect(container.firstChild).toHaveClass('bg-muted');
+    expect(container.firstChild).toHaveClass("bg-muted");
   });
 
-  it('muestra contador de no leidos', () => {
-    const conversation = { ...MOCK_CONVERSATIONS[0], unreadCount: 5 };
-    render(
-      <ConversationItem
-        conversation={conversation}
-        isActive={false}
-        onClick={vi.fn()}
-      />
-    );
-    expect(screen.getByText('5')).toBeInTheDocument();
-  });
-
-  it('llama onClick al hacer click', async () => {
+  it("llama onClick al hacer click", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
     render(
@@ -50,7 +40,9 @@ describe('ConversationItem', () => {
       />
     );
 
-    const item = screen.getByText(MOCK_CONVERSATIONS[0].participantName).closest('div');
+    const title =
+      MOCK_CONVERSATIONS[0].title ?? MOCK_CONVERSATIONS[0].summary ?? "";
+    const item = screen.getByText(title).closest("div");
     if (item) {
       await user.click(item);
       expect(onClick).toHaveBeenCalledTimes(1);

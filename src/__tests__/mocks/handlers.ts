@@ -395,47 +395,89 @@ export const handlers = [
     });
   }),
 
-  http.get(`${API_BASE_URL}/conversations`, () => {
+  http.post(`${API_BASE_URL}/conversations`, () => {
+    const newConv: (typeof MOCK_CONVERSATIONS)[0] = {
+      id: `conv-new-${Date.now()}`,
+      model: 'gpt-4o-mini',
+      systemPrompt: 'Eres el asistente del médico.',
+      summary: undefined,
+      lastActivityAt: new Date(),
+      isActive: true,
+      doctorId: 'doctor-1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      title: 'Conversación nueva',
+    };
     return HttpResponse.json({
       success: true,
       data: {
-        items: MOCK_CONVERSATIONS,
-        total: MOCK_CONVERSATIONS.length,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
+        ...newConv,
+        lastActivityAt: newConv.lastActivityAt.toISOString(),
+        createdAt: newConv.createdAt.toISOString(),
+        updatedAt: newConv.updatedAt.toISOString(),
       },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE_URL}/conversations`, () => {
+    return HttpResponse.json({
+      success: true,
+      data: MOCK_CONVERSATIONS.map((c) => ({
+        ...c,
+        lastActivityAt: c.lastActivityAt instanceof Date ? c.lastActivityAt.toISOString() : c.lastActivityAt,
+        createdAt: c.createdAt instanceof Date ? c.createdAt.toISOString() : c.createdAt,
+        updatedAt: c.updatedAt instanceof Date ? c.updatedAt.toISOString() : c.updatedAt,
+      })),
       timestamp: new Date().toISOString(),
     });
   }),
 
   http.get(`${API_BASE_URL}/conversations/:id/messages`, ({ params }) => {
-    const messages = MOCK_MESSAGES[params.id as string] || [];
+    const messages = (MOCK_MESSAGES[params.id as string] || []).map((m) => ({
+      ...m,
+      createdAt: m.createdAt instanceof Date ? m.createdAt.toISOString() : m.createdAt,
+      updatedAt: m.updatedAt instanceof Date ? m.updatedAt.toISOString() : m.updatedAt,
+      readAt: m.readAt instanceof Date ? m.readAt.toISOString() : m.readAt,
+    }));
     return HttpResponse.json({
       success: true,
-      data: {
-        items: messages,
-        total: messages.length,
-        page: 1,
-        pageSize: 50,
-        totalPages: 1,
-      },
+      data: messages,
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.patch(`${API_BASE_URL}/conversations/:id`, async ({ request, params }) => {
+    const body = (await request.json()) as { contextMessageLimit?: number };
+    const conv = MOCK_CONVERSATIONS.find((c) => c.id === params.id);
+    if (!conv) {
+      return HttpResponse.json({ type: 'NotFound', status: 404 }, { status: 404 });
+    }
+    const updated = {
+      ...conv,
+      contextMessageLimit: body.contextMessageLimit ?? conv.contextMessageLimit,
+      lastActivityAt: conv.lastActivityAt instanceof Date ? conv.lastActivityAt.toISOString() : conv.lastActivityAt,
+      createdAt: conv.createdAt instanceof Date ? conv.createdAt.toISOString() : conv.createdAt,
+      updatedAt: new Date().toISOString(),
+    };
+    return HttpResponse.json({
+      success: true,
+      data: updated,
       timestamp: new Date().toISOString(),
     });
   }),
 
   http.post(`${API_BASE_URL}/messages`, async ({ request }) => {
-    const body = (await request.json()) as Record<string, unknown>;
+    const body = (await request.json()) as { conversationId: string; role?: string; content: string };
     const newMessage = {
       id: `m-${Date.now()}`,
       conversationId: body.conversationId,
-      senderId: body.senderId || 'doctor-1',
-      type: body.type,
-      content: body.content || '',
-      audioUrl: body.audioUrl,
-      audioDuration: body.audioDuration,
-      status: 'sent' as const,
+      role: body.role ?? 'user',
+      content: body.content ?? '',
+      tokenCount: Math.ceil((body.content?.length ?? 0) / 4),
+      readAt: null,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     return HttpResponse.json({
       success: true,

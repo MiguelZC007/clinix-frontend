@@ -1,42 +1,55 @@
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@/__tests__/test-utils';
-import { MOCK_CONVERSATIONS } from '../../__mocks__/messages.mock';
-import { ConversationList } from '../ConversationList';
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@/__tests__/test-utils";
+import { MOCK_CONVERSATIONS } from "../../__mocks__/messages.mock";
+import { ConversationList } from "../ConversationList";
 
-describe('ConversationList', () => {
+describe("ConversationList", () => {
   const defaultProps = {
     conversations: MOCK_CONVERSATIONS,
     activeConversationId: null,
     onSelectConversation: vi.fn(() => {}),
   };
 
-  it('renderiza correctamente', () => {
+  it("renderiza correctamente", () => {
     render(<ConversationList {...defaultProps} />);
-    expect(screen.getByText('messages.title')).toBeInTheDocument();
+    expect(screen.getByText("messages.title")).toBeInTheDocument();
   });
 
-  it('muestra conversaciones', () => {
+  it("muestra conversaciones", () => {
     render(<ConversationList {...defaultProps} />);
-    expect(screen.getByText(MOCK_CONVERSATIONS[0].participantName)).toBeInTheDocument();
+    const title =
+      MOCK_CONVERSATIONS[0].title ?? MOCK_CONVERSATIONS[0].summary ?? "";
+    expect(screen.getByText(title)).toBeInTheDocument();
   });
 
-  it('filtra conversaciones por busqueda', async () => {
+  it("filtra conversaciones por busqueda", async () => {
     const user = userEvent.setup();
     render(<ConversationList {...defaultProps} />);
 
-    const searchInput = screen.getByPlaceholderText('messages.searchConversations');
-    await user.type(searchInput, MOCK_CONVERSATIONS[0].participantName);
+    const searchInput = screen.getByPlaceholderText(
+      "messages.searchConversations"
+    );
+    const title =
+      MOCK_CONVERSATIONS[0].title ?? MOCK_CONVERSATIONS[0].summary ?? "";
+    await user.type(searchInput, title.slice(0, 5));
 
-    expect(screen.getByText(MOCK_CONVERSATIONS[0].participantName)).toBeInTheDocument();
+    expect(screen.getByText(title)).toBeInTheDocument();
   });
 
-  it('llama onSelectConversation al seleccionar', async () => {
+  it("llama onSelectConversation al seleccionar", async () => {
     const user = userEvent.setup();
     const onSelectConversation = vi.fn(() => {});
-    render(<ConversationList {...defaultProps} onSelectConversation={onSelectConversation} />);
+    render(
+      <ConversationList
+        {...defaultProps}
+        onSelectConversation={onSelectConversation}
+      />
+    );
 
-    const conversation = screen.getByText(MOCK_CONVERSATIONS[0].participantName);
+    const title =
+      MOCK_CONVERSATIONS[0].title ?? MOCK_CONVERSATIONS[0].summary ?? "";
+    const conversation = screen.getByText(title);
     await user.click(conversation);
 
     expect(onSelectConversation).toHaveBeenCalledWith(MOCK_CONVERSATIONS[0]);
