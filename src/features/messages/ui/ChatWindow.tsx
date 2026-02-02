@@ -5,6 +5,7 @@ import { MessageSquare, ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageBubble } from "./MessageBubble";
 import { MessageInput } from "./MessageInput";
 import type { Conversation, Message } from "../types/message.types";
@@ -37,7 +37,7 @@ type ChatWindowProps = {
 export function ChatWindow({
   conversation,
   messages,
-  currentUserId,
+  currentUserId: _currentUserId,
   onSendMessage,
   onSendAudio,
   onBack,

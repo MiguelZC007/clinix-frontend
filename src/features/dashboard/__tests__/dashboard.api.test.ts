@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { getDashboardSummary } from '../api/dashboard.api';
+import { MOCK_APPOINTMENTS } from '@/features/appointments/__mocks__/appointments.mock';
 import { MOCK_CLINICAL_HISTORIES } from '@/features/clinical-histories/__mocks__/clinical-histories.mock';
 import { MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
-import { MOCK_APPOINTMENTS } from '@/features/appointments/__mocks__/appointments.mock';
+import { getDashboardSummary } from '../api/dashboard.api';
 
 describe('getDashboardSummary', () => {
   it('retorna resumen con estadísticas y últimas consultas', async () => {

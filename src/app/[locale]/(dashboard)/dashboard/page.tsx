@@ -1,6 +1,5 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import {
   Users,
   FileText,
@@ -9,6 +8,7 @@ import {
   Plus,
   ArrowRight,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,12 +18,11 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { useRouter } from "@/i18n/navigation";
-import { PageHeader } from "@/ui/molecules";
-import { EmptyState, ErrorState } from "@/ui/molecules";
-import { LoadingSpinner } from "@/ui/atoms";
 import { useDashboardSummary } from "@/features/dashboard";
 import type { RecentConsultation } from "@/features/dashboard";
+import { useRouter } from "@/i18n/navigation";
+import { LoadingSpinner } from "@/ui/atoms";
+import { PageHeader, EmptyState, ErrorState } from "@/ui/molecules";
 
 type StatCardProps = {
   title: string;
