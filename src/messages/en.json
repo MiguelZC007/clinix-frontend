@@ -187,6 +187,7 @@
     "recording": "Recording...",
     "holdToRecord": "Hold to record",
     "noConversations": "No conversations",
+    "loadingMessages": "Loading messages...",
     "noMessages": "Select a conversation to start",
     "startConversation": "Start the conversation",
     "audio": "Voice message",

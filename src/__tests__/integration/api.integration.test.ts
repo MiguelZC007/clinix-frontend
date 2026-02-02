@@ -102,15 +102,13 @@ describe.sequential('E2E integración frontend-backend', () => {
 
   const buildAppointmentPayloadBackend = (
     patientId: string,
-    doctorId: string,
     specialtyId: string
-  ): CreateAppointmentRequest & { doctorId: string; specialtyId: string; startAppointment: string; endAppointment: string } => {
+  ): CreateAppointmentRequest & { specialtyId: string; startAppointment: string; endAppointment: string } => {
     const date = new Date().toISOString().slice(0, 10);
     const start = new Date(`${date}T10:00:00.000Z`);
     const end = new Date(`${date}T10:30:00.000Z`);
     return {
       patientId,
-      doctorId,
       specialtyId,
       startAppointment: start.toISOString(),
       endAppointment: end.toISOString(),
@@ -212,11 +210,11 @@ describe.sequential('E2E integración frontend-backend', () => {
     const list = await getAppointments();
     expectAuthHeader(token);
     const first = list.items[0];
-    if (!first?.doctorId || !first?.specialtyId) {
-      throw new Error('getAppointments debe devolver al menos una cita con doctorId y specialtyId (ejecuta seed).');
+    if (!first?.specialtyId) {
+      throw new Error('getAppointments debe devolver al menos una cita con specialtyId (ejecuta seed).');
     }
     const created = await createAppointment(
-      buildAppointmentPayloadBackend(patientId as string, first.doctorId, first.specialtyId)
+      buildAppointmentPayloadBackend(patientId as string, first.specialtyId)
     );
     expectAuthHeader(token);
     appointmentId = created.id;

@@ -31,6 +31,7 @@ type ChatWindowProps = {
     contextMessageLimit: number
   ) => void;
   isSending?: boolean;
+  isLoadingMessages?: boolean;
 };
 
 export function ChatWindow({
@@ -42,15 +43,14 @@ export function ChatWindow({
   onBack,
   onContextLimitChange,
   isSending = false,
+  isLoadingMessages = false,
 }: ChatWindowProps) {
   const t = useTranslations();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
+    scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isSending]);
 
   if (!conversation) {
     return (
@@ -122,26 +122,35 @@ export function ChatWindow({
         )}
       </div>
 
-      <ScrollArea className="flex-1 min-h-0 p-4" ref={scrollRef}>
-        <div className="space-y-1">
-          {messages.map((message) => (
-            <MessageBubble
-              key={message.id}
-              message={message}
-              isOwn={message.role === "user"}
-            />
-          ))}
-          {isSending && (
-            <div className="flex justify-start mb-2">
-              <div className="max-w-[70%] rounded-2xl px-4 py-2 bg-muted rounded-bl-md">
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse" />
-                  {t("messages.assistantWriting")}
-                </p>
-              </div>
+      <ScrollArea className="flex-1 min-h-0 p-4">
+        {isLoadingMessages ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-muted-foreground">
+              {t("messages.loadingMessages")}
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {messages.map((message) => (
+              <MessageBubble
+                key={message.id}
+                message={message}
+                isOwn={message.role === "user"}
+              />
+            ))}
+            {isSending && (
+              <div className="flex justify-start mb-2">
+                <div className="max-w-[70%] rounded-2xl px-4 py-2 bg-muted rounded-bl-md">
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse" />
+                    {t("messages.assistantWriting")}
+                  </p>
+                </div>
+              </div>
+            )}
+            <div ref={scrollAnchorRef} />
+          </div>
+        )}
       </ScrollArea>
 
       <MessageInput

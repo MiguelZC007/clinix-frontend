@@ -148,22 +148,17 @@ export default function MessagesPage() {
         }`}
       >
         {activeConversation ? (
-          isLoadingMessages ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-muted-foreground">Cargando mensajes...</div>
-            </div>
-          ) : (
-            <ChatWindow
-              conversation={activeConversation}
-              messages={messages}
-              currentUserId={currentUserId}
-              onSendMessage={handleSendMessage}
-              onSendAudio={handleSendAudio}
-              onBack={handleBack}
-              onContextLimitChange={handleContextLimitChange}
-              isSending={isSending}
-            />
-          )
+          <ChatWindow
+            conversation={activeConversation}
+            messages={messages}
+            currentUserId={currentUserId}
+            onSendMessage={handleSendMessage}
+            onSendAudio={handleSendAudio}
+            onBack={handleBack}
+            onContextLimitChange={handleContextLimitChange}
+            isSending={isSending}
+            isLoadingMessages={isLoadingMessages}
+          />
         ) : (
           <div className="flex items-center justify-center h-full">
             <div className="text-muted-foreground">

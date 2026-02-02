@@ -187,6 +187,7 @@
     "recording": "Grabando...",
     "holdToRecord": "Mantén presionado para grabar",
     "noConversations": "No hay conversaciones",
+    "loadingMessages": "Cargando mensajes...",
     "noMessages": "Selecciona una conversación para comenzar",
     "startConversation": "Inicia la conversación",
     "audio": "Mensaje de voz",

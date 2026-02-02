@@ -299,7 +299,7 @@ export const handlers = [
     const newAppointment = {
       id: String(MOCK_APPOINTMENTS.length + 1),
       patientId: body.patientId || '',
-      doctorId: body.doctorId,
+      doctorId: (body.doctorId as string) ?? 'doctor-1',
       specialtyId: body.specialtyId,
       startAppointment: body.startAppointment || new Date().toISOString(),
       endAppointment: body.endAppointment || new Date().toISOString(),
