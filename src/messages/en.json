@@ -74,6 +74,8 @@
     "noAppointments": "No appointments for this date"
   },
   "dashboard": {
+    "welcome": "Welcome to the system",
+    "welcomeUser": "Welcome, {name}",
     "registeredPatients": "Registered patients",
     "appointmentsThisWeek": "Appointments this week",
     "totalHistories": "Total histories",

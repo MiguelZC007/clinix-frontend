@@ -74,6 +74,8 @@
     "noAppointments": "No hay citas para esta fecha"
   },
   "dashboard": {
+    "welcome": "Bienvenido al sistema",
+    "welcomeUser": "Bienvenido, {name}",
     "registeredPatients": "Pacientes registrados",
     "appointmentsThisWeek": "Citas esta semana",
     "totalHistories": "Historiales totales",
