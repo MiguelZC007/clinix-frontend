@@ -74,29 +74,29 @@ function unwrapPaginatedResponse<T>(response: BackendPaginatedResponse<T> | Pagi
 
 export async function getAppointments(params?: AppointmentsListParams): Promise<PaginatedData<Appointment>> {
   const queryParams: Record<string, unknown> = {};
-  
+
   if (params?.page !== undefined) {
     queryParams.page = params.page;
   }
-  
+
   if (params?.limit !== undefined) {
     queryParams.limit = params.limit;
   } else if (params?.pageSize !== undefined) {
     queryParams.limit = params.pageSize;
   }
-  
+
   if (params?.startDate) {
     queryParams.startDate = params.startDate;
   }
-  
+
   if (params?.endDate) {
     queryParams.endDate = params.endDate;
   }
-  
+
   if (params?.status) {
-    queryParams.status = params.status;
+    queryParams.status = params.status.toUpperCase();
   }
-  
+
   const response = await client.get<BackendPaginatedResponse<AppointmentBackend> | PaginatedResponse<AppointmentBackend> | PaginatedData<AppointmentBackend>>(
     ENDPOINT,
     undefined,

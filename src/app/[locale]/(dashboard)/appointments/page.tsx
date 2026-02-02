@@ -1,89 +1,165 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { Plus } from 'lucide-react';
-import { useTranslations, useLocale } from 'next-intl';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { AppointmentCalendar } from '@/features/appointments';
-import type { Appointment, AppointmentStatus } from '@/features/appointments';
-import { useAppointmentList } from '@/features/appointments/hooks/useAppointments';
-import { PageHeader, ErrorState } from '@/ui/molecules';
+import { useState, useCallback } from "react";
+import { Plus } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { AppointmentCalendar } from "@/features/appointments";
+import type { Appointment, AppointmentStatus } from "@/features/appointments";
+import { useAppointmentList } from "@/features/appointments/hooks/useAppointments";
+import { PageHeader, ErrorState } from "@/ui/molecules";
 
-function getStatusBadge(status: AppointmentStatus, t: ReturnType<typeof useTranslations>) {
-  const variants: Record<AppointmentStatus, 'default' | 'secondary' | 'destructive'> = {
-    scheduled: 'default',
-    completed: 'secondary',
-    cancelled: 'destructive',
-    pending: 'default',
-    confirmed: 'default',
+function getStatusBadge(
+  status: AppointmentStatus,
+  t: ReturnType<typeof useTranslations>
+) {
+  const variants: Record<
+    AppointmentStatus,
+    "default" | "secondary" | "destructive"
+  > = {
+    scheduled: "default",
+    completed: "secondary",
+    cancelled: "destructive",
+    pending: "default",
+    confirmed: "default",
   };
 
   const labels: Record<AppointmentStatus, string> = {
-    scheduled: t('appointments.scheduled'),
-    completed: t('appointments.completed'),
-    cancelled: t('appointments.cancelled'),
-    pending: t('appointments.pending') || 'Pendiente',
-    confirmed: t('appointments.confirmed') || 'Confirmada',
+    scheduled: t("appointments.scheduled"),
+    completed: t("appointments.completed"),
+    cancelled: t("appointments.cancelled"),
+    pending: t("appointments.pending") || "Pendiente",
+    confirmed: t("appointments.confirmed") || "Confirmada",
   };
 
   return <Badge variant={variants[status]}>{labels[status]}</Badge>;
 }
 
+function getCurrentWeekRange(): { startDate: string; endDate: string } {
+  const now = new Date();
+  const startDate = new Date(now);
+  const day = startDate.getDay();
+  const diff = startDate.getDate() - day + (day === 0 ? -6 : 1);
+  startDate.setDate(diff);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6);
+  endDate.setHours(23, 59, 59, 999);
+  return {
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString(),
+  };
+}
+
+const STATUS_FILTER_OPTIONS: (AppointmentStatus | "all")[] = [
+  "all",
+  "pending",
+  "confirmed",
+  "completed",
+  "cancelled",
+];
+
 export default function AppointmentsPage() {
   const t = useTranslations();
   const locale = useLocale();
-  const dateLocale = locale === 'es' ? 'es-ES' : 'en-US';
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-  const [dateRange, setDateRange] = useState<{ startDate: string; endDate: string } | null>(null);
-
-  const handleDateRangeChange = useCallback((startDate: string, endDate: string) => {
-    setDateRange((prev) => {
-      if (prev?.startDate === startDate && prev?.endDate === endDate) {
-        return prev;
-      }
-      return { startDate, endDate };
-    });
-  }, []);
-
-  const { data, isLoading, error } = useAppointmentList(
-    dateRange ? { startDate: dateRange.startDate, endDate: dateRange.endDate, limit: 100 } : { limit: 100 }
+  const dateLocale = locale === "es" ? "es-ES" : "en-US";
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
+  const [dateRange, setDateRange] = useState<{
+    startDate: string;
+    endDate: string;
+  }>(getCurrentWeekRange);
+  const [statusFilter, setStatusFilter] = useState<AppointmentStatus | null>(
+    null
   );
+
+  const handleDateRangeChange = useCallback(
+    (startDate: string, endDate: string) => {
+      setDateRange((prev) => {
+        if (prev.startDate === startDate && prev.endDate === endDate) {
+          return prev;
+        }
+        return { startDate, endDate };
+      });
+    },
+    []
+  );
+
+  const { data, isLoading, error } = useAppointmentList({
+    startDate: dateRange.startDate,
+    endDate: dateRange.endDate,
+    limit: 100,
+    ...(statusFilter ? { status: statusFilter } : {}),
+  });
   const appointments = data?.items || [];
 
   return (
     <div className="space-y-4 h-full">
       <PageHeader
-        title={t('appointments.title')}
-        description={t('appointments.description')}
+        title={t("appointments.title")}
+        description={t("appointments.description")}
         actions={
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            {t('appointments.newAppointment')}
+            {t("appointments.newAppointment")}
           </Button>
         }
       />
 
-      {isLoading ? (
+      {isLoading && !data ? (
         <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">{t('common.loading') || 'Cargando...'}</div>
+          <div className="text-muted-foreground">
+            {t("common.loading") || "Cargando..."}
+          </div>
         </div>
       ) : error ? (
         <ErrorState
-          title={t('common.error') || 'Error'}
+          title={t("common.error") || "Error"}
           description={error.message}
           onRetry={() => window.location.reload()}
         />
       ) : (
-        <AppointmentCalendar
-          appointments={appointments}
-          onAppointmentClick={setSelectedAppointment}
-          onDateRangeChange={handleDateRangeChange}
-        />
+        <>
+          <div className="flex flex-wrap items-center gap-2">
+            {STATUS_FILTER_OPTIONS.map((option) => {
+              const value = option === "all" ? null : option;
+              const isActive = statusFilter === value;
+              const label =
+                option === "all"
+                  ? t("appointments.filterAll")
+                  : t(`appointments.${option}`);
+              return (
+                <Button
+                  key={option}
+                  variant={isActive ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter(value)}
+                >
+                  {label}
+                </Button>
+              );
+            })}
+          </div>
+          <AppointmentCalendar
+            appointments={appointments}
+            onAppointmentClick={setSelectedAppointment}
+            onDateRangeChange={handleDateRangeChange}
+          />
+        </>
       )}
 
-      <Dialog open={!!selectedAppointment} onOpenChange={(open) => !open && setSelectedAppointment(null)}>
+      <Dialog
+        open={!!selectedAppointment}
+        onOpenChange={(open) => !open && setSelectedAppointment(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
@@ -93,46 +169,55 @@ export default function AppointmentsPage() {
               {selectedAppointment?.patientName}
             </DialogTitle>
             <DialogDescription>
-              {t('appointments.appointmentDetails')}
+              {t("appointments.appointmentDetails")}
             </DialogDescription>
           </DialogHeader>
           {selectedAppointment && (
             <div className="space-y-4 pt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('appointments.date')}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("appointments.date")}
+                  </p>
                   <p className="font-medium">
                     {selectedAppointment.date.toLocaleDateString(dateLocale, {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
                     })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('appointments.time')}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("appointments.time")}
+                  </p>
                   <p className="font-medium">
-                    {selectedAppointment.startTime} - {selectedAppointment.endTime}
+                    {selectedAppointment.startTime} -{" "}
+                    {selectedAppointment.endTime}
                   </p>
                 </div>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">{t('appointments.reason')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("appointments.reason")}
+                </p>
                 <p className="font-medium">{selectedAppointment.reason}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground mb-1">{t('appointments.status')}</p>
+                <p className="text-sm text-muted-foreground mb-1">
+                  {t("appointments.status")}
+                </p>
                 {getStatusBadge(selectedAppointment.status, t)}
               </div>
               <div className="flex gap-2 pt-4">
-                {selectedAppointment.status === 'scheduled' && (
+                {selectedAppointment.status === "scheduled" && (
                   <>
                     <Button className="flex-1">
-                      {t('appointments.startConsultation')}
+                      {t("appointments.startConsultation")}
                     </Button>
                     <Button variant="outline" className="flex-1">
-                      {t('common.edit')}
+                      {t("common.edit")}
                     </Button>
                   </>
                 )}
