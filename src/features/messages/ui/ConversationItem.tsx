@@ -1,10 +1,37 @@
 "use client";
 
 import { MessageSquare } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import type { Conversation } from "../types/message.types";
+
+const previewMarkdownClasses = "text-xs text-muted-foreground [&>*]:m-0 [&>*:last-child]:mb-0";
+const previewComponents = {
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <span className={previewMarkdownClasses}>{children}</span>
+  ),
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold">{children}</strong>
+  ),
+  em: ({ children }: { children?: React.ReactNode }) => (
+    <em className="italic">{children}</em>
+  ),
+  code: ({ children }: { children?: React.ReactNode }) => (
+    <code className="rounded bg-muted px-1 font-mono">{children}</code>
+  ),
+  a: ({
+    href,
+    children,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+    <a href={href} className="underline hover:opacity-80" {...props}>
+      {children}
+    </a>
+  ),
+};
 
 type ConversationItemProps = {
   conversation: Conversation;
@@ -66,12 +93,17 @@ export function ConversationItem({
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-sm font-medium text-foreground">{displayDate}</span>
         {preview ? (
-          <p
-            className="line-clamp-2 text-xs text-muted-foreground"
+          <div
+            className={cn(
+              "line-clamp-2 overflow-hidden text-xs text-muted-foreground",
+              "[&_p]:inline [&_strong]:font-semibold [&_a]:underline"
+            )}
             title={preview}
           >
-            {preview}
-          </p>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={previewComponents}>
+              {preview}
+            </ReactMarkdown>
+          </div>
         ) : null}
       </div>
     </div>

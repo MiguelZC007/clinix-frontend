@@ -2,10 +2,19 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
 import { usePathname } from '@/i18n/navigation';
+import { useAuth } from '@/lib/auth/hooks';
 import { Sidebar } from '../Sidebar';
 
+const mockLogout = vi.fn();
+const mockUser = {
+  id: '1',
+  name: 'María',
+  lastName: 'García',
+  email: 'maria@clinica.com',
+  phone: '+123',
+};
 vi.mock('@/lib/auth/hooks', () => ({
-  useAuth: () => ({ logout: vi.fn() }),
+  useAuth: vi.fn(),
 }));
 
 vi.mock('@/i18n/navigation', async () => {
@@ -19,6 +28,17 @@ vi.mock('@/i18n/navigation', async () => {
 });
 
 describe('Sidebar', () => {
+  beforeEach(() => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: mockUser,
+      logout: mockLogout,
+      isAuthenticated: true,
+      isLoading: false,
+      session: null,
+      accessToken: '',
+    });
+  });
+
   it('renderiza correctamente', () => {
     render(<Sidebar />);
     expect(screen.getByRole('complementary')).toBeInTheDocument();
@@ -69,5 +89,25 @@ describe('Sidebar', () => {
       name: 'navigation.dashboard',
     });
     expect(dashboardLink).not.toHaveClass('bg-sidebar-accent');
+  });
+
+  it('muestra nombre y email del usuario de sesión cuando hay user', () => {
+    render(<Sidebar collapsed={false} />);
+    expect(screen.getByText('María García')).toBeInTheDocument();
+    expect(screen.getByText('maria@clinica.com')).toBeInTheDocument();
+  });
+
+  it('no muestra Dr. Usuario ni doctor@clinica.com cuando user es null', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      logout: mockLogout,
+      isAuthenticated: false,
+      isLoading: false,
+      session: null,
+      accessToken: '',
+    });
+    render(<Sidebar collapsed={false} />);
+    expect(screen.queryByText('Dr. Usuario')).not.toBeInTheDocument();
+    expect(screen.queryByText('doctor@clinica.com')).not.toBeInTheDocument();
   });
 });

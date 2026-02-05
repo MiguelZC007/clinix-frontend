@@ -41,6 +41,16 @@ type NavItemComponentProps = {
   collapsed: boolean;
 };
 
+function getInitials(user: { name?: string; lastName?: string } | null): string {
+  if (!user) return '?';
+  const n = (user.name ?? '').trim();
+  const l = (user.lastName ?? '').trim();
+  const first = n.charAt(0).toUpperCase();
+  const second = l.charAt(0).toUpperCase();
+  if (first || second) return `${first}${second}`;
+  return '?';
+}
+
 function NavItemComponent({ item, collapsed }: NavItemComponentProps) {
   const t = useTranslations();
   const pathname = usePathname();
@@ -185,7 +195,13 @@ export function Sidebar({
   onCollapsedChange,
 }: SidebarProps) {
   const t = useTranslations();
-  const { logout } = useAuth();
+  const { user, isLoading, logout } = useAuth();
+  const displayName = user
+    ? `${user.name} ${user.lastName}`.trim()
+    : isLoading
+      ? '…'
+      : '';
+  const displayEmail = user?.email ?? '';
 
   return (
     <aside
@@ -243,15 +259,21 @@ export function Sidebar({
             >
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs">
-                  DR
+                  {getInitials(user)}
                 </AvatarFallback>
               </Avatar>
               {!collapsed && (
-                <div className="flex flex-col items-start text-left">
-                  <span className="text-sm font-medium">Dr. Usuario</span>
-                  <span className="text-xs text-sidebar-foreground/70">
-                    doctor@clinica.com
-                  </span>
+                <div className="min-w-0 flex-1 flex flex-col items-start text-left overflow-hidden">
+                  {displayName && (
+                    <span className="text-sm font-medium truncate w-full">
+                      {displayName}
+                    </span>
+                  )}
+                  {displayEmail && (
+                    <span className="text-xs text-sidebar-foreground/70 truncate w-full">
+                      {displayEmail}
+                    </span>
+                  )}
                 </div>
               )}
             </Button>
