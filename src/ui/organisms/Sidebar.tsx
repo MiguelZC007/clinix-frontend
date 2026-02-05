@@ -192,7 +192,7 @@ function NavItemComponent({ item, collapsed }: NavItemComponentProps) {
 export function Sidebar({
   className,
   collapsed = false,
-  onCollapsedChange,
+  onCollapsedChange: _onCollapsedChange,
 }: SidebarProps) {
   const t = useTranslations();
   const { user, isLoading, logout } = useAuth();
@@ -206,7 +206,6 @@ export function Sidebar({
   return (
     <aside
       role="complementary"
-      aria-expanded={!collapsed}
       className={cn(
         'flex h-screen flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-200 ease-in-out',
         collapsed ? 'w-16' : 'w-64',
@@ -259,7 +258,7 @@ export function Sidebar({
             >
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs">
-                  {getInitials(user)}
+                  {getInitials(user ?? null)}
                 </AvatarFallback>
               </Avatar>
               {!collapsed && (

@@ -1,9 +1,9 @@
 "use client";
 
 import { MessageSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import type { Conversation } from "../types/message.types";

@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
+import type * as I18nNav from '@/i18n/navigation';
 import { usePathname } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth/hooks';
 import { Sidebar } from '../Sidebar';
@@ -18,9 +19,7 @@ vi.mock('@/lib/auth/hooks', () => ({
 }));
 
 vi.mock('@/i18n/navigation', async () => {
-  const actual = await vi.importActual<typeof import('@/i18n/navigation')>(
-    '@/i18n/navigation'
-  );
+  const actual = (await vi.importActual('@/i18n/navigation')) as typeof I18nNav;
   return {
     ...actual,
     usePathname: vi.fn(() => '/'),
