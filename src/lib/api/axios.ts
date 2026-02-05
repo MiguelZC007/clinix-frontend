@@ -117,17 +117,15 @@ api.interceptors.response.use(
         showError(appError, { logError: true });
       }
 
-      // Si el token expiró o es inválido, redirigir a login
       if (error.response?.status === 401 && !isAuthRequest) {
-        // Esperar un momento para que el usuario vea el mensaje
-        setTimeout(() => {
-          // Obtener el locale actual de la URL o usar 'es' por defecto
-          const currentPath = window.location.pathname;
+        const currentPath = window.location.pathname;
+        if (!currentPath.endsWith("/login")) {
           const localeMatch = currentPath.match(/^\/(es|en)/);
           const locale = localeMatch ? localeMatch[1] : "es";
           const loginPath = `/${locale}/login`;
-          window.location.href = loginPath;
-        }, 2000);
+          const { signOut } = await import("next-auth/react");
+          await signOut({ callbackUrl: loginPath, redirect: true });
+        }
       }
     }
 
