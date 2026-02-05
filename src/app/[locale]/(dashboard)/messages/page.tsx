@@ -123,7 +123,7 @@ export default function MessagesPage() {
   return (
     <div className="flex h-[calc(100vh-130px)] bg-background rounded-lg border overflow-hidden">
       <div
-        className={`w-full md:w-80 shrink-0 ${
+        className={`w-full shrink-0 md:w-64 lg:w-80 ${
           activeConversation ? "hidden md:block" : "block"
         }`}
       >

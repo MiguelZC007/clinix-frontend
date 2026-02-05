@@ -105,6 +105,18 @@ describe('conversationSchema', () => {
     };
     expect(conversationSchema.parse(conversationWithOptional)).toBeDefined();
   });
+
+  it('acepta lastMessagePreview opcional', () => {
+    const withPreview = {
+      ...validConversation,
+      lastMessagePreview: 'Gracias, ya quedó claro',
+      lastActivityAt: validConversation.lastActivityAt.toISOString(),
+      createdAt: validConversation.createdAt.toISOString(),
+      updatedAt: validConversation.updatedAt.toISOString(),
+    };
+    const parsed = conversationSchema.parse(withPreview);
+    expect(parsed.lastMessagePreview).toBe('Gracias, ya quedó claro');
+  });
 });
 
 describe('messageFormSchema', () => {

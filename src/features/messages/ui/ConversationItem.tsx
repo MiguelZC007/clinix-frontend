@@ -19,7 +19,7 @@ export function ConversationItem({
 }: ConversationItemProps) {
   const t = useTranslations();
 
-  const formatTime = (date: Date) => {
+  const formatDate = (date: Date) => {
     const now = new Date();
     const isToday = date.toDateString() === now.toDateString();
     const yesterday = new Date(now);
@@ -27,43 +27,52 @@ export function ConversationItem({
     const isYesterday = date.toDateString() === yesterday.toDateString();
 
     if (isToday) {
-      return date.toLocaleTimeString([], {
+      const time = date.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       });
+      return `${t("common.today")}, ${time}`;
     }
     if (isYesterday) {
       return t("common.yesterday");
     }
-    return date.toLocaleDateString([], { day: "2-digit", month: "2-digit" });
+    return date.toLocaleDateString([], {
+      day: "numeric",
+      month: "short",
+    });
   };
 
-  const title =
-    conversation.title ??
-    conversation.summary?.slice(0, 40) ??
-    t("messages.conversation");
+  const displayDate = formatDate(conversation.lastActivityAt);
+  const preview =
+    conversation.lastMessagePreview?.trim() ??
+    conversation.summary?.trim() ??
+    conversation.title?.trim() ??
+    "";
 
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-3 cursor-pointer transition-colors hover:bg-muted/50",
+        "flex cursor-pointer items-center gap-3 p-3 transition-colors hover:bg-muted/50",
         isActive && "bg-muted"
       )}
       onClick={onClick}
     >
-      <Avatar className="h-12 w-12 shrink-0">
+      <Avatar className="h-9 w-9 shrink-0 md:h-12 md:w-12">
         <AvatarFallback className="bg-primary/10 text-primary font-medium">
-          <MessageSquare className="h-6 w-6" />
+          <MessageSquare className="h-4 w-4 md:h-6 md:w-6" />
         </AvatarFallback>
       </Avatar>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2">
-          <h4 className="font-medium truncate">{title}</h4>
-          <span className="text-xs text-muted-foreground shrink-0">
-            {formatTime(conversation.lastActivityAt)}
-          </span>
-        </div>
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-sm font-medium text-foreground">{displayDate}</span>
+        {preview ? (
+          <p
+            className="line-clamp-2 text-xs text-muted-foreground"
+            title={preview}
+          >
+            {preview}
+          </p>
+        ) : null}
       </div>
     </div>
   );

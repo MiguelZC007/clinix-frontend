@@ -18,6 +18,7 @@ export const conversationSchema = z.object({
   updatedAt: z.coerce.date(),
   contextMessageLimit: z.number().optional(),
   title: z.string().optional(),
+  lastMessagePreview: z.string().optional(),
 });
 export type Conversation = z.infer<typeof conversationSchema>;
 

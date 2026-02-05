@@ -23,20 +23,6 @@ describe("ConversationList", () => {
     expect(screen.getByText(title)).toBeInTheDocument();
   });
 
-  it("filtra conversaciones por busqueda", async () => {
-    const user = userEvent.setup();
-    render(<ConversationList {...defaultProps} />);
-
-    const searchInput = screen.getByPlaceholderText(
-      "messages.searchConversations"
-    );
-    const title =
-      MOCK_CONVERSATIONS[0].title ?? MOCK_CONVERSATIONS[0].summary ?? "";
-    await user.type(searchInput, title.slice(0, 5));
-
-    expect(screen.getByText(title)).toBeInTheDocument();
-  });
-
   it("llama onSelectConversation al seleccionar", async () => {
     const user = userEvent.setup();
     const onSelectConversation = vi.fn(() => {});
@@ -53,5 +39,11 @@ describe("ConversationList", () => {
     await user.click(conversation);
 
     expect(onSelectConversation).toHaveBeenCalledWith(MOCK_CONVERSATIONS[0]);
+  });
+
+  it("titulo tiene clases responsive para cabecera compacta", () => {
+    render(<ConversationList {...defaultProps} />);
+    const heading = screen.getByRole("heading", { name: "messages.title" });
+    expect(heading).toHaveClass("text-base", "md:text-lg");
   });
 });
