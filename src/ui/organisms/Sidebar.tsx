@@ -15,6 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { usePathname } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
+import { useAuth } from '@/lib/auth/hooks';
 import { sidebarNavItems, type NavItem } from '@/lib/config/navigation';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/ui/atoms';
@@ -90,6 +91,7 @@ function NavItemComponent({ item }: { item: NavItem }) {
 
 export function Sidebar({ className }: SidebarProps) {
   const t = useTranslations();
+  const { logout } = useAuth();
 
   return (
     <aside
@@ -133,7 +135,10 @@ export function Sidebar({ className }: SidebarProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem className="text-destructive">
+            <DropdownMenuItem
+              className="text-destructive"
+              onClick={() => void logout()}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               {t('auth.logout')}
             </DropdownMenuItem>
