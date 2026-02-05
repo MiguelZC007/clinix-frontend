@@ -1,10 +1,22 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
+import { usePathname } from '@/i18n/navigation';
 import { Sidebar } from '../Sidebar';
 
 vi.mock('@/lib/auth/hooks', () => ({
   useAuth: () => ({ logout: vi.fn() }),
 }));
+
+vi.mock('@/i18n/navigation', async () => {
+  const actual = await vi.importActual<typeof import('@/i18n/navigation')>(
+    '@/i18n/navigation'
+  );
+  return {
+    ...actual,
+    usePathname: vi.fn(() => '/'),
+  };
+});
 
 describe('Sidebar', () => {
   it('renderiza correctamente', () => {
@@ -48,5 +60,14 @@ describe('Sidebar', () => {
       <Sidebar collapsed={true} className="custom-class" />
     );
     expect(container.firstChild).toHaveClass('custom-class');
+  });
+
+  it('solo resalta la opcion activa: dashboard no activo cuando pathname no es raiz', () => {
+    vi.mocked(usePathname).mockReturnValue('/patients');
+    render(<Sidebar collapsed={false} />);
+    const dashboardLink = screen.getByRole('link', {
+      name: 'navigation.dashboard',
+    });
+    expect(dashboardLink).not.toHaveClass('bg-sidebar-accent');
   });
 });

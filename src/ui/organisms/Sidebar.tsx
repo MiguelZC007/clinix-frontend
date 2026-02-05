@@ -45,7 +45,8 @@ function NavItemComponent({ item, collapsed }: NavItemComponentProps) {
   const t = useTranslations();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const isActive = pathname.startsWith(item.href);
+  const isActive =
+    item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
   const Icon = item.icon;
 
   if (collapsed && item.children) {
@@ -71,7 +72,11 @@ function NavItemComponent({ item, collapsed }: NavItemComponentProps) {
             {t(item.titleKey)}
           </TooltipContent>
         </Tooltip>
-        <PopoverContent side="right" align="start" className="w-48 p-2">
+        <PopoverContent
+          side="right"
+          align="start"
+          className="w-48 p-2 bg-sidebar text-sidebar-foreground border-sidebar-border"
+        >
           <div className="space-y-0.5">
             {item.children.map((child) => (
               <Link
