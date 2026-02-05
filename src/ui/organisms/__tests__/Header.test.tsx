@@ -44,4 +44,47 @@ describe('Header', () => {
     );
     expect(container.firstChild).toHaveClass('custom-class');
   });
+
+  it('muestra botón de toggle de sidebar cuando onSidebarToggle está definido', () => {
+    render(
+      <Header
+        breadcrumbs={breadcrumbs}
+        onSidebarToggle={vi.fn()}
+      />
+    );
+    const toggleButton = screen.getByRole('button', {
+      name: 'collapseSidebar',
+    });
+    expect(toggleButton).toBeInTheDocument();
+  });
+
+  it('tiene aria-expanded false cuando sidebar está colapsado', () => {
+    render(
+      <Header
+        breadcrumbs={breadcrumbs}
+        sidebarCollapsed={true}
+        onSidebarToggle={vi.fn()}
+      />
+    );
+    const toggleButton = screen.getByRole('button', {
+      name: 'expandSidebar',
+    });
+    expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('llama onSidebarToggle al hacer click en el botón de toggle', async () => {
+    const user = userEvent.setup();
+    const onSidebarToggle = vi.fn();
+    render(
+      <Header
+        breadcrumbs={breadcrumbs}
+        onSidebarToggle={onSidebarToggle}
+      />
+    );
+    const toggleButton = screen.getByRole('button', {
+      name: 'collapseSidebar',
+    });
+    await user.click(toggleButton);
+    expect(onSidebarToggle).toHaveBeenCalledTimes(1);
+  });
 });

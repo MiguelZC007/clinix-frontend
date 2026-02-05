@@ -11,8 +11,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { usePathname } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth/hooks';
@@ -22,19 +32,94 @@ import { Logo } from '@/ui/atoms';
 
 type SidebarProps = {
   className?: string;
+  collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
 };
 
-function NavItemComponent({ item }: { item: NavItem }) {
+type NavItemComponentProps = {
+  item: NavItem;
+  collapsed: boolean;
+};
+
+function NavItemComponent({ item, collapsed }: NavItemComponentProps) {
   const t = useTranslations();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const isActive = pathname.startsWith(item.href);
   const Icon = item.icon;
 
+  if (collapsed && item.children) {
+    return (
+      <Popover>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  'h-9 w-9 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                  isActive && 'bg-sidebar-accent text-sidebar-accent-foreground'
+                )}
+                aria-label={t(item.titleKey)}
+              >
+                <Icon className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="right" sideOffset={8}>
+            {t(item.titleKey)}
+          </TooltipContent>
+        </Tooltip>
+        <PopoverContent side="right" align="start" className="w-48 p-2">
+          <div className="space-y-0.5">
+            {item.children.map((child) => (
+              <Link
+                key={child.href}
+                href={child.href}
+                className={cn(
+                  'block rounded-lg px-3 py-2 text-sm transition-colors',
+                  pathname === child.href
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                )}
+              >
+                {t(child.titleKey)}
+              </Link>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
+  if (collapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link
+            href={item.href}
+            className={cn(
+              'flex h-9 w-9 items-center justify-center rounded-lg text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+              isActive && 'bg-sidebar-accent text-sidebar-accent-foreground'
+            )}
+            aria-label={t(item.titleKey)}
+          >
+            <Icon className="h-4 w-4" />
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right" sideOffset={8}>
+          {t(item.titleKey)}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
   if (item.children) {
     return (
       <div>
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             'flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors',
@@ -89,49 +174,81 @@ function NavItemComponent({ item }: { item: NavItem }) {
   );
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({
+  className,
+  collapsed = false,
+  onCollapsedChange,
+}: SidebarProps) {
   const t = useTranslations();
   const { logout } = useAuth();
 
   return (
     <aside
+      role="complementary"
+      aria-expanded={!collapsed}
       className={cn(
-        'flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar',
+        'flex h-screen flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-200 ease-in-out',
+        collapsed ? 'w-16' : 'w-64',
         className
       )}
     >
-      <div className="flex h-16 items-center px-4">
-        <Logo size="md" textClassName="text-white" />
+      <div
+        className={cn(
+          'flex h-16 items-center border-sidebar-border',
+          collapsed ? 'justify-center px-0' : 'px-4'
+        )}
+      >
+        <Logo
+          size="md"
+          textClassName="text-white"
+          showText={!collapsed}
+        />
       </div>
 
       <Separator className="bg-sidebar-border" />
 
       <ScrollArea className="flex-1 px-3 py-4">
-        <nav className="space-y-1">
-          {sidebarNavItems.map((item) => (
-            <NavItemComponent key={item.href} item={item} />
+        <nav
+          className={cn('space-y-1', collapsed && 'flex flex-col items-center gap-1')}
+          aria-label={t('navigation.sidebar')}
+        >
+          {sidebarNavItems.map((navItem) => (
+            <NavItemComponent
+              key={navItem.href}
+              item={navItem}
+              collapsed={collapsed}
+            />
           ))}
         </nav>
       </ScrollArea>
 
       <Separator className="bg-sidebar-border" />
 
-      <div className="p-3">
+      <div className={cn('p-3', collapsed && 'flex justify-center')}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="w-full justify-start gap-3 px-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              size={collapsed ? 'icon' : 'default'}
+              className={cn(
+                'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                !collapsed && 'w-full justify-start gap-3 px-3'
+              )}
+              aria-label={collapsed ? t('auth.userMenu') : undefined}
             >
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs">
                   DR
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col items-start text-left">
-                <span className="text-sm font-medium">Dr. Usuario</span>
-                <span className="text-xs text-sidebar-foreground/70">doctor@clinica.com</span>
-              </div>
+              {!collapsed && (
+                <div className="flex flex-col items-start text-left">
+                  <span className="text-sm font-medium">Dr. Usuario</span>
+                  <span className="text-xs text-sidebar-foreground/70">
+                    doctor@clinica.com
+                  </span>
+                </div>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">

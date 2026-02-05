@@ -27,11 +27,16 @@
     "appointments": "Appointments",
     "clinicalHistories": "Clinical Histories",
     "messages": "Messages",
-    "settings": "Settings"
+    "settings": "Settings",
+    "sidebar": "Main navigation",
+    "openMenu": "Open menu",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar"
   },
   "auth": {
     "login": "Login",
     "logout": "Logout",
+    "userMenu": "User menu",
     "email": "Email",
     "phone": "Phone",
     "password": "Password",

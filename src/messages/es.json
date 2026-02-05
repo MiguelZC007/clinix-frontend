@@ -27,11 +27,16 @@
     "appointments": "Citas",
     "clinicalHistories": "Historiales",
     "messages": "Mensajes",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "sidebar": "Navegación principal",
+    "openMenu": "Abrir menú",
+    "expandSidebar": "Expandir barra lateral",
+    "collapseSidebar": "Colapsar barra lateral"
   },
   "auth": {
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
+    "userMenu": "Menú de usuario",
     "email": "Correo electrónico",
     "phone": "Teléfono",
     "password": "Contraseña",

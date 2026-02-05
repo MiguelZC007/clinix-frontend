@@ -1,8 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { BreadcrumbItemData } from '@/ui/molecules';
 import { Sidebar, MobileSidebar, Header } from '@/ui/organisms';
+
+const SIDEBAR_STORAGE_KEY = 'clinix-sidebar-collapsed';
+
+function parseStoredSidebarCollapsed(raw: string | null): boolean {
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  return false;
+}
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -11,11 +19,29 @@ type DashboardLayoutProps = {
 
 export function DashboardLayout({ children, breadcrumbs }: DashboardLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = typeof window !== 'undefined' ? window.localStorage.getItem(SIDEBAR_STORAGE_KEY) : null;
+      setSidebarCollapsed(parseStoredSidebarCollapsed(stored));
+    } catch {
+      setSidebarCollapsed(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(sidebarCollapsed));
+    } catch {
+      // ignore
+    }
+  }, [sidebarCollapsed]);
 
   return (
     <div className="flex h-screen overflow-hidden">
       <div className="hidden md:block">
-        <Sidebar />
+        <Sidebar collapsed={sidebarCollapsed} />
       </div>
 
       <MobileSidebar open={mobileOpen} onOpenChange={setMobileOpen} />
@@ -24,6 +50,8 @@ export function DashboardLayout({ children, breadcrumbs }: DashboardLayoutProps)
         <Header
           breadcrumbs={breadcrumbs}
           onMenuClick={() => setMobileOpen(true)}
+          sidebarCollapsed={sidebarCollapsed}
+          onSidebarToggle={() => setSidebarCollapsed((prev) => !prev)}
         />
 
         <main className="flex-1 overflow-auto bg-background p-4 md:p-6">
