@@ -188,6 +188,7 @@
     "assistant": "Asistente",
     "assistantWriting": "El asistente está escribiendo...",
     "contextLimit": "Contexto (mensajes)",
+    "contextUsage": "Uso de contexto",
     "newConversation": "Nueva conversación",
     "searchConversations": "Buscar conversaciones...",
     "typeMessage": "Escribe un mensaje...",

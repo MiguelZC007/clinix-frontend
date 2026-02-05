@@ -15,7 +15,8 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     doctorId: 'doctor-1',
     createdAt: new Date(now.getTime() - 1000 * 60 * 60),
     updatedAt: now,
-    contextMessageLimit: 10,
+    contextTokensUsed: 1200,
+    contextTokenLimit: 120_000,
     title: 'Consulta sobre tratamiento con Juan Pérez',
   },
   {
@@ -28,6 +29,8 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     doctorId: 'doctor-1',
     createdAt: new Date(now.getTime() - 1000 * 60 * 60 * 2),
     updatedAt: now,
+    contextTokensUsed: 0,
+    contextTokenLimit: 120_000,
     title: 'Conversación 30 ene',
   },
   {
@@ -40,7 +43,8 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     doctorId: 'doctor-1',
     createdAt: new Date(now.getTime() - 1000 * 60 * 60 * 3),
     updatedAt: now,
-    contextMessageLimit: 20,
+    contextTokensUsed: 800,
+    contextTokenLimit: 120_000,
     title: 'Resultados de exámenes de sangre',
   },
 ];

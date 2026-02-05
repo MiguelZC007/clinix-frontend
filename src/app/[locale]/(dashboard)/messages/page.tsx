@@ -4,12 +4,10 @@ import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { ConversationList, ChatWindow } from "@/features/messages";
 import type { Conversation } from "@/features/messages";
-import {
-  createConversation,
-  patchConversation,
-} from "@/features/messages/api/messages.api";
+import { createConversation } from "@/features/messages/api/messages.api";
 import {
   useConversations,
+  useConversation,
   useMessages,
   useSendMessage,
 } from "@/features/messages/hooks/useMessages";
@@ -28,6 +26,10 @@ export default function MessagesPage() {
     refetch: refetchConversations,
   } = useConversations();
   const {
+    data: conversationDetail,
+    refetch: refetchConversationDetail,
+  } = useConversation(activeConversation?.id ?? null);
+  const {
     data: messagesData,
     isLoading: isLoadingMessages,
     error: _messagesError,
@@ -38,6 +40,7 @@ export default function MessagesPage() {
 
   const conversations = conversationsData?.items || [];
   const messages = messagesData?.items || [];
+  const conversationForChat = conversationDetail ?? activeConversation;
 
   const handleSendMessage = useCallback(
     async (content: string) => {
@@ -50,11 +53,12 @@ export default function MessagesPage() {
           content,
         });
         refetchMessages();
+        refetchConversationDetail();
       } catch (_error) {
         toast.error("Error al enviar mensaje");
       }
     },
-    [activeConversation, currentUserId, sendMessageMutation, refetchMessages]
+    [activeConversation, currentUserId, sendMessageMutation, refetchMessages, refetchConversationDetail]
   );
 
   const handleSendAudio = useCallback(
@@ -72,11 +76,12 @@ export default function MessagesPage() {
           audioDuration: duration,
         });
         refetchMessages();
+        refetchConversationDetail();
       } catch (_error) {
         toast.error("Error al enviar mensaje de audio");
       }
     },
-    [activeConversation, currentUserId, sendMessageMutation, refetchMessages]
+    [activeConversation, currentUserId, sendMessageMutation, refetchMessages, refetchConversationDetail]
   );
 
   const handleBack = useCallback(() => {
@@ -92,23 +97,6 @@ export default function MessagesPage() {
       toast.error("Error al crear conversación");
     }
   }, [refetchConversations]);
-
-  const handleContextLimitChange = useCallback(
-    async (conversationId: string, contextMessageLimit: number) => {
-      try {
-        await patchConversation(conversationId, { contextMessageLimit });
-        setActiveConversation((prev) =>
-          prev && prev.id === conversationId
-            ? { ...prev, contextMessageLimit }
-            : prev
-        );
-        refetchConversations();
-      } catch (_error) {
-        toast.error("Error al actualizar límite de contexto");
-      }
-    },
-    [refetchConversations]
-  );
 
   if (conversationsError) {
     return (
@@ -142,13 +130,12 @@ export default function MessagesPage() {
       >
         {activeConversation ? (
           <ChatWindow
-            conversation={activeConversation}
+            conversation={conversationForChat}
             messages={messages}
             currentUserId={currentUserId}
             onSendMessage={handleSendMessage}
             onSendAudio={handleSendAudio}
             onBack={handleBack}
-            onContextLimitChange={handleContextLimitChange}
             isSending={isSending}
             isLoadingMessages={isLoadingMessages}
           />

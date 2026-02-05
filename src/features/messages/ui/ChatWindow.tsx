@@ -8,17 +8,18 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { MessageBubble } from "./MessageBubble";
 import { MessageInput } from "./MessageInput";
 import type { Conversation, Message } from "../types/message.types";
 
-const CONTEXT_LIMIT_OPTIONS = [5, 10, 20, 50] as const;
+const CIRCLE_SIZE = 28;
+const CIRCLE_STROKE = 3;
+const CIRCLE_R = (CIRCLE_SIZE - CIRCLE_STROKE) / 2;
+const CIRCLE_C = 2 * Math.PI * CIRCLE_R;
 
 type ChatWindowProps = {
   conversation: Conversation | null;
@@ -27,10 +28,6 @@ type ChatWindowProps = {
   onSendMessage: (content: string) => void;
   onSendAudio: (audioBlob: Blob, duration: number) => void;
   onBack?: () => void;
-  onContextLimitChange?: (
-    conversationId: string,
-    contextMessageLimit: number
-  ) => void;
   isSending?: boolean;
   isLoadingMessages?: boolean;
 };
@@ -42,7 +39,6 @@ export function ChatWindow({
   onSendMessage,
   onSendAudio,
   onBack,
-  onContextLimitChange,
   isSending = false,
   isLoadingMessages = false,
 }: ChatWindowProps) {
@@ -97,29 +93,59 @@ export function ChatWindow({
             </p>
           </div>
         </div>
-        {onContextLimitChange && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
-              {t("messages.contextLimit")}
-            </span>
-            <Select
-              value={String(conversation.contextMessageLimit ?? 10)}
-              onValueChange={(v) =>
-                onContextLimitChange(conversation.id, Number(v))
-              }
-            >
-              <SelectTrigger className="w-[90px] h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {CONTEXT_LIMIT_OPTIONS.map((n) => (
-                  <SelectItem key={n} value={String(n)}>
-                    {n}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        {typeof conversation.contextTokenLimit === "number" &&
+          conversation.contextTokenLimit > 0 && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="shrink-0 rounded-full p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={t("messages.contextUsage")}
+              >
+                <svg
+                  width={CIRCLE_SIZE}
+                  height={CIRCLE_SIZE}
+                  className="rotate-[-90deg]"
+                  aria-hidden
+                >
+                  <circle
+                    cx={CIRCLE_SIZE / 2}
+                    cy={CIRCLE_SIZE / 2}
+                    r={CIRCLE_R}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={CIRCLE_STROKE}
+                    className="text-muted"
+                  />
+                  <circle
+                    cx={CIRCLE_SIZE / 2}
+                    cy={CIRCLE_SIZE / 2}
+                    r={CIRCLE_R}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={CIRCLE_STROKE}
+                    strokeDasharray={CIRCLE_C}
+                    strokeDashoffset={
+                      CIRCLE_C *
+                      (1 -
+                        Math.min(
+                          1,
+                          (conversation.contextTokensUsed ?? 0) /
+                            conversation.contextTokenLimit
+                        ))
+                    }
+                    strokeLinecap="round"
+                    className="text-primary transition-all duration-300"
+                  />
+                </svg>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              {t("messages.contextUsage")}:{" "}
+              {(conversation.contextTokensUsed ?? 0).toLocaleString()} /{" "}
+              {conversation.contextTokenLimit.toLocaleString()}
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
 

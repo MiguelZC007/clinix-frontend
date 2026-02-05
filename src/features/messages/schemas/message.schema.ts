@@ -16,7 +16,8 @@ export const conversationSchema = z.object({
   doctorId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  contextMessageLimit: z.number().optional(),
+  contextTokensUsed: z.number(),
+  contextTokenLimit: z.number(),
   title: z.string().optional(),
   lastMessagePreview: z.string().optional(),
 });

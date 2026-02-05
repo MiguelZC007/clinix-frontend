@@ -406,6 +406,8 @@ export const handlers = [
       doctorId: 'doctor-1',
       createdAt: new Date(),
       updatedAt: new Date(),
+      contextTokensUsed: 0,
+      contextTokenLimit: 120_000,
       title: 'Conversación nueva',
     };
     return HttpResponse.json({
@@ -447,15 +449,30 @@ export const handlers = [
     });
   }),
 
-  http.patch(`${API_BASE_URL}/conversations/:id`, async ({ request, params }) => {
-    const body = (await request.json()) as { contextMessageLimit?: number };
+  http.get(`${API_BASE_URL}/conversations/:id`, ({ params }) => {
+    const conv = MOCK_CONVERSATIONS.find((c) => c.id === params.id);
+    if (!conv) {
+      return HttpResponse.json({ type: 'NotFound', status: 404 }, { status: 404 });
+    }
+    return HttpResponse.json({
+      success: true,
+      data: {
+        ...conv,
+        lastActivityAt: conv.lastActivityAt instanceof Date ? conv.lastActivityAt.toISOString() : conv.lastActivityAt,
+        createdAt: conv.createdAt instanceof Date ? conv.createdAt.toISOString() : conv.createdAt,
+        updatedAt: conv.updatedAt instanceof Date ? conv.updatedAt.toISOString() : conv.updatedAt,
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.patch(`${API_BASE_URL}/conversations/:id`, async ({ params }) => {
     const conv = MOCK_CONVERSATIONS.find((c) => c.id === params.id);
     if (!conv) {
       return HttpResponse.json({ type: 'NotFound', status: 404 }, { status: 404 });
     }
     const updated = {
       ...conv,
-      contextMessageLimit: body.contextMessageLimit ?? conv.contextMessageLimit,
       lastActivityAt: conv.lastActivityAt instanceof Date ? conv.lastActivityAt.toISOString() : conv.lastActivityAt,
       createdAt: conv.createdAt instanceof Date ? conv.createdAt.toISOString() : conv.createdAt,
       updatedAt: new Date().toISOString(),

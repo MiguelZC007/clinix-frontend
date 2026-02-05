@@ -40,6 +40,14 @@ export async function getConversations(): Promise<PaginatedData<Conversation>> {
   return client.get(CONVERSATIONS_ENDPOINT, conversationsArrayResponseSchema);
 }
 
+export async function getConversation(conversationId: string): Promise<Conversation> {
+  const response = await client.get(
+    `${CONVERSATIONS_ENDPOINT}/${conversationId}`,
+    ApiResponseSchema(conversationSchema)
+  );
+  return response.data;
+}
+
 export async function createConversation(): Promise<Conversation> {
   const response = await client.post(
     CONVERSATIONS_ENDPOINT,
@@ -72,11 +80,11 @@ export async function sendMessage(data: SendMessageRequest): Promise<Message> {
 
 export async function patchConversation(
   conversationId: string,
-  data: { contextMessageLimit?: number }
+  _data: Record<string, never>
 ): Promise<Conversation> {
   const response = await client.patch(
     `${CONVERSATIONS_ENDPOINT}/${conversationId}`,
-    data,
+    {},
     ApiResponseSchema(conversationSchema)
   );
   return response.data;

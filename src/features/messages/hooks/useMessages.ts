@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { PaginatedData } from '@/types/contracts/api-response';
-import { getConversations, getMessages, sendMessage, markAsRead } from '../api/messages.api';
+import { getConversations, getConversation, getMessages, sendMessage, markAsRead } from '../api/messages.api';
 import type { Conversation, Message, SendMessageRequest } from '../types/message.types';
 
 type UseConversationsState = {
@@ -35,6 +35,44 @@ export function useConversations() {
   return {
     ...state,
     refetch: fetchConversations,
+  };
+}
+
+type UseConversationState = {
+  data: Conversation | null;
+  isLoading: boolean;
+  error: Error | null;
+};
+
+export function useConversation(conversationId: string | null) {
+  const [state, setState] = useState<UseConversationState>({
+    data: null,
+    isLoading: false,
+    error: null,
+  });
+
+  const fetchConversation = useCallback(async () => {
+    if (!conversationId) {
+      setState({ data: null, isLoading: false, error: null });
+      return;
+    }
+
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+    try {
+      const data = await getConversation(conversationId);
+      setState({ data, isLoading: false, error: null });
+    } catch (error) {
+      setState({ data: null, isLoading: false, error: error as Error });
+    }
+  }, [conversationId]);
+
+  useEffect(() => {
+    fetchConversation();
+  }, [fetchConversation]);
+
+  return {
+    ...state,
+    refetch: fetchConversation,
   };
 }
 

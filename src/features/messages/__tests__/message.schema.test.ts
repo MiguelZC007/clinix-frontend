@@ -79,6 +79,8 @@ describe('conversationSchema', () => {
     doctorId: 'doctor-1',
     createdAt: new Date(),
     updatedAt: new Date(),
+    contextTokensUsed: 0,
+    contextTokenLimit: 120_000,
   };
 
   it('valida conversacion completa correctamente', () => {
@@ -91,13 +93,14 @@ describe('conversationSchema', () => {
     expect(parsed.id).toBe('1');
     expect(parsed.model).toBe('gpt-4o-mini');
     expect(parsed.doctorId).toBe('doctor-1');
+    expect(parsed.contextTokensUsed).toBe(0);
+    expect(parsed.contextTokenLimit).toBe(120_000);
   });
 
   it('acepta campos opcionales', () => {
     const conversationWithOptional = {
       ...validConversation,
       summary: 'Resumen',
-      contextMessageLimit: 20,
       title: 'Conversación 1 ene',
       lastActivityAt: validConversation.lastActivityAt.toISOString(),
       createdAt: validConversation.createdAt.toISOString(),
@@ -116,6 +119,20 @@ describe('conversationSchema', () => {
     };
     const parsed = conversationSchema.parse(withPreview);
     expect(parsed.lastMessagePreview).toBe('Gracias, ya quedó claro');
+  });
+
+  it('rechaza conversacion sin contextTokensUsed o contextTokenLimit', () => {
+    const missingTokenFields = {
+      id: '1',
+      model: 'gpt-4o-mini',
+      systemPrompt: 'Eres el asistente.',
+      lastActivityAt: new Date().toISOString(),
+      isActive: true,
+      doctorId: 'doctor-1',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    expect(() => conversationSchema.parse(missingTokenFields)).toThrow();
   });
 });
 

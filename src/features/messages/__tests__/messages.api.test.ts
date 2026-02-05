@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { MOCK_CONVERSATIONS } from '../__mocks__/messages.mock';
 import {
   getConversations,
+  getConversation,
   getMessages,
   sendMessage,
   markAsRead,
@@ -20,7 +21,21 @@ describe('getConversations', () => {
     expect(result.items[0]).toHaveProperty('id');
     expect(result.items[0]).toHaveProperty('title');
     expect(result.items[0]).toHaveProperty('lastActivityAt');
-    expect(result.items[0]).toHaveProperty('contextMessageLimit');
+    expect(result.items[0]).toHaveProperty('contextTokensUsed');
+    expect(result.items[0]).toHaveProperty('contextTokenLimit');
+  });
+});
+
+describe('getConversation', () => {
+  it('retorna una conversacion por id con uso de contexto', async () => {
+    const result = await getConversation('1');
+    expect(result.id).toBe('1');
+    expect(result.contextTokensUsed).toBe(1200);
+    expect(result.contextTokenLimit).toBe(120_000);
+  });
+
+  it('lanza si la conversacion no existe', async () => {
+    await expect(getConversation('999')).rejects.toThrow();
   });
 });
 
@@ -55,10 +70,10 @@ describe('sendMessage', () => {
 });
 
 describe('patchConversation', () => {
-  it('actualiza contextMessageLimit', async () => {
-    const result = await patchConversation('1', { contextMessageLimit: 20 });
-    expect(result.contextMessageLimit).toBe(20);
+  it('retorna la conversacion sin cambios', async () => {
+    const result = await patchConversation('1', {} as Record<string, never>);
     expect(result.id).toBe('1');
+    expect(result.contextTokenLimit).toBe(120_000);
   });
 });
 
