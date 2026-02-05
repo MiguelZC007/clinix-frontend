@@ -30,7 +30,17 @@ async function getStore() {
   return storeInstance;
 }
 
-// Función para actualizar el estado de loading
+function isMessagesSectionRequest(url: string | undefined): boolean {
+  if (!url) return false;
+  return url.includes("/conversations") || url === "/messages";
+}
+
+function shouldSkipGlobalLoading(url: string | undefined): boolean {
+  return (
+    url?.includes("/auth/login") === true || isMessagesSectionRequest(url)
+  );
+}
+
 async function updateApiLoading(isLoading: boolean) {
   if (typeof window === "undefined") return;
 
@@ -67,17 +77,18 @@ export async function getAuthToken(): Promise<string | null> {
 // Interceptor de request para activar loading
 api.interceptors.request.use(
   async (config) => {
-    // Solo activar loading en el cliente y excluir peticiones de login
-    if (typeof window !== "undefined" && !config.url?.includes("/auth/login")) {
+    if (
+      typeof window !== "undefined" &&
+      !shouldSkipGlobalLoading(config.url)
+    ) {
       await updateApiLoading(true);
     }
     return config;
   },
   async (error) => {
-    // Si hay error en el request, desactivar loading
     if (
       typeof window !== "undefined" &&
-      !error.config?.url?.includes("/auth/login")
+      !shouldSkipGlobalLoading(error.config?.url)
     ) {
       await updateApiLoading(false);
     }
@@ -88,17 +99,15 @@ api.interceptors.request.use(
 // Interceptor de respuesta para manejar errores y desactivar loading
 api.interceptors.response.use(
   async (response) => {
-    // Desactivar loading cuando la petición termina exitosamente
     if (
       typeof window !== "undefined" &&
-      !response.config.url?.includes("/auth/login")
+      !shouldSkipGlobalLoading(response.config.url)
     ) {
       await updateApiLoading(false);
     }
     return response;
   },
   async (error) => {
-    // Detectar si es una petición de login (antes de cualquier otra lógica)
     const isAuthRequest = error.config?.url?.includes("/auth/login");
 
     // Solo manejar errores en el cliente
@@ -129,8 +138,10 @@ api.interceptors.response.use(
       }
     }
 
-    // Desactivar loading cuando hay error (excepto login)
-    if (typeof window !== "undefined" && !isAuthRequest) {
+    if (
+      typeof window !== "undefined" &&
+      !shouldSkipGlobalLoading(error.config?.url)
+    ) {
       await updateApiLoading(false);
     }
 

@@ -110,14 +110,6 @@ export default function MessagesPage() {
     [refetchConversations]
   );
 
-  if (isLoadingConversations) {
-    return (
-      <div className="flex items-center justify-center h-[calc(100vh-130px)]">
-        <div className="text-muted-foreground">Cargando conversaciones...</div>
-      </div>
-    );
-  }
-
   if (conversationsError) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-130px)]">
@@ -140,6 +132,7 @@ export default function MessagesPage() {
           activeConversationId={activeConversation?.id || null}
           onSelectConversation={setActiveConversation}
           onNewConversation={handleNewConversation}
+          isLoading={isLoadingConversations}
         />
       </div>
       <div

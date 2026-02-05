@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -124,9 +125,21 @@ export function ChatWindow({
 
       <ScrollArea className="flex-1 min-h-0 p-4">
         {isLoadingMessages ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-muted-foreground">
-              {t("messages.loadingMessages")}
+          <div className="space-y-2">
+            <div className="flex justify-start">
+              <Skeleton className="w-[75%] max-w-[280px] h-14 rounded-2xl rounded-bl-md" />
+            </div>
+            <div className="flex justify-end">
+              <Skeleton className="w-[60%] max-w-[220px] h-10 rounded-2xl rounded-br-md" />
+            </div>
+            <div className="flex justify-start">
+              <Skeleton className="w-[65%] max-w-[240px] h-16 rounded-2xl rounded-bl-md" />
+            </div>
+            <div className="flex justify-end">
+              <Skeleton className="w-[55%] max-w-[200px] h-12 rounded-2xl rounded-br-md" />
+            </div>
+            <div className="flex justify-start">
+              <Skeleton className="w-[70%] max-w-[260px] h-12 rounded-2xl rounded-bl-md" />
             </div>
           </div>
         ) : (

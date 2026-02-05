@@ -6,14 +6,18 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ConversationItem } from "./ConversationItem";
 import type { Conversation } from "../types/message.types";
+
+const CONVERSATION_SKELETON_COUNT = 7;
 
 type ConversationListProps = {
   conversations: Conversation[];
   activeConversationId: string | null;
   onSelectConversation: (conversation: Conversation) => void;
   onNewConversation?: () => void;
+  isLoading?: boolean;
 };
 
 export function ConversationList({
@@ -21,6 +25,7 @@ export function ConversationList({
   activeConversationId,
   onSelectConversation,
   onNewConversation,
+  isLoading = false,
 }: ConversationListProps) {
   const t = useTranslations();
   const [search, setSearch] = useState("");
@@ -58,7 +63,22 @@ export function ConversationList({
       </div>
 
       <ScrollArea className="flex-1">
-        {filteredConversations.length === 0 ? (
+        {isLoading ? (
+          <div className="divide-y">
+            {Array.from({ length: CONVERSATION_SKELETON_COUNT }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 p-3"
+              >
+                <Skeleton className="h-12 w-12 shrink-0 rounded-full" />
+                <div className="flex-1 min-w-0 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 text-center p-4">
             <p className="text-muted-foreground">
               {t("messages.noConversations")}
