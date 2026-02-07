@@ -82,7 +82,7 @@ export const clinicalHistoryBackendSchema = z.object({
   patientId: z.string(),
   doctorId: z.string().optional(),
   specialtyId: z.string().optional(),
-  appointmentId: z.string(),
+  appointmentId: z.string().nullable(),
   consultationReason: z.string(),
   symptoms: z.array(z.string()),
   treatment: z.string(),

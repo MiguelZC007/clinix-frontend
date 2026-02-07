@@ -5,6 +5,7 @@ import {
   vitalSignsFormSchema,
   clinicalHistoryFormSchema,
   clinicalHistoriesListResponseSchema,
+  clinicalHistoryBackendSchema,
 } from '../schemas/clinical-history.schema';
 
 describe('vitalSignsSchema', () => {
@@ -181,5 +182,32 @@ describe('clinicalHistoriesListResponseSchema', () => {
     expect(parsed).toHaveProperty('pageSize', 10);
     expect(parsed).toHaveProperty('totalPages', 1);
     expect(Array.isArray(parsed.items)).toBe(true);
+  });
+});
+
+describe('clinicalHistoryBackendSchema', () => {
+  const validBackendItem = {
+    id: 'ch-1',
+    patientId: 'p-1',
+    appointmentId: null as string | null,
+    consultationReason: 'Control',
+    symptoms: [] as string[],
+    treatment: 'Ninguno',
+    diagnostics: [{ name: 'Ninguno', description: '' }],
+    physicalExams: [{ name: 'General', description: 'Normal' }],
+    vitalSigns: [{ name: 'TA', value: '120/80', unit: 'mmHg', measurement: 'manual' }],
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+  };
+
+  it('acepta appointmentId null', () => {
+    const parsed = clinicalHistoryBackendSchema.parse(validBackendItem);
+    expect(parsed.appointmentId).toBeNull();
+  });
+
+  it('acepta appointmentId string', () => {
+    const withAppointment = { ...validBackendItem, appointmentId: 'apt-1' };
+    const parsed = clinicalHistoryBackendSchema.parse(withAppointment);
+    expect(parsed.appointmentId).toBe('apt-1');
   });
 });
