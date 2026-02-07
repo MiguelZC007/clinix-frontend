@@ -1,7 +1,12 @@
+import { z } from 'zod';
 import { client } from '@/lib/api/client';
 import type { PaginatedData, ApiResponse, PaginatedResponse } from '@/types/contracts/api-response';
+import { ApiResponseSchema } from '@/types/contracts/api-response';
 import { mapAppointmentFromBackend } from '../utils/appointment.mapper';
-import type { Appointment, AppointmentBackend, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams } from '../types/appointment.types';
+import type { Appointment, AppointmentBackend, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams, Specialty } from '../types/appointment.types';
+
+const specialtyItemSchema = z.object({ id: z.string(), name: z.string() });
+const specialtiesResponseSchema = ApiResponseSchema(z.array(specialtyItemSchema));
 
 const ENDPOINT = '/appointments';
 
@@ -155,4 +160,12 @@ export async function getAppointmentsByPatient(patientId: string): Promise<Appoi
   const data = unwrapResponse<AppointmentBackend[]>(response);
   const appointments = Array.isArray(data) ? data : [];
   return appointments.map(mapAppointmentFromBackend);
+}
+
+export async function getSpecialties(): Promise<Specialty[]> {
+  const response = await client.get<{ success: boolean; data: Specialty[]; timestamp: string }>(
+    `${ENDPOINT}/specialties`,
+    specialtiesResponseSchema
+  );
+  return response.data;
 }

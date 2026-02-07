@@ -19,6 +19,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '09:30',
     reason: 'Control rutinario',
     status: 'scheduled',
+    specialtyId: 'spec-1',
   },
   {
     id: '2',
@@ -30,6 +31,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '11:00',
     reason: 'Dolor de cabeza persistente',
     status: 'scheduled',
+    specialtyId: 'spec-1',
   },
   {
     id: '3',
@@ -41,6 +43,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '12:00',
     reason: 'Revisión post-operatoria',
     status: 'completed',
+    specialtyId: 'spec-2',
   },
   {
     id: '4',
@@ -52,6 +55,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '14:45',
     reason: 'Primera consulta',
     status: 'scheduled',
+    specialtyId: 'spec-1',
   },
   {
     id: '5',
@@ -63,6 +67,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '10:00',
     reason: 'Control de presión arterial',
     status: 'scheduled',
+    specialtyId: 'spec-1',
   },
   {
     id: '6',
@@ -74,6 +79,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '11:30',
     reason: 'Exámenes de laboratorio',
     status: 'scheduled',
+    specialtyId: 'spec-2',
   },
   {
     id: '7',
@@ -85,6 +91,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '10:30',
     reason: 'Consulta dermatológica',
     status: 'scheduled',
+    specialtyId: 'spec-1',
   },
   {
     id: '8',
@@ -96,6 +103,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '15:45',
     reason: 'Control prenatal',
     status: 'scheduled',
+    specialtyId: 'spec-2',
   },
   {
     id: '9',
@@ -107,6 +115,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '09:30',
     reason: 'Seguimiento tratamiento',
     status: 'scheduled',
+    specialtyId: 'spec-1',
   },
   {
     id: '10',
@@ -118,6 +127,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     endTime: '16:30',
     reason: 'Cita cancelada por paciente',
     status: 'cancelled',
+    specialtyId: 'spec-2',
   },
 ];
 

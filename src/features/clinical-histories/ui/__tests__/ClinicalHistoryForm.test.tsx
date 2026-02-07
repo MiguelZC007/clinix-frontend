@@ -1,11 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import { MOCK_PATIENTS } from '@/features/patients/__mocks__/patients.mock';
 import { ClinicalHistoryForm } from '../ClinicalHistoryForm';
 
 describe('ClinicalHistoryForm', () => {
   const defaultProps = {
-    patients: MOCK_PATIENTS,
     onSubmit: vi.fn(),
     onCancel: vi.fn(),
     isLoading: false,

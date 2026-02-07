@@ -276,6 +276,17 @@ export const handlers = [
     });
   }),
 
+  http.get(`${API_BASE_URL}/appointments/specialties`, () => {
+    return HttpResponse.json({
+      success: true,
+      data: [
+        { id: 'spec-1', name: 'Cardiología' },
+        { id: 'spec-2', name: 'Medicina General' },
+      ],
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
   http.get(`${API_BASE_URL}/appointments/:id`, ({ params }) => {
     const appointment = MOCK_APPOINTMENTS.find((a) => a.id === params.id);
     if (!appointment) {

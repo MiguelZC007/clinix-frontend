@@ -48,13 +48,22 @@ export interface Appointment {
 
 export type CreateAppointmentRequest = {
   patientId: string;
-  date: string;
-  startTime: string;
-  endTime: string;
+  specialtyId: string;
+  startAppointment: string;
+  endAppointment: string;
   reason: string;
 };
 
-export type UpdateAppointmentRequest = Partial<CreateAppointmentRequest>;
+export type UpdateAppointmentRequest = {
+  startAppointment?: string;
+  endAppointment?: string;
+  reason?: string;
+};
+
+export interface Specialty {
+  id: string;
+  name: string;
+}
 
 export type AppointmentsListParams = {
   page?: number;

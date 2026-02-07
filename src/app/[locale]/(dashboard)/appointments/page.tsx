@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "@/i18n/navigation";
 import {
   Dialog,
   DialogContent,
@@ -70,6 +71,7 @@ const STATUS_FILTER_OPTIONS: (AppointmentStatus | "all")[] = [
 export default function AppointmentsPage() {
   const t = useTranslations();
   const locale = useLocale();
+  const router = useRouter();
   const dateLocale = locale === "es" ? "es-ES" : "en-US";
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
@@ -107,7 +109,7 @@ export default function AppointmentsPage() {
         title={t("appointments.title")}
         description={t("appointments.description")}
         actions={
-          <Button>
+          <Button onClick={() => router.push("/appointments/new")}>
             <Plus className="mr-2 h-4 w-4" />
             {t("appointments.newAppointment")}
           </Button>

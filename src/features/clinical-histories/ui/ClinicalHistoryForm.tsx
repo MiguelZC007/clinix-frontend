@@ -21,20 +21,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import type { Patient } from '@/features/patients/types/patient.types';
+import { PatientSearchSelect } from '@/features/patients/ui';
 import { LoadingSpinner } from '@/ui/atoms';
 import { FormSection } from '@/ui/molecules';
 import { clinicalHistoryFormSchema, type ClinicalHistoryFormData } from '../schemas/clinical-history.schema';
 
 type ClinicalHistoryFormProps = {
-  patients: Patient[];
   onSubmit: (data: ClinicalHistoryFormData) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
 };
 
 export function ClinicalHistoryForm({
-  patients,
   onSubmit,
   onCancel,
   isLoading,
@@ -77,20 +75,15 @@ export function ClinicalHistoryForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('appointments.patient')}</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('clinicalHistories.searchPatient')} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {patients.map((patient) => (
-                      <SelectItem key={patient.id} value={patient.id}>
-                        {patient.name} {patient.lastName} - {patient.email}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <PatientSearchSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder={t('clinicalHistories.searchPatient')}
+                    disabled={isLoading}
+                    displayEmail
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

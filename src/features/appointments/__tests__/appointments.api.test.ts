@@ -6,6 +6,7 @@ import {
   createAppointment,
   updateAppointment,
   cancelAppointment,
+  getSpecialties,
 } from '../api/appointments.api';
 
 describe('getAppointments', () => {
@@ -37,9 +38,9 @@ describe('createAppointment', () => {
   it('crea cita correctamente', async () => {
     const newAppointment = {
       patientId: '1',
-      date: '2024-12-25',
-      startTime: '10:00',
-      endTime: '10:30',
+      specialtyId: 'spec-1',
+      startAppointment: '2024-12-25T10:00:00.000Z',
+      endAppointment: '2024-12-25T10:30:00.000Z',
       reason: 'Consulta',
     };
 
@@ -62,7 +63,17 @@ describe('updateAppointment', () => {
 
 describe('cancelAppointment', () => {
   it('cancela cita correctamente', async () => {
-    const result = await cancelAppointment('1', 'Paciente canceló');
+    const result = await cancelAppointment('1');
     expect(result.status).toBe('cancelled');
+  });
+});
+
+describe('getSpecialties', () => {
+  it('retorna lista de especialidades', async () => {
+    const result = await getSpecialties();
+    expect(Array.isArray(result)).toBe(true);
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0]).toHaveProperty('id');
+    expect(result[0]).toHaveProperty('name');
   });
 });

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { PaginatedData } from '@/types/contracts/api-response';
-import { getAppointments, getAppointmentById, createAppointment, updateAppointment, cancelAppointment } from '../api/appointments.api';
+import { getAppointments, getAppointmentById, createAppointment, updateAppointment, cancelAppointment, getSpecialties } from '../api/appointments.api';
 import type { Appointment, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams } from '../types/appointment.types';
 
 type UseAppointmentListState = {
@@ -86,6 +86,39 @@ export function useAppointment(id: string) {
   return {
     ...state,
     refetch: fetchAppointment,
+  };
+}
+
+type UseSpecialtiesState = {
+  data: Array<{ id: string; name: string }> | null;
+  isLoading: boolean;
+  error: Error | null;
+};
+
+export function useSpecialties() {
+  const [state, setState] = useState<UseSpecialtiesState>({
+    data: null,
+    isLoading: true,
+    error: null,
+  });
+
+  const fetchSpecialties = useCallback(async () => {
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+    try {
+      const data = await getSpecialties();
+      setState({ data, isLoading: false, error: null });
+    } catch (error) {
+      setState({ data: null, isLoading: false, error: error as Error });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSpecialties();
+  }, [fetchSpecialties]);
+
+  return {
+    ...state,
+    refetch: fetchSpecialties,
   };
 }
 

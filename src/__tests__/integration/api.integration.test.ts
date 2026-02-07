@@ -103,7 +103,7 @@ describe.sequential('E2E integración frontend-backend', () => {
   const buildAppointmentPayloadBackend = (
     patientId: string,
     specialtyId: string
-  ): CreateAppointmentRequest & { specialtyId: string; startAppointment: string; endAppointment: string } => {
+  ): CreateAppointmentRequest => {
     const date = new Date().toISOString().slice(0, 10);
     const start = new Date(`${date}T10:00:00.000Z`);
     const end = new Date(`${date}T10:30:00.000Z`);
