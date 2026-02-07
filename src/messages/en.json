@@ -136,7 +136,15 @@
     "deletedSuccess": "Patient deleted successfully",
     "tabInfo": "Information",
     "tabAntecedents": "Antecedents",
-    "tabHistory": "History"
+    "tabHistory": "History",
+    "createSuccess": "Patient created successfully",
+    "updateSuccess": "Patient updated successfully",
+    "deleteSuccess": "Patient deleted successfully",
+    "createError": "Error creating patient",
+    "updateError": "Error updating patient",
+    "deleteError": "Error deleting patient",
+    "notFound": "Patient not found",
+    "notFoundDescription": "The requested patient does not exist"
   },
   "appointments": {
     "title": "Appointments",
@@ -194,7 +202,12 @@
     "emptyDescription": "Clinical histories will appear here",
     "createdSuccess": "History created successfully",
     "selectPatient": "Select patient",
-    "searchPatient": "Search patient..."
+    "searchPatient": "Search patient...",
+    "createSuccess": "Clinical history created successfully",
+    "createError": "Error creating clinical history",
+    "selectAppointment": "Select appointment",
+    "appointmentAlreadyHasHistory": "This appointment already has a clinical history. Choose another appointment.",
+    "appointmentNotFound": "Appointment not found"
   },
   "messages": {
     "title": "Messages",

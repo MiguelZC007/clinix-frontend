@@ -136,7 +136,15 @@
     "deletedSuccess": "Paciente eliminado exitosamente",
     "tabInfo": "Información",
     "tabAntecedents": "Antecedentes",
-    "tabHistory": "Historial"
+    "tabHistory": "Historial",
+    "createSuccess": "Paciente creado correctamente",
+    "updateSuccess": "Paciente actualizado correctamente",
+    "deleteSuccess": "Paciente eliminado correctamente",
+    "createError": "Error al crear paciente",
+    "updateError": "Error al actualizar paciente",
+    "deleteError": "Error al eliminar paciente",
+    "notFound": "Paciente no encontrado",
+    "notFoundDescription": "El paciente solicitado no existe"
   },
   "appointments": {
     "title": "Citas",
@@ -194,7 +202,12 @@
     "emptyDescription": "Los historiales clínicos aparecerán aquí",
     "createdSuccess": "Historial creado exitosamente",
     "selectPatient": "Seleccionar paciente",
-    "searchPatient": "Buscar paciente..."
+    "searchPatient": "Buscar paciente...",
+    "createSuccess": "Historia clínica creada correctamente",
+    "createError": "Error al crear historia clínica",
+    "selectAppointment": "Seleccionar cita",
+    "appointmentAlreadyHasHistory": "Esta cita ya tiene un historial clínico. Elige otra cita.",
+    "appointmentNotFound": "Cita no encontrada"
   },
   "messages": {
     "title": "Mensajes",

@@ -20,7 +20,7 @@ import { PageHeader, ErrorState } from "@/ui/molecules";
 
 function getStatusBadge(
   status: AppointmentStatus,
-  t: ReturnType<typeof useTranslations>
+  t: ReturnType<typeof useTranslations>,
 ) {
   const variants: Record<
     AppointmentStatus,
@@ -80,7 +80,7 @@ export default function AppointmentsPage() {
     endDate: string;
   }>(getCurrentWeekRange);
   const [statusFilter, setStatusFilter] = useState<AppointmentStatus | null>(
-    null
+    null,
   );
 
   const handleDateRangeChange = useCallback(
@@ -92,7 +92,7 @@ export default function AppointmentsPage() {
         return { startDate, endDate };
       });
     },
-    []
+    [],
   );
 
   const { data, isLoading, error } = useAppointmentList({

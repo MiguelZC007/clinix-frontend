@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { PaginatedData } from '@/types/contracts/api-response';
 import { getClinicalHistories, getClinicalHistoryById, createClinicalHistory } from '../api/clinical-histories.api';
-import type { ClinicalHistory, CreateClinicalHistoryRequest, ClinicalHistoriesListParams } from '../types/clinical-history.types';
+import type { ClinicalHistory, ClinicalHistoriesListParams } from '../types/clinical-history.types';
+import type { CreateClinicHistoryBackendPayload } from '../types/create-clinical-history-backend.types';
 
 type UseClinicalHistoryListState = {
   data: PaginatedData<ClinicalHistory> | null;
@@ -90,7 +91,7 @@ export function useCreateClinicalHistory() {
     error: null,
   });
 
-  const mutate = useCallback(async (data: CreateClinicalHistoryRequest): Promise<ClinicalHistory> => {
+  const mutate = useCallback(async (data: CreateClinicHistoryBackendPayload): Promise<ClinicalHistory> => {
     setState({ isLoading: true, error: null });
     try {
       const result = await createClinicalHistory(data);

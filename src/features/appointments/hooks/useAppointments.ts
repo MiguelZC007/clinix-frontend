@@ -31,12 +31,12 @@ export function useAppointmentList(params?: AppointmentsListParams) {
     try {
       const requestParams: AppointmentsListParams | undefined =
         page === undefined &&
-        pageSize === undefined &&
-        limit === undefined &&
-        date === undefined &&
-        startDate === undefined &&
-        endDate === undefined &&
-        status === undefined
+          pageSize === undefined &&
+          limit === undefined &&
+          date === undefined &&
+          startDate === undefined &&
+          endDate === undefined &&
+          status === undefined
           ? undefined
           : { page, pageSize, limit, date, startDate, endDate, status };
       const data = await getAppointments(requestParams);

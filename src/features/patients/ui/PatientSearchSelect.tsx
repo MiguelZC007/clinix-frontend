@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useTranslations } from 'next-intl';
-import { ChevronDownIcon, Loader2Icon } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
-import { getPatients } from '../api/patients.api';
-import type { Patient } from '../types/patient.types';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslations } from "next-intl";
+import { ChevronDownIcon, Loader2Icon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { getPatients } from "../api/patients.api";
+import type { Patient } from "../types/patient.types";
 
 const DEBOUNCE_MS = 300;
 const PAGE_SIZE = 100;
@@ -31,10 +35,10 @@ export function PatientSearchSelect({
   className,
   displayEmail = false,
 }: PatientSearchSelectProps) {
-  const t = useTranslations('patients');
+  const t = useTranslations("patients");
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -73,12 +77,12 @@ export function PatientSearchSelect({
     setSelectedPatient(patient);
     onChange(patient.id, patient);
     setOpen(false);
-    setQuery('');
+    setQuery("");
   };
 
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
-    if (!next) setQuery('');
+    if (!next) setQuery("");
     if (next) setTimeout(() => inputRef.current?.focus(), 0);
   };
 
@@ -98,22 +102,25 @@ export function PatientSearchSelect({
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            'w-full justify-between font-normal h-9 px-3',
-            !displayLabel && 'text-muted-foreground',
-            className
+            "w-full justify-between font-normal h-9 px-3",
+            !displayLabel && "text-muted-foreground",
+            className,
           )}
         >
           <span className="truncate">
-            {displayLabel ?? placeholder ?? t('selectPatient')}
+            {displayLabel ?? placeholder ?? t("selectPatient")}
           </span>
           <ChevronDownIcon className="size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+      <PopoverContent
+        className="w-[var(--radix-popover-trigger-width)] p-0"
+        align="start"
+      >
         <div className="p-2 border-b">
           <Input
             ref={inputRef}
-            placeholder={t('searchPlaceholder')}
+            placeholder={t("searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="h-9"
@@ -127,7 +134,7 @@ export function PatientSearchSelect({
             </div>
           ) : patients.length === 0 ? (
             <div className="py-6 text-center text-sm text-muted-foreground">
-              {debouncedQuery ? t('searchNoResults') : t('searchTypeToSearch')}
+              {debouncedQuery ? t("searchNoResults") : t("searchTypeToSearch")}
             </div>
           ) : (
             <ul className="p-1">
@@ -136,8 +143,8 @@ export function PatientSearchSelect({
                   <button
                     type="button"
                     className={cn(
-                      'w-full text-left px-2 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground',
-                      value === patient.id && 'bg-accent'
+                      "w-full text-left px-2 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground",
+                      value === patient.id && "bg-accent",
                     )}
                     onClick={() => handleSelect(patient)}
                   >

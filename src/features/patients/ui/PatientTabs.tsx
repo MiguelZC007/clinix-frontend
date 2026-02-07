@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { formatDateToYYYYMMDD } from '@/lib/utils';
 import type { Patient } from '../types/patient.types';
 
 type PatientTabsProps = {
@@ -44,7 +45,7 @@ export function PatientTabs({ patient }: PatientTabsProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t('patients.birthDate')}</p>
-                  <p className="font-medium">{patient.birthDate ?? '—'}</p>
+                  <p className="font-medium">{formatDateToYYYYMMDD(patient.birthDate) ?? '—'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t('patients.gender')}</p>

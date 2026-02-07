@@ -1,37 +1,47 @@
-'use client';
+"use client";
 
-import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
-import { useCreateClinicalHistory } from '@/features/clinical-histories/hooks/useClinicalHistories';
-import type { ClinicalHistoryFormData } from '@/features/clinical-histories/schemas/clinical-history.schema';
-import { ClinicalHistoryForm } from '@/features/clinical-histories/ui';
-import { useRouter } from '@/i18n/navigation';
-import { FormPageTemplate } from '@/ui/templates';
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { useCreateClinicalHistory } from "@/features/clinical-histories/hooks/useClinicalHistories";
+import { mapFormDataToBackendPayload } from "@/features/clinical-histories/api/mapFormDataToBackendPayload";
+import type { ClinicalHistoryFormData } from "@/features/clinical-histories/schemas/clinical-history.schema";
+import { ClinicalHistoryForm } from "@/features/clinical-histories/ui";
+import { AppError } from "@/lib/api/errors";
+import { useRouter } from "@/i18n/navigation";
+import { FormPageTemplate } from "@/ui/templates";
 
 export default function NewClinicalHistoryPage() {
   const t = useTranslations();
   const router = useRouter();
 
-  const { mutate: createClinicalHistory, isLoading: isCreating } = useCreateClinicalHistory();
+  const { mutate: createClinicalHistory, isLoading: isCreating } =
+    useCreateClinicalHistory();
 
-  const handleSubmit = async (data: ClinicalHistoryFormData) => {
+  const handleSubmit = async (data: ClinicalHistoryFormData, appointmentId: string) => {
     try {
-      await createClinicalHistory(data);
-      toast.success(t('clinicalHistories.createSuccess') || 'Historia clínica creada correctamente');
-      router.push('/clinical-histories');
-    } catch (_error) {
-      toast.error(t('clinicalHistories.createError') || 'Error al crear historia clínica');
+      const payload = mapFormDataToBackendPayload(data, appointmentId);
+      await createClinicalHistory(payload);
+      toast.success(t("clinicalHistories.createSuccess"));
+      router.push("/clinical-histories");
+    } catch (error) {
+      if (error instanceof AppError && error.status === 409) {
+        toast.error(t("clinicalHistories.appointmentAlreadyHasHistory"));
+        return;
+      }
+      if (error instanceof AppError && error.status === 404) {
+        toast.error(t("clinicalHistories.appointmentNotFound"));
+        return;
+      }
+      toast.error(t("clinicalHistories.createError"));
     }
   };
 
   const handleCancel = () => {
-    router.push('/clinical-histories');
+    router.push("/clinical-histories");
   };
 
   return (
-    <FormPageTemplate
-      title={t('clinicalHistories.newHistory')}
-    >
+    <FormPageTemplate title={t("clinicalHistories.newHistory")}>
       <ClinicalHistoryForm
         onSubmit={handleSubmit}
         onCancel={handleCancel}

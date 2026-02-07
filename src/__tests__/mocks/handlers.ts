@@ -378,24 +378,29 @@ export const handlers = [
     const id = String(MOCK_CLINICAL_HISTORIES.length + 1);
     const createdAt = new Date().toISOString();
     const updatedAt = new Date().toISOString();
-    const vitalSigns = (body.vitalSigns as { bloodPressure: string; heartRate: number; temperature: number; weight: number; height: number }) ?? {};
+    const appointmentId = (body.appointmentId as string) ?? `apt-${id}`;
+    const consultationReason = (body.consultationReason as string) ?? '';
+    const symptoms = Array.isArray(body.symptoms) ? (body.symptoms as string[]) : [String(body.symptoms ?? '')];
+    const diagnostics = Array.isArray(body.diagnostics) ? (body.diagnostics as Array<{ name: string; description: string }>) : [{ name: '', description: '' }];
+    const physicalExams = Array.isArray(body.physicalExams) ? (body.physicalExams as Array<{ name: string; description: string }>) : [{ name: 'Examen', description: '' }];
+    const vitalSignsArray = Array.isArray(body.vitalSigns) ? (body.vitalSigns as Array<{ name: string; value: string; unit: string; measurement: string; description?: string }>) : [];
     const backendItem = {
       id,
-      patientId: body.patientId as string,
-      appointmentId: (body.appointmentId as string) ?? `apt-${id}`,
-      consultationReason: (body.reason as string) ?? '',
-      symptoms: Array.isArray(body.symptoms) ? (body.symptoms as string[]) : [String(body.symptoms ?? '')],
+      patientId: (body.patientId as string) ?? '1',
+      appointmentId,
+      consultationReason,
+      symptoms,
       treatment: (body.treatment as string) ?? '',
-      diagnostics: [{ name: (body.diagnosis as string) ?? '', description: '' }],
-      physicalExams: [{ name: 'Examen', description: (body.physicalExam as string) ?? '' }],
-      vitalSigns: [
-        { name: 'Presión arterial', value: vitalSigns.bloodPressure ?? '', unit: 'mmHg', measurement: '', description: '' },
-        { name: 'Frecuencia cardíaca', value: String(vitalSigns.heartRate ?? 0), unit: 'lpm', measurement: '', description: '' },
-        { name: 'Temperatura', value: String(vitalSigns.temperature ?? 0), unit: '°C', measurement: '', description: '' },
-        { name: 'Peso', value: String(vitalSigns.weight ?? 0), unit: 'kg', measurement: '', description: '' },
-        { name: 'Talla', value: String(vitalSigns.height ?? 0), unit: 'cm', measurement: '', description: '' },
+      diagnostics,
+      physicalExams,
+      vitalSigns: vitalSignsArray.length > 0 ? vitalSignsArray : [
+        { id: '1', name: 'Presión arterial', value: '120/80', unit: 'mmHg', measurement: '', description: '', createdAt, updatedAt },
+        { id: '2', name: 'Frecuencia cardíaca', value: '72', unit: 'lpm', measurement: '', description: '', createdAt, updatedAt },
+        { id: '3', name: 'Temperatura', value: '36.5', unit: '°C', measurement: '', description: '', createdAt, updatedAt },
+        { id: '4', name: 'Peso', value: '70', unit: 'kg', measurement: '', description: '', createdAt, updatedAt },
+        { id: '5', name: 'Altura', value: '170', unit: 'cm', measurement: '', description: '', createdAt, updatedAt },
       ],
-      patient: { id: body.patientId as string, name: 'Patient', lastName: '' },
+      patient: { id: (body.patientId as string) ?? '1', name: 'Patient', lastName: '' },
       createdAt,
       updatedAt,
     };

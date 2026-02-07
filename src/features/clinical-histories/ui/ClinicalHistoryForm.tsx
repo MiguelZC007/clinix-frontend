@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,26 +12,37 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { PatientSearchSelect } from '@/features/patients/ui';
-import { LoadingSpinner } from '@/ui/atoms';
-import { FormSection } from '@/ui/molecules';
-import { clinicalHistoryFormSchema, type ClinicalHistoryFormData } from '../schemas/clinical-history.schema';
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { getAppointmentsByPatient } from "@/features/appointments/api/appointments.api";
+import type { Appointment } from "@/features/appointments/types/appointment.types";
+import { PatientSearchSelect } from "@/features/patients/ui";
+import { LoadingSpinner } from "@/ui/atoms";
+import { FormSection } from "@/ui/molecules";
+import {
+  clinicalHistoryFormSchema,
+  type ClinicalHistoryFormData,
+} from "../schemas/clinical-history.schema";
 
 type ClinicalHistoryFormProps = {
-  onSubmit: (data: ClinicalHistoryFormData) => Promise<void>;
+  onSubmit: (data: ClinicalHistoryFormData, appointmentId: string) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
 };
+
+function formatAppointmentLabel(a: Appointment): string {
+  const d = a.date instanceof Date ? a.date : new Date(a.date);
+  const dateStr = d.toLocaleDateString(undefined, { dateStyle: "short" });
+  return `${dateStr} - ${a.reason || a.id}`;
+}
 
 export function ClinicalHistoryForm({
   onSubmit,
@@ -38,19 +50,22 @@ export function ClinicalHistoryForm({
   isLoading,
 }: ClinicalHistoryFormProps) {
   const t = useTranslations();
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointmentId, setAppointmentId] = useState<string>("");
+  const [loadingAppointments, setLoadingAppointments] = useState(false);
 
   const form = useForm<ClinicalHistoryFormData>({
     resolver: zodResolver(clinicalHistoryFormSchema),
     defaultValues: {
-      patientId: '',
-      reason: '',
-      symptoms: '',
-      physicalExam: '',
-      diagnosis: '',
-      treatment: '',
-      notes: '',
+      patientId: "",
+      reason: "",
+      symptoms: "",
+      physicalExam: "",
+      diagnosis: "",
+      treatment: "",
+      notes: "",
       vitalSigns: {
-        bloodPressure: '',
+        bloodPressure: "",
         heartRate: 0,
         temperature: 0,
         weight: 0,
@@ -59,27 +74,53 @@ export function ClinicalHistoryForm({
     },
   });
 
+  const patientId = form.watch("patientId");
+
+  const loadAppointments = useCallback(async (pid: string) => {
+    if (!pid) {
+      setAppointments([]);
+      setAppointmentId("");
+      return;
+    }
+    setLoadingAppointments(true);
+    try {
+      const list = await getAppointmentsByPatient(pid);
+      setAppointments(list);
+      setAppointmentId("");
+    } catch {
+      setAppointments([]);
+      setAppointmentId("");
+    } finally {
+      setLoadingAppointments(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadAppointments(patientId);
+  }, [patientId, loadAppointments]);
+
   const handleSubmit = async (data: ClinicalHistoryFormData) => {
-    await onSubmit(data);
+    if (!appointmentId) {
+      return;
+    }
+    await onSubmit(data, appointmentId);
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        <FormSection
-          title={t('clinicalHistories.selectPatient')}
-        >
+        <FormSection title={t("clinicalHistories.selectPatient")}>
           <FormField
             control={form.control}
             name="patientId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('appointments.patient')}</FormLabel>
+                <FormLabel>{t("appointments.patient")}</FormLabel>
                 <FormControl>
                   <PatientSearchSelect
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder={t('clinicalHistories.searchPatient')}
+                    placeholder={t("clinicalHistories.searchPatient")}
                     disabled={isLoading}
                     displayEmail
                   />
@@ -90,9 +131,41 @@ export function ClinicalHistoryForm({
           />
         </FormSection>
 
+        <FormSection title={t("clinicalHistories.selectAppointment")}>
+          <FormItem>
+            <FormLabel>{t("clinicalHistories.selectAppointment")}</FormLabel>
+            <Select
+              value={appointmentId}
+              onValueChange={setAppointmentId}
+              disabled={!patientId || loadingAppointments || isLoading}
+            >
+              <SelectTrigger>
+                <SelectValue
+                  placeholder={
+                    loadingAppointments
+                      ? t("common.loading")
+                      : !patientId
+                        ? t("clinicalHistories.selectPatient")
+                        : appointments.length === 0
+                          ? t("common.noResults")
+                          : t("clinicalHistories.selectAppointment")
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {appointments.map((a) => (
+                  <SelectItem key={a.id} value={a.id}>
+                    {formatAppointmentLabel(a)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormItem>
+        </FormSection>
+
         <FormSection
-          title={t('clinicalHistories.vitalSigns')}
-          description={t('clinicalHistories.vitalSignsDescription')}
+          title={t("clinicalHistories.vitalSigns")}
+          description={t("clinicalHistories.vitalSignsDescription")}
         >
           <div className="grid gap-4 md:grid-cols-5">
             <FormField
@@ -100,7 +173,7 @@ export function ClinicalHistoryForm({
               name="vitalSigns.bloodPressure"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.bloodPressure')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.bloodPressure")}</FormLabel>
                   <FormControl>
                     <Input placeholder="120/80" {...field} />
                   </FormControl>
@@ -114,7 +187,7 @@ export function ClinicalHistoryForm({
               name="vitalSigns.heartRate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.heartRate')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.heartRate")}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -133,7 +206,7 @@ export function ClinicalHistoryForm({
               name="vitalSigns.temperature"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.temperature')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.temperature")}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -153,7 +226,7 @@ export function ClinicalHistoryForm({
               name="vitalSigns.weight"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.weight')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.weight")}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -173,7 +246,7 @@ export function ClinicalHistoryForm({
               name="vitalSigns.height"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.height')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.height")}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -190,8 +263,8 @@ export function ClinicalHistoryForm({
         </FormSection>
 
         <FormSection
-          title={t('clinicalHistories.consultationInfo')}
-          description={t('clinicalHistories.consultationInfoDescription')}
+          title={t("clinicalHistories.consultationInfo")}
+          description={t("clinicalHistories.consultationInfoDescription")}
         >
           <div className="space-y-4">
             <FormField
@@ -199,7 +272,7 @@ export function ClinicalHistoryForm({
               name="reason"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.reason')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.reason")}</FormLabel>
                   <FormControl>
                     <Textarea rows={2} {...field} />
                   </FormControl>
@@ -213,7 +286,7 @@ export function ClinicalHistoryForm({
               name="symptoms"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.symptoms')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.symptoms")}</FormLabel>
                   <FormControl>
                     <Textarea rows={3} {...field} />
                   </FormControl>
@@ -227,7 +300,7 @@ export function ClinicalHistoryForm({
               name="physicalExam"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.physicalExam')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.physicalExam")}</FormLabel>
                   <FormControl>
                     <Textarea rows={3} {...field} />
                   </FormControl>
@@ -241,7 +314,7 @@ export function ClinicalHistoryForm({
               name="diagnosis"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.diagnosis')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.diagnosis")}</FormLabel>
                   <FormControl>
                     <Textarea rows={2} {...field} />
                   </FormControl>
@@ -255,7 +328,7 @@ export function ClinicalHistoryForm({
               name="treatment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.treatment')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.treatment")}</FormLabel>
                   <FormControl>
                     <Textarea rows={3} {...field} />
                   </FormControl>
@@ -269,7 +342,7 @@ export function ClinicalHistoryForm({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('clinicalHistories.notes')}</FormLabel>
+                  <FormLabel>{t("clinicalHistories.notes")}</FormLabel>
                   <FormControl>
                     <Textarea rows={2} {...field} />
                   </FormControl>
@@ -282,11 +355,11 @@ export function ClinicalHistoryForm({
 
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" onClick={onCancel}>
-            {t('common.cancel')}
+            {t("common.cancel")}
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading || !appointmentId}>
             {isLoading && <LoadingSpinner size="sm" className="mr-2" />}
-            {t('common.save')}
+            {t("common.save")}
           </Button>
         </div>
       </form>

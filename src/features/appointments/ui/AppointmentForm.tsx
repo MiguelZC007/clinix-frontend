@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,21 +11,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { PatientSearchSelect } from '@/features/patients/ui';
-import type { Specialty } from '../types/appointment.types';
-import { LoadingSpinner } from '@/ui/atoms';
-import { FormSection } from '@/ui/molecules';
-import { appointmentFormSchema, type AppointmentFormData } from '../schemas/appointment.schema';
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { PatientSearchSelect } from "@/features/patients/ui";
+import type { Specialty } from "../types/appointment.types";
+import { LoadingSpinner } from "@/ui/atoms";
+import { FormSection } from "@/ui/molecules";
+import {
+  appointmentFormSchema,
+  type AppointmentFormData,
+} from "../schemas/appointment.schema";
 
 type AppointmentFormProps = {
   specialties: Specialty[];
@@ -45,12 +48,12 @@ export function AppointmentForm({
   const form = useForm<AppointmentFormData>({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
-      patientId: '',
-      specialtyId: '',
-      date: '',
-      startTime: '',
-      endTime: '',
-      reason: '',
+      patientId: "",
+      specialtyId: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      reason: "",
     },
   });
 
@@ -61,19 +64,19 @@ export function AppointmentForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        <FormSection title={t('appointments.appointmentDetails')}>
+        <FormSection title={t("appointments.appointmentDetails")}>
           <div className="grid gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
               name="patientId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('appointments.patient')}</FormLabel>
+                  <FormLabel>{t("appointments.patient")}</FormLabel>
                   <FormControl>
                     <PatientSearchSelect
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder={t('appointments.selectPatient')}
+                      placeholder={t("appointments.selectPatient")}
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -86,11 +89,13 @@ export function AppointmentForm({
               name="specialtyId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('appointments.specialty')}</FormLabel>
+                  <FormLabel>{t("appointments.specialty")}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={t('appointments.selectSpecialty')} />
+                        <SelectValue
+                          placeholder={t("appointments.selectSpecialty")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -112,7 +117,7 @@ export function AppointmentForm({
               name="date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('appointments.date')}</FormLabel>
+                  <FormLabel>{t("appointments.date")}</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -125,7 +130,7 @@ export function AppointmentForm({
               name="startTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('appointments.startTime')}</FormLabel>
+                  <FormLabel>{t("appointments.startTime")}</FormLabel>
                   <FormControl>
                     <Input type="time" {...field} />
                   </FormControl>
@@ -138,7 +143,7 @@ export function AppointmentForm({
               name="endTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('appointments.endTime')}</FormLabel>
+                  <FormLabel>{t("appointments.endTime")}</FormLabel>
                   <FormControl>
                     <Input type="time" {...field} />
                   </FormControl>
@@ -152,9 +157,13 @@ export function AppointmentForm({
             name="reason"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('appointments.reason')}</FormLabel>
+                <FormLabel>{t("appointments.reason")}</FormLabel>
                 <FormControl>
-                  <Textarea placeholder={t('appointments.reasonPlaceholder')} rows={3} {...field} />
+                  <Textarea
+                    placeholder={t("appointments.reasonPlaceholder")}
+                    rows={3}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -162,11 +171,20 @@ export function AppointmentForm({
           />
         </FormSection>
         <div className="flex gap-2 justify-end">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
-            {t('common.cancel')}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isLoading}
+          >
+            {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? <LoadingSpinner size="sm" /> : t('appointments.createAppointment')}
+            {isLoading ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              t("appointments.createAppointment")
+            )}
           </Button>
         </div>
       </form>

@@ -46,24 +46,23 @@ describe('getClinicalHistoryById', () => {
 describe('createClinicalHistory', () => {
   it('crea historial correctamente', async () => {
     const newHistory = {
-      patientId: '1',
-      reason: 'Nueva consulta',
-      symptoms: 'Dolor de cabeza',
-      physicalExam: 'Normal',
-      diagnosis: 'Migraña',
-      treatment: 'Analgésicos',
-      notes: 'Control en 1 semana',
-      vitalSigns: {
-        bloodPressure: '120/80',
-        heartRate: 72,
-        temperature: 36.5,
-        weight: 70,
-        height: 170,
-      },
+      appointmentId: '550e8400-e29b-41d4-a716-446655440003',
+      consultationReason: 'Nueva consulta de control',
+      symptoms: ['Dolor de cabeza'],
+      treatment: 'Analgésicos y reposo',
+      diagnostics: [{ name: 'Migraña', description: 'Cefalea tensional' }],
+      physicalExams: [{ name: 'Examen físico', description: 'Normal' }],
+      vitalSigns: [
+        { name: 'Presión arterial', value: '120/80', unit: 'mmHg', measurement: 'sistólica/diastólica' },
+        { name: 'Frecuencia cardíaca', value: '72', unit: 'lpm', measurement: 'pulsos' },
+        { name: 'Temperatura', value: '36.5', unit: '°C', measurement: 'axilar' },
+        { name: 'Peso', value: '70', unit: 'kg', measurement: 'peso corporal' },
+        { name: 'Altura', value: '170', unit: 'cm', measurement: 'talla' },
+      ],
     };
 
     const result = await createClinicalHistory(newHistory);
-    expect(result.reason).toBe('Nueva consulta');
+    expect(result.reason).toBe('Nueva consulta de control');
     expect(result.id).toBeDefined();
     expect(result.createdAt).toBeDefined();
   });

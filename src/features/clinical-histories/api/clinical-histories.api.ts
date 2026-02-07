@@ -6,7 +6,8 @@ import {
   clinicalHistoryBackendSchema,
   mapClinicalHistoryFromBackend,
 } from '../schemas/clinical-history.schema';
-import type { ClinicalHistory, CreateClinicalHistoryRequest, ClinicalHistoriesListParams } from '../types/clinical-history.types';
+import type { ClinicalHistory, ClinicalHistoriesListParams } from '../types/clinical-history.types';
+import type { CreateClinicHistoryBackendPayload } from '../types/create-clinical-history-backend.types';
 
 const ENDPOINT = '/clinic-histories';
 
@@ -36,7 +37,7 @@ export async function getClinicalHistoryById(id: string): Promise<ClinicalHistor
   return mapClinicalHistoryFromBackend(data);
 }
 
-export async function createClinicalHistory(data: CreateClinicalHistoryRequest): Promise<ClinicalHistory> {
+export async function createClinicalHistory(data: CreateClinicHistoryBackendPayload): Promise<ClinicalHistory> {
   const response = await client.post(
     ENDPOINT,
     data,
