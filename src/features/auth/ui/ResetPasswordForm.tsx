@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Link } from '@/i18n/navigation';
-import { LoadingSpinner } from '@/ui/atoms';
+import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
 import { resetPassword } from '../api/auth.api';
 import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas/login.schema';
 

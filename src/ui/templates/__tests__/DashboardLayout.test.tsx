@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen } from '@/__tests__/test-utils';
-import type { BreadcrumbItemData } from '@/ui/molecules';
+import type { BreadcrumbItemData } from '@/ui/molecules/BreadcrumbNav';
 import { DashboardLayout } from '../DashboardLayout';
 
 vi.mock('@/lib/auth/hooks', () => ({

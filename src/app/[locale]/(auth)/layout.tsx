@@ -3,8 +3,8 @@
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from '@/i18n/navigation';
-import { LoadingSpinner } from '@/ui/atoms';
-import { AuthLayout } from '@/ui/templates';
+import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
+import { AuthLayout } from '@/ui/templates/AuthLayout';
 
 type AuthLayoutPageProps = {
   children: React.ReactNode;

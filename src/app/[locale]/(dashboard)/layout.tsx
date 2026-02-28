@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
-import { LoadingSpinner } from '@/ui/atoms';
-import type { BreadcrumbItemData } from '@/ui/molecules';
-import { DashboardLayout } from '@/ui/templates';
+import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
+import type { BreadcrumbItemData } from '@/ui/molecules/BreadcrumbNav';
+import { DashboardLayout } from '@/ui/templates/DashboardLayout';
 
 type DashboardLayoutPageProps = {
   children: React.ReactNode;

@@ -4,9 +4,9 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useCreatePatient } from '@/features/patients/hooks/usePatients';
 import type { PatientFormData } from '@/features/patients/schemas/patient.schema';
-import { PatientForm } from '@/features/patients/ui';
+import { PatientForm } from '@/features/patients/ui/PatientForm';
 import { useRouter } from '@/i18n/navigation';
-import { FormPageTemplate } from '@/ui/templates';
+import { FormPageTemplate } from '@/ui/templates/FormPageTemplate';
 
 export default function NewPatientPage() {
   const t = useTranslations();

@@ -6,14 +6,13 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useClinicalHistoryList } from '@/features/clinical-histories/hooks/useClinicalHistories';
 import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
-import {
-  ClinicalHistoryFilters,
-  ClinicalHistoryTable,
-} from '@/features/clinical-histories/ui';
+import { ClinicalHistoryTable } from '@/features/clinical-histories/ui/ClinicalHistoryTable';
+import { ClinicalHistoryFilters } from '@/features/clinical-histories/ui/ClinicalHistoryFilters';
 import { useRouter } from '@/i18n/navigation';
-import { EmptyState, ErrorState } from '@/ui/molecules';
-import { ListPageTemplate } from '@/ui/templates';
-import { LoadingSpinner } from '@/ui/atoms';
+import { EmptyState } from '@/ui/molecules/EmptyState';
+import { ErrorState } from '@/ui/molecules/ErrorState';
+import { TableSkeleton } from '@/ui/molecules/TableSkeleton';
+import { ListPageTemplate } from '@/ui/templates/ListPageTemplate';
 
 const PAGE_SIZE = 10;
 
@@ -84,9 +83,7 @@ export default function ClinicalHistoriesPage() {
       }
     >
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" />
-        </div>
+        <TableSkeleton columns={5} rows={10} />
       ) : error ? (
         <ErrorState
           title={t('common.error') || 'Error'}

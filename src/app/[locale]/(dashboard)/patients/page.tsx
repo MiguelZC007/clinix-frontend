@@ -10,10 +10,14 @@ import {
   useDeletePatient,
 } from "@/features/patients/hooks/usePatients";
 import type { Patient } from "@/features/patients/types/patient.types";
-import { PatientTable, PatientFilters } from "@/features/patients/ui";
+import { PatientTable } from "@/features/patients/ui/PatientTable";
+import { PatientFilters } from "@/features/patients/ui/PatientFilters";
 import { useRouter } from "@/i18n/navigation";
-import { EmptyState, ConfirmDialog, ErrorState } from "@/ui/molecules";
-import { ListPageTemplate } from "@/ui/templates";
+import { EmptyState } from "@/ui/molecules/EmptyState";
+import { ConfirmDialog } from "@/ui/molecules/ConfirmDialog";
+import { ErrorState } from "@/ui/molecules/ErrorState";
+import { TableSkeleton } from "@/ui/molecules/TableSkeleton";
+import { ListPageTemplate } from "@/ui/templates/ListPageTemplate";
 
 export default function PatientsPage() {
   const t = useTranslations();
@@ -77,11 +81,7 @@ export default function PatientsPage() {
         }
       >
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-muted-foreground">
-              {t("common.loading") || "Cargando..."}
-            </div>
-          </div>
+          <TableSkeleton columns={4} rows={10} />
         ) : error ? (
           <ErrorState
             title={t("common.error") || "Error"}

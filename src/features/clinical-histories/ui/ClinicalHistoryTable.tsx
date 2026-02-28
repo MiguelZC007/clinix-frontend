@@ -3,7 +3,7 @@
 import { Eye } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { DataTable, type Column } from '@/ui/organisms';
+import { DataTable, type Column } from '@/ui/organisms/DataTable';
 import type { ClinicalHistory } from '../types/clinical-history.types';
 
 const MAX_TEXT_LENGTH = 50;

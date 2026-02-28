@@ -3,7 +3,7 @@
 import { useAtomValue } from 'jotai';
 import { useTranslations } from 'next-intl';
 import { navigationLoadingAtom, apiLoadingAtom, loadingMessageAtom } from '@/lib/store/loading.atoms';
-import { LoadingSpinner } from '@/ui/atoms';
+import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
 
 export function GlobalLoading() {
   const navigationLoading = useAtomValue(navigationLoadingAtom);

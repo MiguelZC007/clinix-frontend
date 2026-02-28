@@ -13,10 +13,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { AppointmentCalendar } from "@/features/appointments";
-import type { Appointment, AppointmentStatus } from "@/features/appointments";
+import { AppointmentCalendar } from "@/features/appointments/ui/AppointmentCalendar";
+import type { Appointment, AppointmentStatus } from "@/features/appointments/types/appointment.types";
 import { useAppointmentList } from "@/features/appointments/hooks/useAppointments";
-import { PageHeader, ErrorState } from "@/ui/molecules";
+import { PageHeader } from "@/ui/molecules/PageHeader";
+import { ErrorState } from "@/ui/molecules/ErrorState";
 
 function getStatusBadge(
   status: AppointmentStatus,

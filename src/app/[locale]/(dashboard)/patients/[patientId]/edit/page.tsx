@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { usePatient, useUpdatePatient } from '@/features/patients/hooks/usePatients';
 import type { PatientFormData } from '@/features/patients/schemas/patient.schema';
-import { PatientForm } from '@/features/patients/ui';
+import { PatientForm } from '@/features/patients/ui/PatientForm';
 import { useRouter } from '@/i18n/navigation';
-import { ErrorState } from '@/ui/molecules';
-import { FormPageTemplate } from '@/ui/templates';
+import { ErrorState } from '@/ui/molecules/ErrorState';
+import { FormPageTemplate } from '@/ui/templates/FormPageTemplate';
 
 export default function EditPatientPage() {
   const t = useTranslations();

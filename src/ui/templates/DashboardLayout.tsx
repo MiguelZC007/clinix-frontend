@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { BreadcrumbItemData } from '@/ui/molecules';
-import { Sidebar, MobileSidebar, Header } from '@/ui/organisms';
+import type { BreadcrumbItemData } from '@/ui/molecules/BreadcrumbNav';
+import { Sidebar } from '@/ui/organisms/Sidebar';
+import { MobileSidebar } from '@/ui/organisms/MobileSidebar';
+import { Header } from '@/ui/organisms/Header';
 
 const SIDEBAR_STORAGE_KEY = 'clinix-sidebar-collapsed';
 

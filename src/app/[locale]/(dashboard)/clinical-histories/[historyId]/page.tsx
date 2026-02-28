@@ -7,9 +7,10 @@ import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useClinicalHistory } from '@/features/clinical-histories/hooks/useClinicalHistories';
-import { ClinicalHistoryDetail } from '@/features/clinical-histories/ui';
+import { ClinicalHistoryDetail } from '@/features/clinical-histories/ui/ClinicalHistoryDetail';
 import { useRouter } from '@/i18n/navigation';
-import { PageHeader, ErrorState } from '@/ui/molecules';
+import { PageHeader } from '@/ui/molecules/PageHeader';
+import { ErrorState } from '@/ui/molecules/ErrorState';
 
 export default function ClinicalHistoryDetailPage() {
   const t = useTranslations();

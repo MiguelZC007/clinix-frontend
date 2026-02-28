@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Link } from '@/i18n/navigation';
-import { LoadingSpinner } from '@/ui/atoms';
+import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
 import { forgotPassword } from '../api/auth.api';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '../schemas/login.schema';
 

@@ -28,7 +28,7 @@ import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth/hooks';
 import { sidebarNavItems, type NavItem } from '@/lib/config/navigation';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/ui/atoms';
+import { Logo } from '@/ui/atoms/Logo';
 
 type SidebarProps = {
   className?: string;

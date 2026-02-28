@@ -4,7 +4,7 @@ import { MessageSquarePlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ListItemSkeleton } from "@/ui/molecules/ListItemSkeleton";
 import { ConversationItem } from "./ConversationItem";
 import type { Conversation } from "../types/message.types";
 
@@ -48,16 +48,7 @@ export function ConversationList({
         {isLoading ? (
           <div className="divide-y">
             {Array.from({ length: CONVERSATION_SKELETON_COUNT }).map((_, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 p-3"
-              >
-                <Skeleton className="h-12 w-12 shrink-0 rounded-full" />
-                <div className="flex-1 min-w-0 space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-1/4" />
-                </div>
-              </div>
+              <ListItemSkeleton key={i} avatarSize="md" lines={2} />
             ))}
           </div>
         ) : conversations.length === 0 ? (

@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DataTable, type Column } from '@/ui/organisms';
+import { DataTable, type Column } from '@/ui/organisms/DataTable';
 import type { Patient } from '../types/patient.types';
 
 type PatientTableProps = {

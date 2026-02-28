@@ -24,9 +24,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { getAppointmentsByPatient } from "@/features/appointments/api/appointments.api";
 import type { Appointment } from "@/features/appointments/types/appointment.types";
-import { PatientSearchSelect } from "@/features/patients/ui";
-import { LoadingSpinner } from "@/ui/atoms";
-import { FormSection } from "@/ui/molecules";
+import { PatientSearchSelect } from "@/features/patients/ui/PatientSearchSelect";
+import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
+import { FormSection } from "@/ui/molecules/FormSection";
 import {
   clinicalHistoryFormSchema,
   type ClinicalHistoryFormData,

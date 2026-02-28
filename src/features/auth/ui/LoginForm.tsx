@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Link, useRouter } from '@/i18n/navigation';
 import { showError } from '@/lib/utils/error-handler';
-import { LoadingSpinner } from '@/ui/atoms';
+import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
 import { PhoneInputWithCountry } from '@/ui/molecules/PhoneInputWithCountry';
 import { loginSchema, type LoginFormData } from '../schemas/login.schema';
 

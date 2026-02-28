@@ -20,8 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { LoadingSpinner } from '@/ui/atoms';
-import { FormSection } from '@/ui/molecules';
+import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
+import { FormSection } from '@/ui/molecules/FormSection';
 import { patientFormSchema, type PatientFormData } from '../schemas/patient.schema';
 import type { Patient } from '../types/patient.types';
 

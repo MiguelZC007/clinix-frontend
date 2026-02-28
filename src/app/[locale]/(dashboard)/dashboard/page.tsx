@@ -18,11 +18,13 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { useDashboardSummary } from "@/features/dashboard";
-import type { RecentConsultation } from "@/features/dashboard";
+import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboardSummary";
+import type { RecentConsultation } from "@/features/dashboard/types/dashboard.types";
 import { useRouter } from "@/i18n/navigation";
-import { LoadingSpinner } from "@/ui/atoms";
-import { PageHeader, EmptyState, ErrorState } from "@/ui/molecules";
+import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
+import { PageHeader } from "@/ui/molecules/PageHeader";
+import { EmptyState } from "@/ui/molecules/EmptyState";
+import { ErrorState } from "@/ui/molecules/ErrorState";
 
 type StatCardProps = {
   title: string;

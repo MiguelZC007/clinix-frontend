@@ -6,9 +6,10 @@ import { ArrowLeft, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { usePatient } from '@/features/patients/hooks/usePatients';
-import { PatientTabs } from '@/features/patients/ui';
+import { PatientTabs } from '@/features/patients/ui/PatientTabs';
 import { useRouter } from '@/i18n/navigation';
-import { PageHeader, ErrorState } from '@/ui/molecules';
+import { PageHeader } from '@/ui/molecules/PageHeader';
+import { ErrorState } from '@/ui/molecules/ErrorState';
 
 export default function PatientDetailPage() {
   const t = useTranslations();

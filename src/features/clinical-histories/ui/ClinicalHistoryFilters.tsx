@@ -2,9 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { SearchInput } from '@/ui/molecules';
+import { SearchInput } from '@/ui/molecules/SearchInput';
+import { DateRangeFilters } from '@/ui/molecules/DateRangeFilters';
 
 type ClinicalHistoryFiltersProps = {
   search: string;
@@ -38,32 +37,15 @@ export function ClinicalHistoryFilters({
           className="w-full"
         />
       </div>
-      <div className="flex flex-wrap items-end gap-2">
-        <div className="space-y-1">
-          <Label htmlFor="clinical-history-date-from" className="text-xs">
-            {t('clinicalHistories.dateFrom')}
-          </Label>
-          <Input
-            id="clinical-history-date-from"
-            type="date"
-            value={dateFrom}
-            onChange={(e) => onDateFromChange(e.target.value)}
-            className="w-[140px]"
-          />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="clinical-history-date-to" className="text-xs">
-            {t('clinicalHistories.dateTo')}
-          </Label>
-          <Input
-            id="clinical-history-date-to"
-            type="date"
-            value={dateTo}
-            onChange={(e) => onDateToChange(e.target.value)}
-            className="w-[140px]"
-          />
-        </div>
-      </div>
+      <DateRangeFilters
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onDateFromChange={onDateFromChange}
+        onDateToChange={onDateToChange}
+        dateFromLabel={t('clinicalHistories.dateFrom')}
+        dateToLabel={t('clinicalHistories.dateTo')}
+        idPrefix="clinical-history"
+      />
       {hasFilters && onClear && (
         <Button
           type="button"

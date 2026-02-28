@@ -4,7 +4,7 @@ import { Menu, PanelLeft, PanelLeftClose } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { BreadcrumbNav, type BreadcrumbItemData } from '@/ui/molecules';
+import { BreadcrumbNav, type BreadcrumbItemData } from '@/ui/molecules/BreadcrumbNav';
 
 type HeaderProps = {
   breadcrumbs: BreadcrumbItemData[];

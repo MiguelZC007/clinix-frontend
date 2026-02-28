@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { PageHeader } from '@/ui/molecules';
+import { PageHeader } from '@/ui/molecules/PageHeader';
 
 type FormPageTemplateProps = {
   title: string;

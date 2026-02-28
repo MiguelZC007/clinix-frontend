@@ -7,9 +7,9 @@ import {
   useSpecialties,
 } from "@/features/appointments/hooks/useAppointments";
 import type { AppointmentFormData } from "@/features/appointments/schemas/appointment.schema";
-import { AppointmentForm } from "@/features/appointments/ui";
+import { AppointmentForm } from "@/features/appointments/ui/AppointmentForm";
 import { useRouter } from "@/i18n/navigation";
-import { FormPageTemplate } from "@/ui/templates";
+import { FormPageTemplate } from "@/ui/templates/FormPageTemplate";
 
 function toISOAppointment(dateStr: string, timeStr: string): string {
   const date = new Date(`${dateStr}T${timeStr}`);

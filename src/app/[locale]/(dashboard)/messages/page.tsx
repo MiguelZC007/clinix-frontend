@@ -2,8 +2,9 @@
 
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
-import { ConversationList, ChatWindow } from "@/features/messages";
-import type { Conversation } from "@/features/messages";
+import { ConversationList } from "@/features/messages/ui/ConversationList";
+import { ChatWindow } from "@/features/messages/ui/ChatWindow";
+import type { Conversation } from "@/features/messages/types/message.types";
 import { createConversation } from "@/features/messages/api/messages.api";
 import {
   useConversations,
