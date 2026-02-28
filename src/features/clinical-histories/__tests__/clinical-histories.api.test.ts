@@ -29,6 +29,21 @@ describe('getClinicalHistories', () => {
     const result = await getClinicalHistories({ patientId: '1' });
     expect(result.items.length).toBeGreaterThan(0);
   });
+
+  it('acepta search, dateFrom y dateTo en params', async () => {
+    const result = await getClinicalHistories({
+      page: 1,
+      pageSize: 10,
+      search: 'dolor',
+      dateFrom: '2026-01-01',
+      dateTo: '2026-12-31',
+    });
+    expect(result).toHaveProperty('items');
+    expect(result).toHaveProperty('page', 1);
+    expect(result).toHaveProperty('pageSize', 10);
+    expect(result).toHaveProperty('total');
+    expect(result).toHaveProperty('totalPages');
+  });
 });
 
 describe('getClinicalHistoryById', () => {

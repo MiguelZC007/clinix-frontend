@@ -22,20 +22,29 @@ export function useClinicalHistoryList(params?: ClinicalHistoriesListParams) {
   const page = params?.page;
   const pageSize = params?.pageSize;
   const patientId = params?.patientId;
+  const search = params?.search;
+  const dateFrom = params?.dateFrom;
+  const dateTo = params?.dateTo;
 
   const fetchHistories = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
-      const requestParams: ClinicalHistoriesListParams | undefined =
-        page === undefined && pageSize === undefined && patientId === undefined
-          ? undefined
-          : { page, pageSize, patientId };
+      const hasParams =
+        page !== undefined ||
+        pageSize !== undefined ||
+        patientId !== undefined ||
+        search !== undefined ||
+        dateFrom !== undefined ||
+        dateTo !== undefined;
+      const requestParams: ClinicalHistoriesListParams | undefined = hasParams
+        ? { page, pageSize, patientId, search, dateFrom, dateTo }
+        : undefined;
       const data = await getClinicalHistories(requestParams);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
       setState({ data: null, isLoading: false, error: error as Error });
     }
-  }, [page, pageSize, patientId]);
+  }, [page, pageSize, patientId, search, dateFrom, dateTo]);
 
   useEffect(() => {
     fetchHistories();

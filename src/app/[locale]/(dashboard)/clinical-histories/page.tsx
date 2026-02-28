@@ -1,15 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useClinicalHistoryList } from '@/features/clinical-histories/hooks/useClinicalHistories';
 import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
-import { ClinicalHistoryCard } from '@/features/clinical-histories/ui';
+import {
+  ClinicalHistoryFilters,
+  ClinicalHistoryTable,
+} from '@/features/clinical-histories/ui';
 import { useRouter } from '@/i18n/navigation';
 import { EmptyState, ErrorState } from '@/ui/molecules';
 import { ListPageTemplate } from '@/ui/templates';
+import { LoadingSpinner } from '@/ui/atoms';
 
 const PAGE_SIZE = 10;
 
@@ -17,16 +21,44 @@ export default function ClinicalHistoriesPage() {
   const t = useTranslations();
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
 
   const { data, isLoading, error, refetch } = useClinicalHistoryList({
     page,
     pageSize: PAGE_SIZE,
+    search: search || undefined,
+    dateFrom: dateFrom || undefined,
+    dateTo: dateTo || undefined,
   });
   const histories = data?.items ?? [];
   const totalPages = data?.totalPages ?? 0;
 
   const handleView = (history: ClinicalHistory) => {
     router.push(`/clinical-histories/${history.id}`);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleDateFromChange = (value: string) => {
+    setDateFrom(value);
+    setPage(1);
+  };
+
+  const handleDateToChange = (value: string) => {
+    setDateTo(value);
+    setPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setSearch('');
+    setDateFrom('');
+    setDateTo('');
+    setPage(1);
   };
 
   return (
@@ -39,10 +71,21 @@ export default function ClinicalHistoriesPage() {
           {t('clinicalHistories.newHistory')}
         </Button>
       }
+      filters={
+        <ClinicalHistoryFilters
+          search={search}
+          onSearchChange={handleSearchChange}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          onDateFromChange={handleDateFromChange}
+          onDateToChange={handleDateToChange}
+          onClear={handleClearFilters}
+        />
+      }
     >
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">{t('common.loading') || 'Cargando...'}</div>
+          <LoadingSpinner size="lg" />
         </div>
       ) : error ? (
         <ErrorState
@@ -59,40 +102,13 @@ export default function ClinicalHistoriesPage() {
           onAction={() => router.push('/clinical-histories/new')}
         />
       ) : (
-        <>
-          <div className="grid gap-4 md:grid-cols-2">
-            {histories.map((history) => (
-              <ClinicalHistoryCard
-                key={history.id}
-                history={history}
-                onClick={() => handleView(history)}
-              />
-            ))}
-          </div>
-          {totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-end gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((p) => p - 1)}
-                disabled={page <= 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                {page} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page >= totalPages}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-        </>
+        <ClinicalHistoryTable
+          histories={histories}
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          onView={handleView}
+        />
       )}
     </ListPageTemplate>
   );

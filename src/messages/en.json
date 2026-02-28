@@ -19,7 +19,8 @@
     "view": "View",
     "close": "Close",
     "today": "Today",
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "date": "Date"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -207,7 +208,11 @@
     "createError": "Error creating clinical history",
     "selectAppointment": "Select appointment",
     "appointmentAlreadyHasHistory": "This appointment already has a clinical history. Choose another appointment.",
-    "appointmentNotFound": "Appointment not found"
+    "appointmentNotFound": "Appointment not found",
+    "searchPlaceholder": "Search by patient, diagnosis, reason...",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "clearFilters": "Clear filters"
   },
   "messages": {
     "title": "Messages",

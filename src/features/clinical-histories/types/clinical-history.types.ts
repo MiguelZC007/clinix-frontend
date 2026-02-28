@@ -7,4 +7,7 @@ export type ClinicalHistoriesListParams = {
   page?: number;
   pageSize?: number;
   patientId?: string;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
 };

@@ -19,7 +19,8 @@
     "view": "Ver",
     "close": "Cerrar",
     "today": "Hoy",
-    "yesterday": "Ayer"
+    "yesterday": "Ayer",
+    "date": "Fecha"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -207,7 +208,11 @@
     "createError": "Error al crear historia clínica",
     "selectAppointment": "Seleccionar cita",
     "appointmentAlreadyHasHistory": "Esta cita ya tiene un historial clínico. Elige otra cita.",
-    "appointmentNotFound": "Cita no encontrada"
+    "appointmentNotFound": "Cita no encontrada",
+    "searchPlaceholder": "Buscar por paciente, diagnóstico, motivo...",
+    "dateFrom": "Desde",
+    "dateTo": "Hasta",
+    "clearFilters": "Limpiar filtros"
   },
   "messages": {
     "title": "Mensajes",
