@@ -5,7 +5,8 @@ export type Gender = z.infer<typeof genderSchema>;
 
 export const patientSchema = z.object({
   id: z.string(),
-  email: z.string().min(1).max(255),
+  patientNumber: z.number().optional(),
+  email: z.string().min(1).max(255).email(),
   name: z.string(),
   lastName: z.string(),
   phone: z.string(),

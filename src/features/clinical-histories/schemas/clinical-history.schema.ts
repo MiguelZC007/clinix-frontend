@@ -13,6 +13,8 @@ export const clinicalHistorySchema = z.object({
   id: z.string(),
   patientId: z.string(),
   patientName: z.string().optional(),
+  doctorName: z.string().optional(),
+  doctorSpecialty: z.string().optional(),
   reason: z.string(),
   symptoms: z.string(),
   physicalExam: z.string(),
@@ -113,10 +115,14 @@ export function mapClinicalHistoryFromBackend(b: ClinicalHistoryBackend): Clinic
     return Number.isFinite(n) ? n : 0;
   };
   const patientName = b.patient ? `${b.patient.name} ${b.patient.lastName}`.trim() : undefined;
+  const doctorName = b.doctor ? `${b.doctor.name} ${b.doctor.lastName}`.trim() : undefined;
+  const doctorSpecialty = b.doctor?.specialty;
   return {
     id: b.id,
     patientId: b.patientId,
     patientName,
+    doctorName,
+    doctorSpecialty,
     reason: b.consultationReason,
     symptoms: Array.isArray(b.symptoms) ? b.symptoms.join(', ') : '',
     physicalExam: b.physicalExams.map((e) => `${e.name}: ${e.description}`).join('; ') || '',

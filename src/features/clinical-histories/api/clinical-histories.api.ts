@@ -56,3 +56,33 @@ export async function getClinicalHistoriesByPatient(patientId: string): Promise<
   const arr = Array.isArray(data) ? data : [];
   return arr.map(mapClinicalHistoryFromBackend);
 }
+
+const patientClinicHistoryFilterOptionsSchema = z.object({
+  doctors: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      lastName: z.string(),
+    })
+  ),
+  specialties: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+    })
+  ),
+});
+
+export type PatientClinicHistoryFilterOptions = z.infer<
+  typeof patientClinicHistoryFilterOptionsSchema
+>;
+
+export async function getPatientClinicHistoryFilterOptions(
+  patientId: string
+): Promise<PatientClinicHistoryFilterOptions> {
+  const response = await client.get(
+    `/patients/${patientId}/clinic-histories/filter-options`,
+    ApiResponseSchema(patientClinicHistoryFilterOptionsSchema)
+  );
+  return response.data;
+}

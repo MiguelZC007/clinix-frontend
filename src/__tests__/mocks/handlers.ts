@@ -251,6 +251,26 @@ export const handlers = [
     });
   }),
 
+  http.get(`${API_BASE_URL}/patients/:patientId/clinic-histories/filter-options`, ({ params }) => {
+    const byPatient = MOCK_CLINICAL_HISTORIES.filter((h) => h.patientId === params.patientId);
+    const doctorIds = [...new Set(byPatient.map((h) => (h as { doctorId?: string }).doctorId).filter(Boolean))];
+    const specialtyIds = [...new Set(byPatient.map((h) => (h as { specialtyId?: string }).specialtyId).filter(Boolean))];
+    const doctors = doctorIds.map((id, i) => ({
+      id: id ?? `doctor-${i}`,
+      name: `Doctor`,
+      lastName: `${i + 1}`,
+    }));
+    const specialties = specialtyIds.map((id, i) => ({
+      id: id ?? `spec-${i}`,
+      name: ['Cardiología', 'Medicina General', 'Psiquiatría'][i] ?? `Especialidad ${i + 1}`,
+    }));
+    return HttpResponse.json({
+      success: true,
+      data: { doctors, specialties },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
   http.get(`${API_BASE_URL}/patients/:id/appointments`, ({ params }) => {
     const byPatient = MOCK_APPOINTMENTS.filter((a) => a.patientId === params.id);
     const backendAppointments = byPatient.map(convertAppointmentToBackendFormat);
@@ -336,7 +356,11 @@ export const handlers = [
     const url = new URL(request.url);
     const page = Math.max(1, parseInt(url.searchParams.get('page') ?? '1', 10));
     const pageSize = Math.max(1, Math.min(100, parseInt(url.searchParams.get('pageSize') ?? '10', 10)));
-    const backendItems = MOCK_CLINICAL_HISTORIES.map(toBackendClinicalHistory);
+    const patientId = url.searchParams.get('patientId');
+    let backendItems = MOCK_CLINICAL_HISTORIES.map(toBackendClinicalHistory);
+    if (patientId) {
+      backendItems = backendItems.filter((item) => item.patientId === patientId);
+    }
     const total = backendItems.length;
     const totalPages = total === 0 ? 0 : Math.ceil(total / pageSize);
     const start = (page - 1) * pageSize;
@@ -680,6 +704,13 @@ export const handlers = [
       timestamp: new Date().toISOString(),
     });
   }),
+
+  http.get(`${API_BASE_URL}/twilio/message//status`, () =>
+    HttpResponse.json(
+      { success: false, message: 'Invalid messageSid' },
+      { status: 400 }
+    )
+  ),
 
   http.get(`${API_BASE_URL}/twilio/message/:messageSid/status`, ({ params }) => {
     const messageSid = params.messageSid as string;

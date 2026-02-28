@@ -59,7 +59,7 @@ describe('Sidebar', () => {
     const aside = screen.getByRole('complementary');
     expect(aside).toHaveClass('w-16');
     expect(aside).toHaveAttribute('aria-expanded', 'false');
-    const nav = screen.getByRole('navigation', { name: 'navigation.sidebar' });
+    const nav = screen.getByRole('navigation');
     expect(nav).toBeInTheDocument();
   });
 

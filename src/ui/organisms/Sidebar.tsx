@@ -206,6 +206,7 @@ export function Sidebar({
   return (
     <aside
       role="complementary"
+      aria-expanded={!collapsed}
       className={cn(
         'flex h-screen flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-200 ease-in-out',
         collapsed ? 'w-16' : 'w-64',

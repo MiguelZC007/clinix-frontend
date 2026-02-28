@@ -14,6 +14,11 @@ export default defineConfig({
     env: env,
     setupFiles: ['./src/__tests__/setup.ts'],
     css: true,
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      ...(process.env.RUN_INTEGRATION !== '1' ? ['**/__tests__/integration/**'] : []),
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

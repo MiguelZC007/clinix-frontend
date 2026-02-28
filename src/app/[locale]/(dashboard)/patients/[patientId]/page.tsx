@@ -1,7 +1,7 @@
 'use client';
 
+import { use } from 'react';
 import { useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { ArrowLeft, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,14 @@ import { useRouter } from '@/i18n/navigation';
 import { PageHeader } from '@/ui/molecules/PageHeader';
 import { ErrorState } from '@/ui/molecules/ErrorState';
 
-export default function PatientDetailPage() {
+type PatientDetailPageProps = {
+  params: Promise<{ patientId: string }>;
+};
+
+export default function PatientDetailPage({ params }: PatientDetailPageProps) {
   const t = useTranslations();
   const router = useRouter();
-  const params = useParams();
-  const patientId = params.patientId as string;
+  const { patientId } = use(params);
 
   const { data: patient, isLoading, error } = usePatient(patientId);
 

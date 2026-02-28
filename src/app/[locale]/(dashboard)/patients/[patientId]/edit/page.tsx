@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { use } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { usePatient, useUpdatePatient } from '@/features/patients/hooks/usePatients';
@@ -10,11 +10,14 @@ import { useRouter } from '@/i18n/navigation';
 import { ErrorState } from '@/ui/molecules/ErrorState';
 import { FormPageTemplate } from '@/ui/templates/FormPageTemplate';
 
-export default function EditPatientPage() {
+type EditPatientPageProps = {
+  params: Promise<{ patientId: string }>;
+};
+
+export default function EditPatientPage({ params }: EditPatientPageProps) {
   const t = useTranslations();
   const router = useRouter();
-  const params = useParams();
-  const patientId = params.patientId as string;
+  const { patientId } = use(params);
 
   const { data: patient, isLoading: isLoadingPatient, error } = usePatient(patientId);
   const { mutate: updatePatient, isLoading: isUpdating } = useUpdatePatient();

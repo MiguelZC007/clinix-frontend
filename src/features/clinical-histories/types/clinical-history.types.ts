@@ -10,4 +10,6 @@ export type ClinicalHistoriesListParams = {
   search?: string;
   dateFrom?: string;
   dateTo?: string;
+  doctorId?: string;
+  specialtyId?: string;
 };

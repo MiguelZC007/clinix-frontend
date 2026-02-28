@@ -25,6 +25,8 @@ export function useClinicalHistoryList(params?: ClinicalHistoriesListParams) {
   const search = params?.search;
   const dateFrom = params?.dateFrom;
   const dateTo = params?.dateTo;
+  const doctorId = params?.doctorId;
+  const specialtyId = params?.specialtyId;
 
   const fetchHistories = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
@@ -35,16 +37,18 @@ export function useClinicalHistoryList(params?: ClinicalHistoriesListParams) {
         patientId !== undefined ||
         search !== undefined ||
         dateFrom !== undefined ||
-        dateTo !== undefined;
+        dateTo !== undefined ||
+        doctorId !== undefined ||
+        specialtyId !== undefined;
       const requestParams: ClinicalHistoriesListParams | undefined = hasParams
-        ? { page, pageSize, patientId, search, dateFrom, dateTo }
+        ? { page, pageSize, patientId, search, dateFrom, dateTo, doctorId, specialtyId }
         : undefined;
       const data = await getClinicalHistories(requestParams);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
       setState({ data: null, isLoading: false, error: error as Error });
     }
-  }, [page, pageSize, patientId, search, dateFrom, dateTo]);
+  }, [page, pageSize, patientId, search, dateFrom, dateTo, doctorId, specialtyId]);
 
   useEffect(() => {
     fetchHistories();

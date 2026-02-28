@@ -73,6 +73,7 @@ describe('mapAppointmentFromBackend', () => {
 describe('appointmentFormSchema', () => {
   const validFormData = {
     patientId: '1',
+    specialtyId: '1',
     date: '2024-01-15',
     startTime: '09:00',
     endTime: '09:30',

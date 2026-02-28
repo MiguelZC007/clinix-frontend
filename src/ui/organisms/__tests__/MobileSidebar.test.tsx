@@ -1,11 +1,31 @@
 import { describe, it, expect, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { render, screen } from '@/__tests__/test-utils';
 import { MobileSidebar } from '../MobileSidebar';
 
+const mockUser = {
+  id: '1',
+  name: 'María',
+  lastName: 'García',
+  email: 'maria@clinica.com',
+  phone: '+123',
+};
+
+vi.mock('@/lib/auth/hooks', () => ({
+  useAuth: vi.fn(() => ({
+    user: mockUser,
+    logout: vi.fn(),
+    isAuthenticated: true,
+    isLoading: false,
+    session: null,
+    accessToken: '',
+  })),
+}));
+
 describe('MobileSidebar', () => {
-  it('renderiza cuando esta abierto', () => {
+  it('renderiza cuando esta abierto', async () => {
     render(<MobileSidebar open={true} onOpenChange={vi.fn()} />);
-    expect(screen.getByText('Clínica San Miguel')).toBeInTheDocument();
+    expect(await screen.findByText('Clínica San Miguel')).toBeInTheDocument();
   });
 
   it('no renderiza cuando esta cerrado', () => {
@@ -15,10 +35,10 @@ describe('MobileSidebar', () => {
 
   it('llama onOpenChange al cerrar', async () => {
     const onOpenChange = vi.fn();
+    const user = userEvent.setup();
     render(<MobileSidebar open={true} onOpenChange={onOpenChange} />);
-    const overlay = document.querySelector('[data-slot="sheet-overlay"]');
-    if (overlay) {
-      (overlay as HTMLElement).click();
-    }
+    const closeButton = await screen.findByRole('button', { name: 'Close' });
+    await user.click(closeButton);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

@@ -1,7 +1,7 @@
 'use client';
 
+import { use } from 'react';
 import { useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { ArrowLeft, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
@@ -12,11 +12,14 @@ import { useRouter } from '@/i18n/navigation';
 import { PageHeader } from '@/ui/molecules/PageHeader';
 import { ErrorState } from '@/ui/molecules/ErrorState';
 
-export default function ClinicalHistoryDetailPage() {
+type ClinicalHistoryDetailPageProps = {
+  params: Promise<{ historyId: string }>;
+};
+
+export default function ClinicalHistoryDetailPage({ params }: ClinicalHistoryDetailPageProps) {
   const t = useTranslations();
   const router = useRouter();
-  const params = useParams();
-  const historyId = params.historyId as string;
+  const { historyId } = use(params);
 
   const { data: history, isLoading, error } = useClinicalHistory(historyId);
 

@@ -2,8 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { PaginatedData } from '@/types/contracts/api-response';
-import { getPatients, getPatientById, createPatient, updatePatient, deletePatient } from '../api/patients.api';
-import type { Patient, CreatePatientRequest, UpdatePatientRequest, PatientsListParams } from '../types/patient.types';
+import { getPatients, getPatientById, createPatient, updatePatient, deletePatient, getPatientAntecedents } from '../api/patients.api';
+import { getClinicalHistories, getPatientClinicHistoryFilterOptions } from '@/features/clinical-histories/api/clinical-histories.api';
+import type { PatientClinicHistoryFilterOptions } from '@/features/clinical-histories/api/clinical-histories.api';
+import type { Patient, CreatePatientRequest, UpdatePatientRequest, PatientsListParams, PatientAntecedents } from '../types/patient.types';
+import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
+import type { ClinicalHistoriesListParams } from '@/features/clinical-histories/types/clinical-history.types';
 
 type UsePatientListState = {
   data: PaginatedData<Patient> | null;
@@ -76,6 +80,156 @@ export function usePatient(id: string) {
   return {
     ...state,
     refetch: fetchPatient,
+  };
+}
+
+type UsePatientAntecedentsState = {
+  data: PatientAntecedents | null;
+  isLoading: boolean;
+  error: Error | null;
+};
+
+export function usePatientAntecedents(patientId: string | undefined) {
+  const [state, setState] = useState<UsePatientAntecedentsState>({
+    data: null,
+    isLoading: false,
+    error: null,
+  });
+
+  const fetchAntecedents = useCallback(async () => {
+    if (!patientId) {
+      setState({ data: null, isLoading: false, error: null });
+      return;
+    }
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+    try {
+      const data = await getPatientAntecedents(patientId);
+      setState({ data, isLoading: false, error: null });
+    } catch (error) {
+      setState({ data: null, isLoading: false, error: error as Error });
+    }
+  }, [patientId]);
+
+  useEffect(() => {
+    fetchAntecedents();
+  }, [fetchAntecedents]);
+
+  return {
+    ...state,
+    refetch: fetchAntecedents,
+  };
+}
+
+type UsePatientClinicHistoriesState = {
+  data: PaginatedData<ClinicalHistory> | null;
+  isLoading: boolean;
+  error: Error | null;
+};
+
+export function usePatientClinicHistories(params: {
+  patientId: string | undefined;
+  page?: number;
+  pageSize?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  doctorId?: string;
+  specialtyId?: string;
+}) {
+  const {
+    patientId,
+    page = 1,
+    pageSize = 10,
+    dateFrom,
+    dateTo,
+    doctorId,
+    specialtyId,
+  } = params;
+
+  const [state, setState] = useState<UsePatientClinicHistoriesState>({
+    data: null,
+    isLoading: false,
+    error: null,
+  });
+
+  const fetchHistories = useCallback(async () => {
+    if (!patientId) {
+      setState({
+        data: { items: [], total: 0, page: 1, pageSize: 10, totalPages: 0 },
+        isLoading: false,
+        error: null,
+      });
+      return;
+    }
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+    try {
+      const requestParams: ClinicalHistoriesListParams = {
+        patientId,
+        page,
+        pageSize,
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
+        doctorId: doctorId || undefined,
+        specialtyId: specialtyId || undefined,
+      };
+      const data = await getClinicalHistories(requestParams);
+      setState({ data, isLoading: false, error: null });
+    } catch (error) {
+      setState({
+        data: null,
+        isLoading: false,
+        error: error as Error,
+      });
+    }
+  }, [patientId, page, pageSize, dateFrom, dateTo, doctorId, specialtyId]);
+
+  useEffect(() => {
+    fetchHistories();
+  }, [fetchHistories]);
+
+  return {
+    ...state,
+    refetch: fetchHistories,
+  };
+}
+
+type UsePatientClinicHistoryFilterOptionsState = {
+  data: PatientClinicHistoryFilterOptions | null;
+  isLoading: boolean;
+  error: Error | null;
+};
+
+export function usePatientClinicHistoryFilterOptions(patientId: string | undefined) {
+  const [state, setState] = useState<UsePatientClinicHistoryFilterOptionsState>({
+    data: null,
+    isLoading: false,
+    error: null,
+  });
+
+  const fetchOptions = useCallback(async () => {
+    if (!patientId) {
+      setState({ data: null, isLoading: false, error: null });
+      return;
+    }
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+    try {
+      const data = await getPatientClinicHistoryFilterOptions(patientId);
+      setState({ data, isLoading: false, error: null });
+    } catch (error) {
+      setState({
+        data: null,
+        isLoading: false,
+        error: error as Error,
+      });
+    }
+  }, [patientId]);
+
+  useEffect(() => {
+    fetchOptions();
+  }, [fetchOptions]);
+
+  return {
+    ...state,
+    refetch: fetchOptions,
   };
 }
 
