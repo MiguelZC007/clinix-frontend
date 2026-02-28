@@ -44,7 +44,7 @@ export function ConversationList({
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 min-h-0">
         {isLoading ? (
           <div className="divide-y">
             {Array.from({ length: CONVERSATION_SKELETON_COUNT }).map((_, i) => (

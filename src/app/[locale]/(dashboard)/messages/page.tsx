@@ -100,7 +100,7 @@ export default function MessagesPage() {
 
   if (conversationsError) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-130px)]">
+      <div className="flex items-center justify-center min-h-[200px]">
         <div className="text-destructive">
           Error al cargar conversaciones: {conversationsError.message}
         </div>
@@ -109,7 +109,7 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-130px)] bg-background rounded-lg border overflow-hidden">
+    <div className="flex h-full min-h-0 bg-background rounded-lg border overflow-hidden">
       <div
         className={`w-full shrink-0 md:w-64 lg:w-80 ${
           activeConversation ? "hidden md:block" : "block"
