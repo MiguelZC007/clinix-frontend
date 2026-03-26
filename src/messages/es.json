@@ -20,7 +20,9 @@
     "close": "Cerrar",
     "today": "Hoy",
     "yesterday": "Ayer",
-    "date": "Fecha"
+    "date": "Fecha",
+    "table": "Tabla",
+    "cards": "Tarjetas"
   },
   "navigation": {
     "dashboard": "Dashboard",

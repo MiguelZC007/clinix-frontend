@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { useTranslations } from 'next-intl';
 import { navigationLoadingAtom, apiLoadingAtom, loadingMessageAtom } from '@/lib/store/loading.atoms';
+import { useLoading } from '@/lib/hooks/useLoading';
 import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
 
 export function GlobalLoading() {
@@ -10,8 +12,15 @@ export function GlobalLoading() {
   const apiLoading = useAtomValue(apiLoadingAtom);
   const loadingMessage = useAtomValue(loadingMessageAtom);
   const t = useTranslations();
+  const { clearLoading } = useLoading();
 
   const isLoading = navigationLoading || apiLoading;
+
+  useEffect(() => {
+    if (!isLoading) {
+      clearLoading();
+    }
+  }, [isLoading, clearLoading]);
 
   if (!isLoading) {
     return null;

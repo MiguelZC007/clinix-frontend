@@ -22,7 +22,7 @@ export type ApiResponse<T> = {
   timestamp: string;
 };
 
-export const PaginatedDataSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+const PaginatedDataSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
   z.union([
     z.object({
       items: z.array(itemSchema),
@@ -71,5 +71,3 @@ export const MessageResponseSchema = z.object({
   message: z.string().optional(),
   timestamp: z.union([z.string(), z.string().datetime()]).optional(),
 });
-
-export type MessageResponse = z.infer<typeof MessageResponseSchema>;

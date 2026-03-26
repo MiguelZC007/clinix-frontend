@@ -11,6 +11,7 @@ import {
   useConversation,
   useMessages,
   useSendMessage,
+  usePatchConversation,
 } from "@/features/messages/hooks/useMessages";
 import { useAuth } from "@/lib/auth/hooks";
 
@@ -38,6 +39,7 @@ export default function MessagesPage() {
   } = useMessages(activeConversation?.id || null);
   const { mutate: sendMessageMutation, isLoading: isSending } =
     useSendMessage();
+  const { mutate: patchConversationMutation } = usePatchConversation();
 
   const conversations = conversationsData?.items || [];
   const messages = messagesData?.items || [];
@@ -86,8 +88,11 @@ export default function MessagesPage() {
   );
 
   const handleBack = useCallback(() => {
+    if (activeConversation) {
+      patchConversationMutation(activeConversation.id).catch(() => {});
+    }
     setActiveConversation(null);
-  }, []);
+  }, [activeConversation, patchConversationMutation]);
 
   const handleNewConversation = useCallback(async () => {
     try {

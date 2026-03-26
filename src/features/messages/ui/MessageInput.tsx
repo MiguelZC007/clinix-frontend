@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Send, Mic, Square, Loader2 } from 'lucide-react';
+import { Send, Mic, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { messageFormSchema, type MessageFormData } from '../schemas/message.schema';
+import { AudioRecorder } from './AudioRecorder';
 
 type MessageInputProps = {
   onSendMessage: (content: string) => void;
@@ -19,11 +20,7 @@ type MessageInputProps = {
 
 export function MessageInput({ onSendMessage, onSendAudio, disabled }: MessageInputProps) {
   const t = useTranslations();
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingDuration, setRecordingDuration] = useState(0);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [showRecordingUI, setShowRecordingUI] = useState(false);
 
   const form = useForm<MessageFormData>({
     resolver: zodResolver(messageFormSchema),
@@ -37,50 +34,9 @@ export function MessageInput({ onSendMessage, onSendAudio, disabled }: MessageIn
     form.reset();
   };
 
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
-
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        onSendAudio(audioBlob, recordingDuration);
-        stream.getTracks().forEach((track) => track.stop());
-        setRecordingDuration(0);
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-
-      timerRef.current = setInterval(() => {
-        setRecordingDuration((prev) => prev + 1);
-      }, 1000);
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    }
-  };
-
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  const handleRecordingComplete = (audioBlob: Blob, duration: number) => {
+    onSendAudio(audioBlob, duration);
+    setShowRecordingUI(false);
   };
 
   const messageValue = form.watch('content');
@@ -88,22 +44,13 @@ export function MessageInput({ onSendMessage, onSendAudio, disabled }: MessageIn
 
   return (
     <div className="shrink-0 border-t p-4 bg-background">
-      {isRecording ? (
-        <div className="flex items-center gap-4">
-          <div className="flex-1 flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-sm font-medium">{t('messages.recording')}</span>
-            <span className="text-sm text-muted-foreground">{formatDuration(recordingDuration)}</span>
-          </div>
-          <Button
-            type="button"
-            size="icon"
-            variant="destructive"
-            className="rounded-full h-12 w-12"
-            onClick={stopRecording}
-          >
-            <Square className="h-5 w-5" />
-          </Button>
+      {showRecordingUI ? (
+        <div className="flex items-center gap-2">
+          <AudioRecorder
+            onRecordingComplete={handleRecordingComplete}
+            onCancel={() => setShowRecordingUI(false)}
+            className="flex-1"
+          />
         </div>
       ) : (
         <Form {...form}>
@@ -145,8 +92,8 @@ export function MessageInput({ onSendMessage, onSendAudio, disabled }: MessageIn
                 variant="secondary"
                 className={cn('rounded-full h-10 w-10')}
                 disabled={disabled}
-                onMouseDown={startRecording}
-                onTouchStart={startRecording}
+                onMouseDown={() => setShowRecordingUI(true)}
+                onTouchStart={() => setShowRecordingUI(true)}
               >
                 <Mic className="h-5 w-5" />
               </Button>

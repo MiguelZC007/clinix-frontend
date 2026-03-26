@@ -20,7 +20,9 @@
     "close": "Close",
     "today": "Today",
     "yesterday": "Yesterday",
-    "date": "Date"
+    "date": "Date",
+    "table": "Table",
+    "cards": "Cards"
   },
   "navigation": {
     "dashboard": "Dashboard",

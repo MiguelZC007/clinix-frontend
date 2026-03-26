@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const genderSchema = z.enum(['male', 'female']);
-export type Gender = z.infer<typeof genderSchema>;
+type Gender = z.infer<typeof genderSchema>;
 
 export const patientSchema = z.object({
   id: z.string(),

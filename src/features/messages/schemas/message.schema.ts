@@ -4,7 +4,7 @@ export const messageTypeSchema = z.enum(['text', 'audio']);
 export type MessageType = z.infer<typeof messageTypeSchema>;
 
 export const messageStatusSchema = z.enum(['sending', 'sent', 'delivered', 'read']);
-export type MessageStatus = z.infer<typeof messageStatusSchema>;
+type MessageStatus = z.infer<typeof messageStatusSchema>;
 
 export const conversationSchema = z.object({
   id: z.string(),
@@ -44,4 +44,4 @@ export const audioMessageSchema = z.object({
   audioUrl: z.string().min(1),
   audioDuration: z.number().min(1),
 });
-export type AudioMessageFormData = z.infer<typeof audioMessageSchema>;
+type AudioMessageFormData = z.infer<typeof audioMessageSchema>;

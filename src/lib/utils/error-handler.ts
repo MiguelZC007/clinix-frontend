@@ -82,7 +82,7 @@ function formatValidationErrors(errors: Record<string, string[]>): string {
 /**
  * Hook para manejar errores en componentes
  */
-export function useErrorHandler() {
+function useErrorHandler() {
   return {
     showError,
     handleError: (error: unknown) => showError(error),

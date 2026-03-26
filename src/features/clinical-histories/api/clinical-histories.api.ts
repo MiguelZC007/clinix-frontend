@@ -47,7 +47,7 @@ export async function createClinicalHistory(data: CreateClinicHistoryBackendPayl
   return mapClinicalHistoryFromBackend(apiData);
 }
 
-export async function getClinicalHistoriesByPatient(patientId: string): Promise<ClinicalHistory[]> {
+async function getClinicalHistoriesByPatient(patientId: string): Promise<ClinicalHistory[]> {
   const response = await client.get(
     `/patients/${patientId}/clinic-histories`,
     ApiResponseSchema(z.array(clinicalHistoryBackendSchema))

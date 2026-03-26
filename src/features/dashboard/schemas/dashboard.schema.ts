@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const recentConsultationSchema = z.object({
+const recentConsultationSchema = z.object({
   id: z.string(),
   patientName: z.string(),
   patientLastName: z.string(),
@@ -15,6 +15,3 @@ export const dashboardSummarySchema = z.object({
   consultationsToday: z.number(),
   recentConsultations: z.array(recentConsultationSchema),
 });
-
-export type DashboardSummarySchema = z.infer<typeof dashboardSummarySchema>;
-export type RecentConsultationSchema = z.infer<typeof recentConsultationSchema>;

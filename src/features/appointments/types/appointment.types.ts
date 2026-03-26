@@ -1,4 +1,4 @@
-export type { AppointmentStatus, AppointmentFormData } from '../schemas/appointment.schema';
+export type { AppointmentStatus } from '../schemas/appointment.schema';
 import type { AppointmentStatus } from '../schemas/appointment.schema';
 
 export interface AppointmentBackendPatient {

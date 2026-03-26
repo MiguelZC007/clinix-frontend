@@ -6,4 +6,4 @@ export const routing = defineRouting({
   localePrefix: 'always',
 });
 
-export type Locale = (typeof routing.locales)[number];
+type Locale = (typeof routing.locales)[number];

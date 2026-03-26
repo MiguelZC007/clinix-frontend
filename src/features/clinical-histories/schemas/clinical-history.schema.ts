@@ -98,7 +98,7 @@ export const clinicalHistoryBackendSchema = z.object({
   updatedAt: z.union([z.string(), z.date()]),
 });
 
-export type ClinicalHistoryBackend = z.infer<typeof clinicalHistoryBackendSchema>;
+type ClinicalHistoryBackend = z.infer<typeof clinicalHistoryBackendSchema>;
 
 function formatDate(v: string | Date): string {
   return typeof v === 'string' ? v : v.toISOString();

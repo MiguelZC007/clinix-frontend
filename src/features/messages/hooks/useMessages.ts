@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { PaginatedData } from '@/types/contracts/api-response';
-import { getConversations, getConversation, getMessages, sendMessage, markAsRead } from '../api/messages.api';
+import { getConversations, getConversation, getMessages, sendMessage, markAsRead, patchConversation } from '../api/messages.api';
 import type { Conversation, Message, SendMessageRequest } from '../types/message.types';
 
 type UseConversationsState = {
@@ -143,7 +143,7 @@ export function useSendMessage() {
   };
 }
 
-export function useMarkAsRead() {
+function useMarkAsRead() {
   const [state, setState] = useState<MutationState>({
     isLoading: false,
     error: null,
@@ -154,6 +154,30 @@ export function useMarkAsRead() {
     try {
       await markAsRead(conversationId);
       setState({ isLoading: false, error: null });
+    } catch (error) {
+      setState({ isLoading: false, error: error as Error });
+      throw error;
+    }
+  }, []);
+
+  return {
+    ...state,
+    mutate,
+  };
+}
+
+export function usePatchConversation() {
+  const [state, setState] = useState<MutationState>({
+    isLoading: false,
+    error: null,
+  });
+
+  const mutate = useCallback(async (conversationId: string): Promise<Conversation> => {
+    setState({ isLoading: true, error: null });
+    try {
+      const result = await patchConversation(conversationId, {});
+      setState({ isLoading: false, error: null });
+      return result;
     } catch (error) {
       setState({ isLoading: false, error: error as Error });
       throw error;

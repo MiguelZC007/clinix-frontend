@@ -62,7 +62,7 @@ type UseAppointmentState = {
   error: Error | null;
 };
 
-export function useAppointment(id: string) {
+function useAppointment(id: string) {
   const [state, setState] = useState<UseAppointmentState>({
     data: null,
     isLoading: true,
@@ -151,7 +151,7 @@ export function useCreateAppointment() {
   };
 }
 
-export function useUpdateAppointment() {
+function useUpdateAppointment() {
   const [state, setState] = useState<MutationState>({
     isLoading: false,
     error: null,
@@ -175,7 +175,7 @@ export function useUpdateAppointment() {
   };
 }
 
-export function useCancelAppointment() {
+function useCancelAppointment() {
   const [state, setState] = useState<MutationState>({
     isLoading: false,
     error: null,

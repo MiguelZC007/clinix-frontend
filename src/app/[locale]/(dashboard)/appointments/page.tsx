@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import { Plus } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
 import {
@@ -18,22 +17,17 @@ import type { Appointment, AppointmentStatus } from "@/features/appointments/typ
 import { useAppointmentList } from "@/features/appointments/hooks/useAppointments";
 import { PageHeader } from "@/ui/molecules/PageHeader";
 import { ErrorState } from "@/ui/molecules/ErrorState";
+import { StatusBadge } from "@/ui/atoms/StatusBadge";
 
-function getStatusBadge(
-  status: AppointmentStatus,
-  t: ReturnType<typeof useTranslations>,
-) {
-  const variants: Record<
-    AppointmentStatus,
-    "default" | "secondary" | "destructive"
-  > = {
-    scheduled: "default",
-    completed: "secondary",
-    cancelled: "destructive",
-    pending: "default",
-    confirmed: "default",
-  };
+const STATUS_VARIANT: Record<AppointmentStatus, "default" | "success" | "warning" | "error"> = {
+  scheduled: "default",
+  completed: "success",
+  cancelled: "error",
+  pending: "warning",
+  confirmed: "default",
+};
 
+function getStatusLabel(status: AppointmentStatus, t: ReturnType<typeof useTranslations>): string {
   const labels: Record<AppointmentStatus, string> = {
     scheduled: t("appointments.scheduled"),
     completed: t("appointments.completed"),
@@ -41,8 +35,7 @@ function getStatusBadge(
     pending: t("appointments.pending") || "Pendiente",
     confirmed: t("appointments.confirmed") || "Confirmada",
   };
-
-  return <Badge variant={variants[status]}>{labels[status]}</Badge>;
+  return labels[status];
 }
 
 function getCurrentWeekRange(): { startDate: string; endDate: string } {
@@ -211,7 +204,10 @@ export default function AppointmentsPage() {
                 <p className="text-sm text-muted-foreground mb-1">
                   {t("appointments.status")}
                 </p>
-                {getStatusBadge(selectedAppointment.status, t)}
+                <StatusBadge
+                  status={getStatusLabel(selectedAppointment.status, t)}
+                  variant={STATUS_VARIANT[selectedAppointment.status]}
+                />
               </div>
               <div className="flex gap-2 pt-4">
                 {selectedAppointment.status === "scheduled" && (

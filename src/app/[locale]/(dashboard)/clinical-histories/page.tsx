@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, LayoutGrid, Table } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useClinicalHistoryList } from '@/features/clinical-histories/hooks/useClinicalHistories';
 import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
 import { ClinicalHistoryTable } from '@/features/clinical-histories/ui/ClinicalHistoryTable';
+import { ClinicalHistoryCard } from '@/features/clinical-histories/ui/ClinicalHistoryCard';
 import { ClinicalHistoryFilters } from '@/features/clinical-histories/ui/ClinicalHistoryFilters';
 import { useRouter } from '@/i18n/navigation';
 import { EmptyState } from '@/ui/molecules/EmptyState';
@@ -15,6 +16,7 @@ import { TableSkeleton } from '@/ui/molecules/TableSkeleton';
 import { ListPageTemplate } from '@/ui/templates/ListPageTemplate';
 
 const PAGE_SIZE = 10;
+type ViewMode = 'table' | 'cards';
 
 export default function ClinicalHistoriesPage() {
   const t = useTranslations();
@@ -23,6 +25,7 @@ export default function ClinicalHistoriesPage() {
   const [search, setSearch] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [viewMode, setViewMode] = useState<ViewMode>('table');
 
   const { data, isLoading, error, refetch } = useClinicalHistoryList({
     page,
@@ -99,13 +102,47 @@ export default function ClinicalHistoriesPage() {
           onAction={() => router.push('/clinical-histories/new')}
         />
       ) : (
-        <ClinicalHistoryTable
-          histories={histories}
-          page={page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-          onView={handleView}
-        />
+        <>
+          <div className="flex items-center gap-2 mb-4">
+            <Button
+              variant={viewMode === 'table' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('table')}
+              aria-pressed={viewMode === 'table'}
+            >
+              <Table className="h-4 w-4 mr-1" />
+              {t('common.table') || 'Tabla'}
+            </Button>
+            <Button
+              variant={viewMode === 'cards' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('cards')}
+              aria-pressed={viewMode === 'cards'}
+            >
+              <LayoutGrid className="h-4 w-4 mr-1" />
+              {t('common.cards') || 'Tarjetas'}
+            </Button>
+          </div>
+          {viewMode === 'table' ? (
+            <ClinicalHistoryTable
+              histories={histories}
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              onView={handleView}
+            />
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {histories.map((history) => (
+                <ClinicalHistoryCard
+                  key={history.id}
+                  history={history}
+                  onClick={() => handleView(history)}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </ListPageTemplate>
   );
