@@ -13,7 +13,7 @@ import {
   type DayButton,
 } from "react-day-picker";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { cn, toDateLocale } from "@/lib/utils";
+import { cn, toDateLocale, toDateFnsLocale } from "@/lib/utils";
 
 function Calendar({
   className,
@@ -28,12 +28,14 @@ function Calendar({
   buttonVariant?: React.ComponentProps<typeof Button>["variant"];
 }) {
   const defaultClassNames = getDefaultClassNames();
-  const appLocale = toDateLocale(useLocale());
+  const rawLocale = useLocale();
+  const appLocale = toDateLocale(rawLocale);
+  const dayPickerLocale = toDateFnsLocale(rawLocale);
 
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      locale={appLocale}
+      locale={dayPickerLocale}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,

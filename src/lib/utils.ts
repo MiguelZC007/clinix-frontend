@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { enUS, es } from "date-fns/locale";
+import type { Locale } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -13,6 +15,15 @@ export function cn(...inputs: ClassValue[]) {
 const LOCALE_MAP: Record<string, string> = { es: "es-ES", en: "en-US" };
 export function toDateLocale(appLocale: string): string {
   return LOCALE_MAP[appLocale] ?? appLocale;
+}
+
+/**
+ * Returns the date-fns locale object for the given app locale code.
+ * Use this with react-day-picker v9's `locale` prop.
+ */
+const DATE_FNS_LOCALE_MAP: Record<string, Locale> = { es, en: enUS };
+export function toDateFnsLocale(appLocale: string): Locale {
+  return DATE_FNS_LOCALE_MAP[appLocale] ?? enUS;
 }
 
 /**
