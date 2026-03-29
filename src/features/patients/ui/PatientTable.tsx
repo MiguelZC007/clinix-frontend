@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { MoreHorizontal, Eye, Pencil, Trash2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
+import { MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { DataTable, type Column } from '@/ui/organisms/DataTable';
-import type { Patient } from '../types/patient.types';
+} from "@/components/ui/dropdown-menu";
+import { DataTable, type Column } from "@/ui/organisms/DataTable";
+import type { Patient } from "../types/patient.types";
 
 type PatientTableProps = {
   patients: Patient[];
@@ -35,47 +35,58 @@ export function PatientTable({
 
   const columns: Column<Patient>[] = [
     {
-      key: 'fullName',
-      headerKey: 'patients.fullName',
+      key: "fullName",
+      headerKey: "patients.fullName",
       render: (patient) => `${patient.name} ${patient.lastName}`,
     },
     {
-      key: 'phone',
-      headerKey: 'patients.phone',
+      key: "phone",
+      headerKey: "patients.phone",
     },
     {
-      key: 'email',
-      headerKey: 'patients.email',
+      key: "email",
+      headerKey: "patients.email",
     },
     {
-      key: 'actions',
-      headerKey: 'common.actions',
-      className: 'w-[80px]',
+      key: "actions",
+      headerKey: "common.actions",
+      className: "w-[80px]",
       render: (patient) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => onView(patient)}>
-              <Eye className="mr-2 h-4 w-4" />
-              {t('common.view')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit(patient)}>
-              <Pencil className="mr-2 h-4 w-4" />
-              {t('common.edit')}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete(patient)}
-              className="text-destructive"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              {t('common.delete')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+          role="group"
+        >
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                aria-label={t("common.actions")}
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onView(patient)}>
+                <Eye className="mr-2 h-4 w-4" />
+                {t("common.view")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit(patient)}>
+                <Pencil className="mr-2 h-4 w-4" />
+                {t("common.edit")}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(patient)}
+                className="text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                {t("common.delete")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       ),
     },
   ];

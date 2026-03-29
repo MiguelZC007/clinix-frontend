@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
-import { SearchInput } from '@/ui/molecules/SearchInput';
-import { DateRangeFilters } from '@/ui/molecules/DateRangeFilters';
+import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { DateRangeFilters } from "@/ui/molecules/DateRangeFilters";
+import { SearchInput } from "@/ui/molecules/SearchInput";
 
 type ClinicalHistoryFiltersProps = {
   search: string;
@@ -25,7 +25,7 @@ export function ClinicalHistoryFilters({
   onClear,
 }: ClinicalHistoryFiltersProps) {
   const t = useTranslations();
-  const hasFilters = search !== '' || dateFrom !== '' || dateTo !== '';
+  const hasFilters = search !== "" || dateFrom !== "" || dateTo !== "";
 
   return (
     <div className="flex flex-wrap items-end gap-4">
@@ -33,7 +33,7 @@ export function ClinicalHistoryFilters({
         <SearchInput
           value={search}
           onChange={onSearchChange}
-          placeholder={t('clinicalHistories.searchPlaceholder')}
+          placeholder={t("clinicalHistories.searchPlaceholder")}
           className="w-full"
         />
       </div>
@@ -42,8 +42,9 @@ export function ClinicalHistoryFilters({
         dateTo={dateTo}
         onDateFromChange={onDateFromChange}
         onDateToChange={onDateToChange}
-        dateFromLabel={t('clinicalHistories.dateFrom')}
-        dateToLabel={t('clinicalHistories.dateTo')}
+        dateFromLabel={t("clinicalHistories.dateFrom")}
+        dateToLabel={t("clinicalHistories.dateTo")}
+        calendarButtonLabel={t("common.openCalendar")}
         idPrefix="clinical-history"
       />
       {hasFilters && onClear && (
@@ -54,7 +55,7 @@ export function ClinicalHistoryFilters({
           onClick={onClear}
           data-testid="clinical-history-filters-clear"
         >
-          {t('clinicalHistories.clearFilters')}
+          {t("clinicalHistories.clearFilters")}
         </Button>
       )}
     </div>

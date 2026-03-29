@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,19 +11,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
-import { FormSection } from '@/ui/molecules/FormSection';
-import { patientFormSchema, type PatientFormData } from '../schemas/patient.schema';
-import type { Patient } from '../types/patient.types';
+} from "@/components/ui/select";
+import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
+import { FormSection } from "@/ui/molecules/FormSection";
+import {
+  patientFormSchema,
+  type PatientFormData,
+} from "../schemas/patient.schema";
+import type { Patient } from "../types/patient.types";
 
 type PatientFormProps = {
   patient?: Patient;
@@ -32,19 +35,24 @@ type PatientFormProps = {
   isLoading?: boolean;
 };
 
-export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientFormProps) {
+export function PatientForm({
+  patient,
+  onSubmit,
+  onCancel,
+  isLoading,
+}: PatientFormProps) {
   const t = useTranslations();
 
   const form = useForm<PatientFormData>({
     resolver: zodResolver(patientFormSchema),
     defaultValues: {
-      name: patient?.name ?? '',
-      lastName: patient?.lastName ?? '',
-      birthDate: patient?.birthDate ?? '',
-      gender: patient?.gender ?? 'male',
-      phone: patient?.phone ?? '',
-      email: patient?.email ?? '',
-      address: patient?.address ?? '',
+      name: patient?.name ?? "",
+      lastName: patient?.lastName ?? "",
+      birthDate: patient?.birthDate ?? "",
+      gender: patient?.gender ?? "male",
+      phone: patient?.phone ?? "",
+      email: patient?.email ?? "",
+      address: patient?.address ?? "",
     },
   });
 
@@ -56,8 +64,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         <FormSection
-          title={t('patients.personalInfo')}
-          description={t('patients.personalInfoDescription')}
+          title={t("patients.personalInfo")}
+          description={t("patients.personalInfoDescription")}
         >
           <div className="grid gap-4 md:grid-cols-2">
             <FormField
@@ -65,7 +73,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('patients.name')}</FormLabel>
+                  <FormLabel>{t("patients.name")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -79,7 +87,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               name="lastName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('patients.lastName')}</FormLabel>
+                  <FormLabel>{t("patients.lastName")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -93,7 +101,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               name="birthDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('patients.birthDate')}</FormLabel>
+                  <FormLabel>{t("patients.birthDate")}</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -107,17 +115,24 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('patients.gender')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel>{t("patients.gender")}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="male">{t('patients.male')}</SelectItem>
-                      <SelectItem value="female">{t('patients.female')}</SelectItem>
-                      <SelectItem value="other">{t('patients.other')}</SelectItem>
+                      <SelectItem value="male">{t("patients.male")}</SelectItem>
+                      <SelectItem value="female">
+                        {t("patients.female")}
+                      </SelectItem>
+                      <SelectItem value="other">
+                        {t("patients.other")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -128,8 +143,8 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
         </FormSection>
 
         <FormSection
-          title={t('patients.contactInfo')}
-          description={t('patients.contactInfoDescription')}
+          title={t("patients.contactInfo")}
+          description={t("patients.contactInfoDescription")}
         >
           <div className="grid gap-4 md:grid-cols-2">
             <FormField
@@ -137,7 +152,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('patients.phone')}</FormLabel>
+                  <FormLabel>{t("patients.phone")}</FormLabel>
                   <FormControl>
                     <Input type="tel" {...field} />
                   </FormControl>
@@ -151,7 +166,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('patients.email')}</FormLabel>
+                  <FormLabel>{t("patients.email")}</FormLabel>
                   <FormControl>
                     <Input type="email" {...field} />
                   </FormControl>
@@ -165,7 +180,7 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
               name="address"
               render={({ field }) => (
                 <FormItem className="md:col-span-2">
-                  <FormLabel>{t('patients.address')}</FormLabel>
+                  <FormLabel>{t("patients.address")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -177,12 +192,17 @@ export function PatientForm({ patient, onSubmit, onCancel, isLoading }: PatientF
         </FormSection>
 
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
-            {t('common.cancel')}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isLoading}
+          >
+            {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={isLoading}>
             {isLoading && <LoadingSpinner size="sm" className="mr-2" />}
-            {t('common.save')}
+            {t("common.save")}
           </Button>
         </div>
       </form>

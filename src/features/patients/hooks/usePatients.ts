@@ -1,13 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import type { PaginatedData } from '@/types/contracts/api-response';
-import { getPatients, getPatientById, createPatient, updatePatient, deletePatient, getPatientAntecedents } from '../api/patients.api';
-import { getClinicalHistories, getPatientClinicHistoryFilterOptions } from '@/features/clinical-histories/api/clinical-histories.api';
-import type { PatientClinicHistoryFilterOptions } from '@/features/clinical-histories/api/clinical-histories.api';
-import type { Patient, CreatePatientRequest, UpdatePatientRequest, PatientsListParams, PatientAntecedents } from '../types/patient.types';
-import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
-import type { ClinicalHistoriesListParams } from '@/features/clinical-histories/types/clinical-history.types';
+import { useState, useEffect, useCallback } from "react";
+import {
+  getClinicalHistories,
+  getPatientClinicHistoryFilterOptions,
+} from "@/features/clinical-histories/api/clinical-histories.api";
+import type { PatientClinicHistoryFilterOptions } from "@/features/clinical-histories/api/clinical-histories.api";
+import type { ClinicalHistory } from "@/features/clinical-histories/types/clinical-history.types";
+import type { ClinicalHistoriesListParams } from "@/features/clinical-histories/types/clinical-history.types";
+import { toError } from "@/lib/utils";
+import type { PaginatedData } from "@/types/contracts/api-response";
+import {
+  getPatients,
+  getPatientById,
+  createPatient,
+  updatePatient,
+  deletePatient,
+  getPatientAntecedents,
+} from "../api/patients.api";
+import type {
+  Patient,
+  CreatePatientRequest,
+  UpdatePatientRequest,
+  PatientsListParams,
+  PatientAntecedents,
+} from "../types/patient.types";
 
 type UsePatientListState = {
   data: PaginatedData<Patient> | null;
@@ -36,7 +53,7 @@ export function usePatientList(params?: PatientsListParams) {
       const data = await getPatients(requestParams);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, [page, pageSize, search]);
 
@@ -69,7 +86,7 @@ export function usePatient(id: string) {
       const data = await getPatientById(id);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, [id]);
 
@@ -106,7 +123,7 @@ export function usePatientAntecedents(patientId: string | undefined) {
       const data = await getPatientAntecedents(patientId);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, [patientId]);
 
@@ -177,7 +194,7 @@ export function usePatientClinicHistories(params: {
       setState({
         data: null,
         isLoading: false,
-        error: error as Error,
+        error: toError(error),
       });
     }
   }, [patientId, page, pageSize, dateFrom, dateTo, doctorId, specialtyId]);
@@ -198,12 +215,16 @@ type UsePatientClinicHistoryFilterOptionsState = {
   error: Error | null;
 };
 
-export function usePatientClinicHistoryFilterOptions(patientId: string | undefined) {
-  const [state, setState] = useState<UsePatientClinicHistoryFilterOptionsState>({
-    data: null,
-    isLoading: false,
-    error: null,
-  });
+export function usePatientClinicHistoryFilterOptions(
+  patientId: string | undefined,
+) {
+  const [state, setState] = useState<UsePatientClinicHistoryFilterOptionsState>(
+    {
+      data: null,
+      isLoading: false,
+      error: null,
+    },
+  );
 
   const fetchOptions = useCallback(async () => {
     if (!patientId) {
@@ -218,7 +239,7 @@ export function usePatientClinicHistoryFilterOptions(patientId: string | undefin
       setState({
         data: null,
         isLoading: false,
-        error: error as Error,
+        error: toError(error),
       });
     }
   }, [patientId]);
@@ -244,17 +265,20 @@ export function useCreatePatient() {
     error: null,
   });
 
-  const mutate = useCallback(async (data: CreatePatientRequest): Promise<Patient> => {
-    setState({ isLoading: true, error: null });
-    try {
-      const result = await createPatient(data);
-      setState({ isLoading: false, error: null });
-      return result;
-    } catch (error) {
-      setState({ isLoading: false, error: error as Error });
-      throw error;
-    }
-  }, []);
+  const mutate = useCallback(
+    async (data: CreatePatientRequest): Promise<Patient> => {
+      setState({ isLoading: true, error: null });
+      try {
+        const result = await createPatient(data);
+        setState({ isLoading: false, error: null });
+        return result;
+      } catch (error) {
+        setState({ isLoading: false, error: toError(error) });
+        throw error;
+      }
+    },
+    [],
+  );
 
   return {
     ...state,
@@ -268,17 +292,20 @@ export function useUpdatePatient() {
     error: null,
   });
 
-  const mutate = useCallback(async (id: string, data: UpdatePatientRequest): Promise<Patient> => {
-    setState({ isLoading: true, error: null });
-    try {
-      const result = await updatePatient(id, data);
-      setState({ isLoading: false, error: null });
-      return result;
-    } catch (error) {
-      setState({ isLoading: false, error: error as Error });
-      throw error;
-    }
-  }, []);
+  const mutate = useCallback(
+    async (id: string, data: UpdatePatientRequest): Promise<Patient> => {
+      setState({ isLoading: true, error: null });
+      try {
+        const result = await updatePatient(id, data);
+        setState({ isLoading: false, error: null });
+        return result;
+      } catch (error) {
+        setState({ isLoading: false, error: toError(error) });
+        throw error;
+      }
+    },
+    [],
+  );
 
   return {
     ...state,
@@ -298,7 +325,7 @@ export function useDeletePatient() {
       await deletePatient(id);
       setState({ isLoading: false, error: null });
     } catch (error) {
-      setState({ isLoading: false, error: error as Error });
+      setState({ isLoading: false, error: toError(error) });
       throw error;
     }
   }, []);

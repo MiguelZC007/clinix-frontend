@@ -1,14 +1,15 @@
 "use client";
 
 import { MessageSquare } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { cn, toDateLocale } from "@/lib/utils";
 import type { Conversation } from "../types/message.types";
 
-const previewMarkdownClasses = "text-xs text-muted-foreground [&>*]:m-0 [&>*:last-child]:mb-0";
+const previewMarkdownClasses =
+  "text-xs text-muted-foreground [&>*]:m-0 [&>*:last-child]:mb-0";
 const previewComponents = {
   p: ({ children }: { children?: React.ReactNode }) => (
     <span className={previewMarkdownClasses}>{children}</span>
@@ -22,14 +23,8 @@ const previewComponents = {
   code: ({ children }: { children?: React.ReactNode }) => (
     <code className="rounded bg-muted px-1 font-mono">{children}</code>
   ),
-  a: ({
-    href,
-    children,
-    ...props
-  }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-    <a href={href} className="underline hover:opacity-80" {...props}>
-      {children}
-    </a>
+  a: ({ children }: { children?: React.ReactNode }) => (
+    <span className="underline">{children}</span>
   ),
 };
 
@@ -45,6 +40,7 @@ export function ConversationItem({
   onClick,
 }: ConversationItemProps) {
   const t = useTranslations();
+  const dateLocale = toDateLocale(useLocale());
 
   const formatDate = (date: Date) => {
     const now = new Date();
@@ -54,7 +50,7 @@ export function ConversationItem({
     const isYesterday = date.toDateString() === yesterday.toDateString();
 
     if (isToday) {
-      const time = date.toLocaleTimeString([], {
+      const time = date.toLocaleTimeString(dateLocale, {
         hour: "2-digit",
         minute: "2-digit",
       });
@@ -63,7 +59,7 @@ export function ConversationItem({
     if (isYesterday) {
       return t("common.yesterday");
     }
-    return date.toLocaleDateString([], {
+    return date.toLocaleDateString(dateLocale, {
       day: "numeric",
       month: "short",
     });
@@ -77,11 +73,13 @@ export function ConversationItem({
     "";
 
   return (
-    <div
+    <button
+      type="button"
       className={cn(
-        "flex cursor-pointer items-center gap-3 p-3 transition-colors hover:bg-muted/50",
-        isActive && "bg-muted"
+        "flex w-full cursor-pointer items-center gap-3 p-3 text-left transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+        isActive && "bg-muted",
       )}
+      aria-current={isActive ? "true" : undefined}
       onClick={onClick}
     >
       <Avatar className="h-9 w-9 shrink-0 md:h-12 md:w-12">
@@ -91,21 +89,29 @@ export function ConversationItem({
       </Avatar>
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-sm font-medium text-foreground">{displayDate}</span>
+        <span className="text-sm font-medium text-foreground">
+          {displayDate}
+        </span>
         {preview ? (
           <div
             className={cn(
               "line-clamp-2 overflow-hidden text-xs text-muted-foreground",
-              "[&_p]:inline [&_strong]:font-semibold [&_a]:underline"
+              "[&_p]:inline [&_strong]:font-semibold [&_a]:underline",
             )}
             title={preview}
           >
-            <ReactMarkdown remarkPlugins={[remarkGfm]} components={previewComponents}>
+            <ReactMarkdown
+              skipHtml
+              remarkPlugins={[remarkGfm]}
+              allowedElements={["p", "strong", "em", "code", "del", "a", "br"]}
+              unwrapDisallowed
+              components={previewComponents}
+            >
               {preview}
             </ReactMarkdown>
           </div>
         ) : null}
       </div>
-    </div>
+    </button>
   );
 }

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useSession as useNextAuthSession } from 'next-auth/react';
-import { signOut } from 'next-auth/react';
-import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
-import { useRouter } from '@/i18n/navigation';
+import { useSession as useNextAuthSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { useRouter } from "@/i18n/navigation";
 
 export function useAuth() {
   const { data: session, status } = useNextAuthSession();
@@ -14,10 +14,10 @@ export function useAuth() {
   const logout = async () => {
     try {
       await signOut({ redirect: false });
-      toast.success(t('auth.logoutSuccess') || 'Sesión cerrada correctamente');
-      router.push('/login');
+      toast.success(t("auth.logoutSuccess"));
+      router.push("/login");
     } catch (_error) {
-      toast.error(t('auth.logoutError') || 'Error al cerrar sesión');
+      toast.error(t("auth.logoutError"));
     }
   };
 
@@ -25,8 +25,8 @@ export function useAuth() {
     session,
     user: session?.user,
     accessToken: session?.accessToken,
-    isAuthenticated: status === 'authenticated',
-    isLoading: status === 'loading',
+    isAuthenticated: status === "authenticated",
+    isLoading: status === "loading",
     logout,
   };
 }

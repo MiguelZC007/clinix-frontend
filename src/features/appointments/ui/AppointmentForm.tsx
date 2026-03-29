@@ -22,13 +22,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { PatientSearchSelect } from "@/features/patients/ui/PatientSearchSelect";
-import type { Specialty } from "../types/appointment.types";
 import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
 import { FormSection } from "@/ui/molecules/FormSection";
 import {
   appointmentFormSchema,
   type AppointmentFormData,
 } from "../schemas/appointment.schema";
+import type { Specialty } from "../types/appointment.types";
 
 type AppointmentFormProps = {
   specialties: Specialty[];

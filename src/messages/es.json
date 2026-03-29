@@ -1,4 +1,8 @@
 {
+  "metadata": {
+    "title": "Dashboard Médico",
+    "description": "Sistema de gestión médica"
+  },
   "common": {
     "appName": "Clínica San Miguel",
     "loading": "Cargando...",
@@ -22,7 +26,12 @@
     "yesterday": "Ayer",
     "date": "Fecha",
     "table": "Tabla",
-    "cards": "Tarjetas"
+    "cards": "Tarjetas",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "comingSoon": "Próximamente",
+    "loadError": "Error al cargar los datos. Por favor, intenta de nuevo",
+    "openCalendar": "Abrir calendario"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -32,6 +41,7 @@
     "messages": "Mensajes",
     "settings": "Configuración",
     "sidebar": "Navegación principal",
+    "sidebarDescription": "Navegación de la barra lateral de la aplicación",
     "openMenu": "Abrir menú",
     "expandSidebar": "Expandir barra lateral",
     "collapseSidebar": "Colapsar barra lateral"
@@ -78,8 +88,11 @@
       "sat": "Sáb",
       "sun": "Dom"
     },
+    "previousPeriod": "Período anterior",
+    "nextPeriod": "Período siguiente",
     "more": "+{count} más",
-    "noAppointments": "No hay citas para esta fecha"
+    "noAppointments": "No hay citas para esta fecha",
+    "viewSelector": "Selector de vista"
   },
   "dashboard": {
     "welcome": "Bienvenido al sistema",
@@ -131,6 +144,7 @@
     "searchPlaceholder": "Buscar por nombre...",
     "searchNoResults": "Sin coincidencias",
     "searchTypeToSearch": "Escriba para buscar",
+    "searchError": "Error al buscar pacientes",
     "selectPatient": "Seleccionar paciente",
     "deleteConfirmTitle": "Eliminar Paciente",
     "deleteConfirmDescription": "¿Estás seguro de que deseas eliminar este paciente? Esta acción no se puede deshacer.",
@@ -211,16 +225,22 @@
     "vitalSigns": "Signos Vitales",
     "vitalSignsDescription": "Registra los signos vitales del paciente",
     "bloodPressure": "Presión Arterial",
+    "bloodPressureUnit": "mmHg",
     "heartRate": "Frecuencia Cardíaca",
+    "heartRateUnit": "lpm",
     "temperature": "Temperatura",
+    "temperatureUnit": "°C",
     "weight": "Peso",
+    "weightUnit": "kg",
     "height": "Altura",
+    "heightUnit": "cm",
     "consultationInfo": "Información de Consulta",
     "consultationInfoDescription": "Detalles de la consulta médica",
     "emptyTitle": "No hay historiales",
     "emptyDescription": "Los historiales clínicos aparecerán aquí",
     "createdSuccess": "Historial creado exitosamente",
     "selectPatient": "Seleccionar paciente",
+    "selectPatientFirst": "Selecciona un paciente primero",
     "searchPatient": "Buscar paciente...",
     "createSuccess": "Historia clínica creada correctamente",
     "createError": "Error al crear historia clínica",
@@ -230,7 +250,11 @@
     "searchPlaceholder": "Buscar por paciente, diagnóstico, motivo...",
     "dateFrom": "Desde",
     "dateTo": "Hasta",
-    "clearFilters": "Limpiar filtros"
+    "clearFilters": "Limpiar filtros",
+    "notFound": "Historia clínica no encontrada",
+    "notFoundDescription": "La historia clínica solicitada no existe o fue eliminada",
+    "loadAppointmentsError": "Error al cargar las citas del paciente",
+    "appointmentRequired": "Por favor selecciona una cita"
   },
   "messages": {
     "title": "Mensajes",
@@ -244,18 +268,19 @@
     "searchConversations": "Buscar conversaciones...",
     "typeMessage": "Escribe un mensaje...",
     "send": "Enviar",
-    "recording": "Grabando...",
-    "holdToRecord": "Mantén presionado para grabar",
     "noConversations": "No hay conversaciones",
     "loadingMessages": "Cargando mensajes...",
     "noMessages": "Selecciona una conversación para comenzar",
     "startConversation": "Inicia la conversación",
-    "audio": "Mensaje de voz",
+    "selectConversation": "Selecciona una conversación",
+    "sendError": "Error al enviar mensaje",
+    "createError": "Error al crear conversación",
+    "loadError": "Error al cargar conversaciones",
     "you": "Tú",
     "online": "En línea",
     "offline": "Desconectado",
     "typing": "Escribiendo...",
-    "voiceMessage": "Mensaje de voz"
+    "unauthorized": "No tienes autorización. Por favor, inicia sesión"
   },
   "errors": {
     "required": "Este campo es requerido",
@@ -274,6 +299,7 @@
     "unknownError": "Ha ocurrido un error inesperado",
     "clientError": "Error en la solicitud. Por favor, verifica los datos.",
     "invalidOtp": "El código debe tener 6 dígitos",
-    "passwordsDoNotMatch": "Las contraseñas no coinciden"
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "endTimeBeforeStart": "La hora de fin debe ser posterior a la de inicio"
   }
 }

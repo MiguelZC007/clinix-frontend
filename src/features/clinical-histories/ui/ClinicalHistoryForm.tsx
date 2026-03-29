@@ -1,8 +1,8 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations, useLocale } from "next-intl";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getAppointmentsByPatient } from "@/features/appointments/api/appointments.api";
 import type { Appointment } from "@/features/appointments/types/appointment.types";
 import { PatientSearchSelect } from "@/features/patients/ui/PatientSearchSelect";
+import { toDateLocale } from "@/lib/utils";
 import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
 import { FormSection } from "@/ui/molecules/FormSection";
 import {
@@ -33,14 +34,17 @@ import {
 } from "../schemas/clinical-history.schema";
 
 type ClinicalHistoryFormProps = {
-  onSubmit: (data: ClinicalHistoryFormData, appointmentId: string) => Promise<void>;
+  onSubmit: (
+    data: ClinicalHistoryFormData,
+    appointmentId: string,
+  ) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
 };
 
-function formatAppointmentLabel(a: Appointment): string {
+function formatAppointmentLabel(a: Appointment, dateLocale: string): string {
   const d = a.date instanceof Date ? a.date : new Date(a.date);
-  const dateStr = d.toLocaleDateString(undefined, { dateStyle: "short" });
+  const dateStr = d.toLocaleDateString(dateLocale, { dateStyle: "short" });
   return `${dateStr} - ${a.reason || a.id}`;
 }
 
@@ -50,20 +54,21 @@ export function ClinicalHistoryForm({
   isLoading,
 }: ClinicalHistoryFormProps) {
   const t = useTranslations();
+  const dateLocale = toDateLocale(useLocale());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [appointmentId, setAppointmentId] = useState<string>("");
   const [loadingAppointments, setLoadingAppointments] = useState(false);
+  const [appointmentsError, setAppointmentsError] = useState(false);
 
   const form = useForm<ClinicalHistoryFormData>({
     resolver: zodResolver(clinicalHistoryFormSchema),
     defaultValues: {
       patientId: "",
+      appointmentId: "",
       reason: "",
       symptoms: "",
       physicalExam: "",
       diagnosis: "",
       treatment: "",
-      notes: "",
       vitalSigns: {
         bloodPressure: "",
         heartRate: 0,
@@ -76,34 +81,37 @@ export function ClinicalHistoryForm({
 
   const patientId = form.watch("patientId");
 
-  const loadAppointments = useCallback(async (pid: string) => {
-    if (!pid) {
-      setAppointments([]);
-      setAppointmentId("");
-      return;
-    }
-    setLoadingAppointments(true);
-    try {
-      const list = await getAppointmentsByPatient(pid);
-      setAppointments(list);
-      setAppointmentId("");
-    } catch {
-      setAppointments([]);
-      setAppointmentId("");
-    } finally {
-      setLoadingAppointments(false);
-    }
-  }, []);
+  const loadAppointments = useCallback(
+    async (pid: string) => {
+      if (!pid) {
+        setAppointments([]);
+        form.setValue("appointmentId", "");
+        setAppointmentsError(false);
+        return;
+      }
+      setLoadingAppointments(true);
+      setAppointmentsError(false);
+      try {
+        const list = await getAppointmentsByPatient(pid);
+        setAppointments(list);
+        form.setValue("appointmentId", "");
+      } catch {
+        setAppointments([]);
+        form.setValue("appointmentId", "");
+        setAppointmentsError(true);
+      } finally {
+        setLoadingAppointments(false);
+      }
+    },
+    [form],
+  );
 
   useEffect(() => {
     loadAppointments(patientId);
   }, [patientId, loadAppointments]);
 
   const handleSubmit = async (data: ClinicalHistoryFormData) => {
-    if (!appointmentId) {
-      return;
-    }
-    await onSubmit(data, appointmentId);
+    await onSubmit(data, data.appointmentId);
   };
 
   return (
@@ -132,35 +140,58 @@ export function ClinicalHistoryForm({
         </FormSection>
 
         <FormSection title={t("clinicalHistories.selectAppointment")}>
-          <FormItem>
-            <FormLabel>{t("clinicalHistories.selectAppointment")}</FormLabel>
-            <Select
-              value={appointmentId}
-              onValueChange={setAppointmentId}
-              disabled={!patientId || loadingAppointments || isLoading}
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={
-                    loadingAppointments
-                      ? t("common.loading")
-                      : !patientId
-                        ? t("clinicalHistories.selectPatient")
-                        : appointments.length === 0
-                          ? t("common.noResults")
-                          : t("clinicalHistories.selectAppointment")
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {appointments.map((a) => (
-                  <SelectItem key={a.id} value={a.id}>
-                    {formatAppointmentLabel(a)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormItem>
+          <FormField
+            control={form.control}
+            name="appointmentId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  {t("clinicalHistories.selectAppointment")}
+                </FormLabel>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={
+                      !patientId ||
+                      loadingAppointments ||
+                      isLoading ||
+                      appointmentsError
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={
+                          loadingAppointments
+                            ? t("common.loading")
+                            : appointmentsError
+                              ? t("common.error")
+                              : !patientId
+                                ? t("clinicalHistories.selectPatientFirst")
+                                : appointments.length === 0
+                                  ? t("common.noResults")
+                                  : t("clinicalHistories.selectAppointment")
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {appointments.map((a) => (
+                        <SelectItem key={a.id} value={a.id}>
+                          {formatAppointmentLabel(a, dateLocale)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                {appointmentsError && (
+                  <p className="text-sm text-destructive mt-1">
+                    {t("clinicalHistories.loadAppointmentsError")}
+                  </p>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </FormSection>
 
         <FormSection
@@ -175,7 +206,7 @@ export function ClinicalHistoryForm({
                 <FormItem>
                   <FormLabel>{t("clinicalHistories.bloodPressure")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="120/80" {...field} />
+                    <Input placeholder="120/80 mmHg" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -191,9 +222,16 @@ export function ClinicalHistoryForm({
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="72"
+                      placeholder="72 bpm"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? undefined
+                            : Number(e.target.value),
+                        )
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -211,9 +249,16 @@ export function ClinicalHistoryForm({
                     <Input
                       type="number"
                       step="0.1"
-                      placeholder="36.5"
+                      placeholder="36.5 °C"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? undefined
+                            : Number(e.target.value),
+                        )
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -231,9 +276,16 @@ export function ClinicalHistoryForm({
                     <Input
                       type="number"
                       step="0.1"
-                      placeholder="70"
+                      placeholder="70 kg"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? undefined
+                            : Number(e.target.value),
+                        )
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -250,9 +302,16 @@ export function ClinicalHistoryForm({
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="170"
+                      placeholder="170 cm"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? undefined
+                            : Number(e.target.value),
+                        )
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -336,20 +395,6 @@ export function ClinicalHistoryForm({
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("clinicalHistories.notes")}</FormLabel>
-                  <FormControl>
-                    <Textarea rows={2} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
         </FormSection>
 
@@ -357,7 +402,7 @@ export function ClinicalHistoryForm({
           <Button type="button" variant="outline" onClick={onCancel}>
             {t("common.cancel")}
           </Button>
-          <Button type="submit" disabled={isLoading || !appointmentId}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading && <LoadingSpinner size="sm" className="mr-2" />}
             {t("common.save")}
           </Button>

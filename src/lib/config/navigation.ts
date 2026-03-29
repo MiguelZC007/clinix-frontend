@@ -1,4 +1,10 @@
-import { LayoutDashboard, Users, FileText, Calendar, MessageSquare } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  FileText,
+  Calendar,
+  MessageSquare,
+} from "lucide-react";
 
 export type NavItem = {
   titleKey: string;
@@ -9,32 +15,32 @@ export type NavItem = {
 
 export const sidebarNavItems: NavItem[] = [
   {
-    titleKey: 'navigation.dashboard',
-    href: '/',
+    titleKey: "navigation.dashboard",
+    href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    titleKey: 'navigation.patients',
-    href: '/patients',
+    titleKey: "navigation.patients",
+    href: "/patients",
     icon: Users,
     children: [
-      { titleKey: 'patients.title', href: '/patients' },
-      { titleKey: 'patients.newPatient', href: '/patients/new' },
+      { titleKey: "patients.title", href: "/patients" },
+      { titleKey: "patients.newPatient", href: "/patients/new" },
     ],
   },
   {
-    titleKey: 'navigation.appointments',
-    href: '/appointments',
+    titleKey: "navigation.appointments",
+    href: "/appointments",
     icon: Calendar,
   },
   {
-    titleKey: 'navigation.messages',
-    href: '/messages',
+    titleKey: "navigation.messages",
+    href: "/messages",
     icon: MessageSquare,
   },
   {
-    titleKey: 'navigation.clinicalHistories',
-    href: '/clinical-histories',
+    titleKey: "navigation.clinicalHistories",
+    href: "/clinical-histories",
     icon: FileText,
   },
 ];

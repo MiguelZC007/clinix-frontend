@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitest/config';
-import { loadEnv } from 'vite';
 import path from 'path';
 import react from '@vitejs/plugin-react';
+import { loadEnv } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 const envDir = path.resolve(process.cwd());
 const env = loadEnv('', envDir, '');

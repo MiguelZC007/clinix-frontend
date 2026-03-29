@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ConversationList } from "@/features/messages/ui/ConversationList";
-import { ChatWindow } from "@/features/messages/ui/ChatWindow";
-import type { Conversation } from "@/features/messages/types/message.types";
 import { createConversation } from "@/features/messages/api/messages.api";
 import {
   useConversations,
@@ -13,9 +11,14 @@ import {
   useSendMessage,
   usePatchConversation,
 } from "@/features/messages/hooks/useMessages";
+import type { Conversation } from "@/features/messages/types/message.types";
+import { ChatWindow } from "@/features/messages/ui/ChatWindow";
+import { ConversationList } from "@/features/messages/ui/ConversationList";
 import { useAuth } from "@/lib/auth/hooks";
+import { getSafeErrorMessage } from "@/lib/utils/error-handler";
 
 export default function MessagesPage() {
+  const t = useTranslations();
   const [activeConversation, setActiveConversation] =
     useState<Conversation | null>(null);
   const { user } = useAuth();
@@ -27,14 +30,12 @@ export default function MessagesPage() {
     error: conversationsError,
     refetch: refetchConversations,
   } = useConversations();
-  const {
-    data: conversationDetail,
-    refetch: refetchConversationDetail,
-  } = useConversation(activeConversation?.id ?? null);
+  const { data: conversationDetail, refetch: refetchConversationDetail } =
+    useConversation(activeConversation?.id ?? null);
   const {
     data: messagesData,
     isLoading: isLoadingMessages,
-    error: _messagesError,
+    error: messagesError,
     refetch: refetchMessages,
   } = useMessages(activeConversation?.id || null);
   const { mutate: sendMessageMutation, isLoading: isSending } =
@@ -45,51 +46,49 @@ export default function MessagesPage() {
   const messages = messagesData?.items || [];
   const conversationForChat = conversationDetail ?? activeConversation;
 
+  useEffect(() => {
+    if (messagesError) {
+      toast.error(t("messages.loadError"));
+    }
+  }, [messagesError, t]);
+
   const handleSendMessage = useCallback(
     async (content: string) => {
-      if (!activeConversation || !currentUserId) return;
+      if (!activeConversation) return;
+      if (!currentUserId) {
+        toast.error(t("messages.unauthorized"));
+        throw new Error("Missing current user id");
+      }
 
       try {
         await sendMessageMutation({
           conversationId: activeConversation.id,
-          type: "text",
           content,
         });
         refetchMessages();
         refetchConversationDetail();
+        refetchConversations();
       } catch (_error) {
-        toast.error("Error al enviar mensaje");
+        toast.error(t("messages.sendError"));
+        throw _error;
       }
     },
-    [activeConversation, currentUserId, sendMessageMutation, refetchMessages, refetchConversationDetail]
-  );
-
-  const handleSendAudio = useCallback(
-    async (audioBlob: Blob, duration: number) => {
-      if (!activeConversation || !currentUserId) return;
-
-      const audioUrl = URL.createObjectURL(audioBlob);
-
-      try {
-        await sendMessageMutation({
-          conversationId: activeConversation.id,
-          type: "audio",
-          content: "",
-          audioUrl,
-          audioDuration: duration,
-        });
-        refetchMessages();
-        refetchConversationDetail();
-      } catch (_error) {
-        toast.error("Error al enviar mensaje de audio");
-      }
-    },
-    [activeConversation, currentUserId, sendMessageMutation, refetchMessages, refetchConversationDetail]
+    [
+      activeConversation,
+      currentUserId,
+      sendMessageMutation,
+      refetchMessages,
+      refetchConversationDetail,
+      refetchConversations,
+      t,
+    ],
   );
 
   const handleBack = useCallback(() => {
     if (activeConversation) {
-      patchConversationMutation(activeConversation.id).catch(() => {});
+      patchConversationMutation(activeConversation.id).catch((err) => {
+        console.error("Failed to mark conversation as read:", err);
+      });
     }
     setActiveConversation(null);
   }, [activeConversation, patchConversationMutation]);
@@ -99,16 +98,26 @@ export default function MessagesPage() {
       const newConv = await createConversation();
       setActiveConversation(newConv);
       refetchConversations();
-    } catch (_error) {
-      toast.error("Error al crear conversación");
+    } catch (error) {
+      toast.error(t("messages.createError"));
+      throw error;
     }
-  }, [refetchConversations]);
+  }, [refetchConversations, t]);
 
   if (conversationsError) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
-        <div className="text-destructive">
-          Error al cargar conversaciones: {conversationsError.message}
+        <div className="flex flex-col items-center gap-3 text-center">
+          <p className="text-destructive">
+            {getSafeErrorMessage(conversationsError, t)}
+          </p>
+          <button
+            type="button"
+            className="text-sm text-primary underline hover:text-primary/80"
+            onClick={() => refetchConversations()}
+          >
+            {t("common.retry")}
+          </button>
         </div>
       </div>
     );
@@ -135,20 +144,34 @@ export default function MessagesPage() {
         }`}
       >
         {activeConversation ? (
-          <ChatWindow
-            conversation={conversationForChat}
-            messages={messages}
-            currentUserId={currentUserId}
-            onSendMessage={handleSendMessage}
-            onSendAudio={handleSendAudio}
-            onBack={handleBack}
-            isSending={isSending}
-            isLoadingMessages={isLoadingMessages}
-          />
+          messagesError ? (
+            <div className="flex flex-col items-center justify-center flex-1 gap-3 p-4 text-center">
+              <p className="text-destructive text-sm">
+                {t("messages.loadError")}
+              </p>
+              <button
+                type="button"
+                className="text-sm text-primary underline hover:text-primary/80"
+                onClick={() => refetchMessages()}
+              >
+                {t("common.retry")}
+              </button>
+            </div>
+          ) : (
+            <ChatWindow
+              conversation={conversationForChat}
+              messages={messages}
+              currentUserId={currentUserId}
+              onSendMessage={handleSendMessage}
+              onBack={handleBack}
+              isSending={isSending}
+              isLoadingMessages={isLoadingMessages}
+            />
+          )
         ) : (
           <div className="flex items-center justify-center h-full">
             <div className="text-muted-foreground">
-              Selecciona una conversación
+              {t("messages.selectConversation")}
             </div>
           </div>
         )}

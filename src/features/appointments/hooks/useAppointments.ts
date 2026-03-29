@@ -1,9 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import type { PaginatedData } from '@/types/contracts/api-response';
-import { getAppointments, getAppointmentById, createAppointment, updateAppointment, cancelAppointment, getSpecialties } from '../api/appointments.api';
-import type { Appointment, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentsListParams } from '../types/appointment.types';
+import { useState, useEffect, useCallback } from "react";
+import { toError } from "@/lib/utils";
+import type { PaginatedData } from "@/types/contracts/api-response";
+import {
+  getAppointments,
+  getAppointmentById,
+  createAppointment,
+  updateAppointment,
+  cancelAppointment,
+  getSpecialties,
+} from "../api/appointments.api";
+import type {
+  Appointment,
+  CreateAppointmentRequest,
+  UpdateAppointmentRequest,
+  AppointmentsListParams,
+} from "../types/appointment.types";
 
 type UseAppointmentListState = {
   data: PaginatedData<Appointment> | null;
@@ -31,18 +44,18 @@ export function useAppointmentList(params?: AppointmentsListParams) {
     try {
       const requestParams: AppointmentsListParams | undefined =
         page === undefined &&
-          pageSize === undefined &&
-          limit === undefined &&
-          date === undefined &&
-          startDate === undefined &&
-          endDate === undefined &&
-          status === undefined
+        pageSize === undefined &&
+        limit === undefined &&
+        date === undefined &&
+        startDate === undefined &&
+        endDate === undefined &&
+        status === undefined
           ? undefined
           : { page, pageSize, limit, date, startDate, endDate, status };
       const data = await getAppointments(requestParams);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, [page, pageSize, limit, date, startDate, endDate, status]);
 
@@ -62,7 +75,7 @@ type UseAppointmentState = {
   error: Error | null;
 };
 
-function useAppointment(id: string) {
+export function useAppointment(id: string) {
   const [state, setState] = useState<UseAppointmentState>({
     data: null,
     isLoading: true,
@@ -75,7 +88,7 @@ function useAppointment(id: string) {
       const data = await getAppointmentById(id);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, [id]);
 
@@ -108,7 +121,7 @@ export function useSpecialties() {
       const data = await getSpecialties();
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, []);
 
@@ -133,17 +146,20 @@ export function useCreateAppointment() {
     error: null,
   });
 
-  const mutate = useCallback(async (data: CreateAppointmentRequest): Promise<Appointment> => {
-    setState({ isLoading: true, error: null });
-    try {
-      const result = await createAppointment(data);
-      setState({ isLoading: false, error: null });
-      return result;
-    } catch (error) {
-      setState({ isLoading: false, error: error as Error });
-      throw error;
-    }
-  }, []);
+  const mutate = useCallback(
+    async (data: CreateAppointmentRequest): Promise<Appointment> => {
+      setState({ isLoading: true, error: null });
+      try {
+        const result = await createAppointment(data);
+        setState({ isLoading: false, error: null });
+        return result;
+      } catch (error) {
+        setState({ isLoading: false, error: toError(error) });
+        throw error;
+      }
+    },
+    [],
+  );
 
   return {
     ...state,
@@ -151,23 +167,29 @@ export function useCreateAppointment() {
   };
 }
 
-function useUpdateAppointment() {
+export function useUpdateAppointment() {
   const [state, setState] = useState<MutationState>({
     isLoading: false,
     error: null,
   });
 
-  const mutate = useCallback(async (id: string, data: UpdateAppointmentRequest): Promise<Appointment> => {
-    setState({ isLoading: true, error: null });
-    try {
-      const result = await updateAppointment(id, data);
-      setState({ isLoading: false, error: null });
-      return result;
-    } catch (error) {
-      setState({ isLoading: false, error: error as Error });
-      throw error;
-    }
-  }, []);
+  const mutate = useCallback(
+    async (
+      id: string,
+      data: UpdateAppointmentRequest,
+    ): Promise<Appointment> => {
+      setState({ isLoading: true, error: null });
+      try {
+        const result = await updateAppointment(id, data);
+        setState({ isLoading: false, error: null });
+        return result;
+      } catch (error) {
+        setState({ isLoading: false, error: toError(error) });
+        throw error;
+      }
+    },
+    [],
+  );
 
   return {
     ...state,
@@ -175,7 +197,7 @@ function useUpdateAppointment() {
   };
 }
 
-function useCancelAppointment() {
+export function useCancelAppointment() {
   const [state, setState] = useState<MutationState>({
     isLoading: false,
     error: null,
@@ -188,7 +210,7 @@ function useCancelAppointment() {
       setState({ isLoading: false, error: null });
       return result;
     } catch (error) {
-      setState({ isLoading: false, error: error as Error });
+      setState({ isLoading: false, error: toError(error) });
       throw error;
     }
   }, []);

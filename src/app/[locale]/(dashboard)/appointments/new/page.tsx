@@ -12,7 +12,12 @@ import { useRouter } from "@/i18n/navigation";
 import { FormPageTemplate } from "@/ui/templates/FormPageTemplate";
 
 function toISOAppointment(dateStr: string, timeStr: string): string {
-  const date = new Date(`${dateStr}T${timeStr}`);
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  if (!year || !month || !day || hours === undefined || minutes === undefined) {
+    return "";
+  }
+  const date = new Date(Date.UTC(year, month - 1, day, hours, minutes));
   if (Number.isNaN(date.getTime())) return "";
   return date.toISOString();
 }
@@ -31,7 +36,7 @@ export default function NewAppointmentPage() {
     const startAppointment = toISOAppointment(data.date, data.startTime);
     const endAppointment = toISOAppointment(data.date, data.endTime);
     if (!startAppointment || !endAppointment) {
-      toast.error(t("appointments.invalidDateTime") ?? "Fecha u hora inválida");
+      toast.error(t("appointments.invalidDateTime"));
       return;
     }
     try {
@@ -42,12 +47,10 @@ export default function NewAppointmentPage() {
         endAppointment,
         reason: data.reason,
       });
-      toast.success(
-        t("appointments.createSuccess") ?? "Cita creada correctamente",
-      );
+      toast.success(t("appointments.createSuccess"));
       router.push("/appointments");
     } catch (_err) {
-      toast.error(t("appointments.createError") ?? "Error al crear la cita");
+      toast.error(t("appointments.createError"));
     }
   };
 
@@ -64,9 +67,7 @@ export default function NewAppointmentPage() {
     >
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">
-            {t("common.loading") ?? "Cargando..."}
-          </div>
+          <div className="text-muted-foreground">{t("common.loading")}</div>
         </div>
       ) : (
         <AppointmentForm

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, isSameDayUTC } from "@/lib/utils";
 import type { Appointment } from "../types/appointment.types";
 
 type CalendarDayViewProps = {
@@ -28,6 +28,10 @@ function getStatusColor(status: Appointment["status"]) {
       return "bg-emerald-500/90 hover:bg-emerald-500 border-emerald-600";
     case "cancelled":
       return "bg-red-500/90 hover:bg-red-500 border-red-600";
+    case "pending":
+      return "bg-yellow-500/90 hover:bg-yellow-500 border-yellow-600";
+    case "confirmed":
+      return "bg-green-500/90 hover:bg-green-500 border-green-600";
     default:
       return "bg-blue-500/90 hover:bg-blue-500 border-blue-600";
   }
@@ -38,12 +42,12 @@ export function CalendarDayView({
   appointments,
   onAppointmentClick,
 }: CalendarDayViewProps) {
-  const dayAppointments = appointments.filter(
-    (apt) => apt.date.toDateString() === currentDate.toDateString()
+  const dayAppointments = appointments.filter((apt) =>
+    isSameDayUTC(apt.date, currentDate),
   );
 
   const now = new Date();
-  const isToday = currentDate.toDateString() === now.toDateString();
+  const isToday = isSameDayUTC(currentDate, now);
   const currentTimeTop = isToday
     ? (now.getHours() * 60 + now.getMinutes()) * (64 / 60)
     : -1;
@@ -81,10 +85,19 @@ export function CalendarDayView({
                 key={apt.id}
                 className={cn(
                   "absolute left-1 right-1 rounded-md px-2 py-1 text-white text-sm cursor-pointer transition-colors border-l-4",
-                  getStatusColor(apt.status)
+                  getStatusColor(apt.status),
                 )}
                 style={getAppointmentStyle(apt.startTime, apt.endTime)}
+                role="button"
+                tabIndex={0}
+                aria-label={`${apt.patientName} — ${apt.startTime} - ${apt.endTime}`}
                 onClick={() => onAppointmentClick?.(apt)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onAppointmentClick?.(apt);
+                  }
+                }}
               >
                 <div className="font-medium truncate">{apt.patientName}</div>
                 <div className="text-xs opacity-90 truncate">

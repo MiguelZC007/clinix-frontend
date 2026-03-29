@@ -10,11 +10,12 @@ import {
   useDeletePatient,
 } from "@/features/patients/hooks/usePatients";
 import type { Patient } from "@/features/patients/types/patient.types";
-import { PatientTable } from "@/features/patients/ui/PatientTable";
 import { PatientFilters } from "@/features/patients/ui/PatientFilters";
+import { PatientTable } from "@/features/patients/ui/PatientTable";
 import { useRouter } from "@/i18n/navigation";
-import { EmptyState } from "@/ui/molecules/EmptyState";
+import { getSafeErrorMessage } from "@/lib/utils/error-handler";
 import { ConfirmDialog } from "@/ui/molecules/ConfirmDialog";
+import { EmptyState } from "@/ui/molecules/EmptyState";
 import { ErrorState } from "@/ui/molecules/ErrorState";
 import { TableSkeleton } from "@/ui/molecules/TableSkeleton";
 import { ListPageTemplate } from "@/ui/templates/ListPageTemplate";
@@ -55,13 +56,11 @@ export default function PatientsPage() {
 
     try {
       await deletePatientMutation(deletePatient.id);
-      toast.success(
-        t("patients.deleteSuccess") || "Paciente eliminado correctamente"
-      );
+      toast.success(t("patients.deleteSuccess"));
       setDeletePatient(null);
       refetch();
     } catch (_error) {
-      toast.error(t("patients.deleteError") || "Error al eliminar paciente");
+      toast.error(t("patients.deleteError"));
     }
   };
 
@@ -84,8 +83,9 @@ export default function PatientsPage() {
           <TableSkeleton columns={4} rows={10} />
         ) : error ? (
           <ErrorState
-            title={t("common.error") || "Error"}
-            description={error.message}
+            title={t("common.error")}
+            description={getSafeErrorMessage(error, t)}
+            retryLabel={t("common.retry")}
             onRetry={refetch}
           />
         ) : patients.length === 0 ? (

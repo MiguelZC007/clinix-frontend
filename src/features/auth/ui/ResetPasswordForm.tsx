@@ -1,14 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft } from 'lucide-react';
-import { useTranslations, useLocale } from 'next-intl';
-import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -16,35 +21,29 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Link } from '@/i18n/navigation';
-import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
-import { resetPassword } from '../api/auth.api';
-import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas/login.schema';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Link, useRouter } from "@/i18n/navigation";
+import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
+import { resetPassword } from "../api/auth.api";
+import {
+  resetPasswordSchema,
+  type ResetPasswordFormData,
+} from "../schemas/login.schema";
 
 export function ResetPasswordForm() {
   const t = useTranslations();
-  const locale = useLocale();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const phoneFromQuery = searchParams.get('phone') ?? '';
 
   const form = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      phone: phoneFromQuery,
-      code: '',
-      newPassword: '',
-      confirmPassword: '',
+      phone: "",
+      code: "",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
-
-  useEffect(() => {
-    if (phoneFromQuery && !form.getValues('phone')) {
-      form.setValue('phone', phoneFromQuery);
-    }
-  }, [phoneFromQuery, form]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     try {
@@ -54,19 +53,21 @@ export function ResetPasswordForm() {
         newPassword: data.newPassword,
         confirmPassword: data.confirmPassword,
       });
-      toast.success(t('auth.resetPasswordSuccess'));
-      router.push(`/${locale}/login`);
+      toast.success(t("auth.resetPasswordSuccess"));
+      router.push("/login");
     } catch {
-      toast.error(t('auth.resetPasswordError'));
+      toast.error(t("auth.resetPasswordError"));
     }
   };
 
   return (
     <Card>
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">{t('auth.resetPassword')}</CardTitle>
+        <CardTitle className="text-2xl text-center">
+          {t("auth.resetPassword")}
+        </CardTitle>
         <CardDescription className="text-center">
-          {t('auth.resetPasswordDescription')}
+          {t("auth.resetPasswordDescription")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -77,14 +78,9 @@ export function ResetPasswordForm() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.phone')}</FormLabel>
+                  <FormLabel>{t("auth.phone")}</FormLabel>
                   <FormControl>
-                    <Input
-                      type="tel"
-                      placeholder="+584241234567"
-                      readOnly={!!phoneFromQuery}
-                      {...field}
-                    />
+                    <Input type="tel" placeholder="+584241234567" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -95,7 +91,7 @@ export function ResetPasswordForm() {
               name="code"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.otpCode')}</FormLabel>
+                  <FormLabel>{t("auth.otpCode")}</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -113,7 +109,7 @@ export function ResetPasswordForm() {
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.newPassword')}</FormLabel>
+                  <FormLabel>{t("auth.newPassword")}</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
@@ -126,7 +122,7 @@ export function ResetPasswordForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.confirmPassword')}</FormLabel>
+                  <FormLabel>{t("auth.confirmPassword")}</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
@@ -142,7 +138,7 @@ export function ResetPasswordForm() {
               {form.formState.isSubmitting ? (
                 <LoadingSpinner size="sm" className="mr-2" />
               ) : null}
-              {t('auth.resetPassword')}
+              {t("auth.resetPassword")}
             </Button>
           </form>
         </Form>
@@ -153,7 +149,7 @@ export function ResetPasswordForm() {
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
         >
           <ArrowLeft className="h-4 w-4" />
-          {t('auth.backToLogin')}
+          {t("auth.backToLogin")}
         </Link>
       </CardFooter>
     </Card>

@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -15,13 +21,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Link, useRouter } from '@/i18n/navigation';
-import { showError } from '@/lib/utils/error-handler';
-import { LoadingSpinner } from '@/ui/atoms/LoadingSpinner';
-import { PhoneInputWithCountry } from '@/ui/molecules/PhoneInputWithCountry';
-import { loginSchema, type LoginFormData } from '../schemas/login.schema';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Link, useRouter } from "@/i18n/navigation";
+import { showError } from "@/lib/utils/error-handler";
+import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
+import { PhoneInputWithCountry } from "@/ui/molecules/PhoneInputWithCountry";
+import { loginSchema, type LoginFormData } from "../schemas/login.schema";
 
 export function LoginForm() {
   const t = useTranslations();
@@ -31,15 +37,15 @@ export function LoginForm() {
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      phone: '',
-      password: '',
+      phone: "",
+      password: "",
     },
   });
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         phone: data.phone,
         password: data.password,
         redirect: false,
@@ -49,22 +55,23 @@ export function LoginForm() {
         // El error puede ser genérico de NextAuth o específico del backend
         // Si es un error de red/conexión, ya se mostró en el interceptor
         // Mostramos un mensaje genérico aquí
-        const errorMessage = result.error === 'CredentialsSignin' 
-          ? t('auth.invalidCredentials') || 'Credenciales inválidas'
-          : t('auth.loginError') || 'Error al iniciar sesión';
-        
+        const errorMessage =
+          result.error === "CredentialsSignin"
+            ? t("auth.invalidCredentials")
+            : t("auth.loginError");
+
         toast.error(errorMessage);
         form.reset();
       } else if (result?.ok) {
-        toast.success(t('auth.loginSuccess') || 'Inicio de sesión exitoso');
+        toast.success(t("auth.loginSuccess"));
         // Usar router.push para respetar el locale (es por defecto)
         // Redirigir a pacientes que es una ruta que existe
-        router.push('/patients');
+        router.push("/patients");
       }
     } catch (error) {
       // El error ya se mostrará en el interceptor de axios
       // Pero mostramos un mensaje genérico aquí si es necesario
-      showError(error, { logError: true });
+      showError(error, { logError: true, t });
       form.reset();
     } finally {
       setIsLoading(false);
@@ -74,7 +81,9 @@ export function LoginForm() {
   return (
     <Card>
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">{t('auth.login')}</CardTitle>
+        <CardTitle className="text-2xl text-center">
+          {t("auth.login")}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -84,7 +93,7 @@ export function LoginForm() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.phone') || 'Teléfono'}</FormLabel>
+                  <FormLabel>{t("auth.phone")}</FormLabel>
                   <FormControl>
                     <PhoneInputWithCountry
                       value={field.value}
@@ -104,7 +113,7 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('auth.password')}</FormLabel>
+                  <FormLabel>{t("auth.password")}</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
@@ -118,10 +127,10 @@ export function LoginForm() {
               className="w-full"
               disabled={isLoading || form.formState.isSubmitting}
             >
-              {(isLoading || form.formState.isSubmitting) ? (
+              {isLoading || form.formState.isSubmitting ? (
                 <LoadingSpinner size="sm" className="mr-2" />
               ) : null}
-              {t('auth.login')}
+              {t("auth.login")}
             </Button>
           </form>
         </Form>
@@ -131,7 +140,7 @@ export function LoginForm() {
           href="/forgot-password"
           className="text-sm text-muted-foreground hover:text-primary"
         >
-          {t('auth.forgotPassword')}
+          {t("auth.forgotPassword")}
         </Link>
       </CardFooter>
     </Card>

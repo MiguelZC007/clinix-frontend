@@ -1,14 +1,18 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
-import { usePatient, useUpdatePatient } from '@/features/patients/hooks/usePatients';
-import type { PatientFormData } from '@/features/patients/schemas/patient.schema';
-import { PatientForm } from '@/features/patients/ui/PatientForm';
-import { useRouter } from '@/i18n/navigation';
-import { ErrorState } from '@/ui/molecules/ErrorState';
-import { FormPageTemplate } from '@/ui/templates/FormPageTemplate';
+import { use } from "react";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import {
+  usePatient,
+  useUpdatePatient,
+} from "@/features/patients/hooks/usePatients";
+import type { PatientFormData } from "@/features/patients/schemas/patient.schema";
+import { PatientForm } from "@/features/patients/ui/PatientForm";
+import { useRouter } from "@/i18n/navigation";
+import { getSafeErrorMessage } from "@/lib/utils/error-handler";
+import { ErrorState } from "@/ui/molecules/ErrorState";
+import { FormPageTemplate } from "@/ui/templates/FormPageTemplate";
 
 type EditPatientPageProps = {
   params: Promise<{ patientId: string }>;
@@ -19,7 +23,11 @@ export default function EditPatientPage({ params }: EditPatientPageProps) {
   const router = useRouter();
   const { patientId } = use(params);
 
-  const { data: patient, isLoading: isLoadingPatient, error } = usePatient(patientId);
+  const {
+    data: patient,
+    isLoading: isLoadingPatient,
+    error,
+  } = usePatient(patientId);
   const { mutate: updatePatient, isLoading: isUpdating } = useUpdatePatient();
 
   const handleSubmit = async (data: PatientFormData) => {
@@ -27,10 +35,10 @@ export default function EditPatientPage({ params }: EditPatientPageProps) {
 
     try {
       await updatePatient(patientId, data);
-      toast.success(t('patients.updateSuccess') || 'Paciente actualizado correctamente');
+      toast.success(t("patients.updateSuccess"));
       router.push(`/patients/${patientId}`);
     } catch (_error) {
-      toast.error(t('patients.updateError') || 'Error al actualizar paciente');
+      toast.error(t("patients.updateError"));
     }
   };
 
@@ -40,9 +48,9 @@ export default function EditPatientPage({ params }: EditPatientPageProps) {
 
   if (isLoadingPatient) {
     return (
-      <FormPageTemplate title={t('patients.editPatient')}>
+      <FormPageTemplate title={t("patients.editPatient")}>
         <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">{t('common.loading') || 'Cargando...'}</div>
+          <div className="text-muted-foreground">{t("common.loading")}</div>
         </div>
       </FormPageTemplate>
     );
@@ -50,11 +58,16 @@ export default function EditPatientPage({ params }: EditPatientPageProps) {
 
   if (error || !patient) {
     return (
-      <FormPageTemplate title={t('patients.editPatient')}>
+      <FormPageTemplate title={t("patients.editPatient")}>
         <ErrorState
-          title={t('patients.notFound') || 'Paciente no encontrado'}
-          description={error?.message || t('patients.notFoundDescription') || 'El paciente solicitado no existe'}
-          onRetry={() => router.push('/patients')}
+          title={t("patients.notFound")}
+          description={
+            error
+              ? getSafeErrorMessage(error, t)
+              : t("patients.notFoundDescription")
+          }
+          retryLabel={t("common.back")}
+          onRetry={() => router.push("/patients")}
         />
       </FormPageTemplate>
     );
@@ -62,7 +75,7 @@ export default function EditPatientPage({ params }: EditPatientPageProps) {
 
   return (
     <FormPageTemplate
-      title={t('patients.editPatient')}
+      title={t("patients.editPatient")}
       description={`${patient.name} ${patient.lastName}`}
     >
       <PatientForm

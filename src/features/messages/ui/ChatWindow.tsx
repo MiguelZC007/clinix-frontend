@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { MessageSquare, ArrowLeft } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,8 +25,7 @@ type ChatWindowProps = {
   conversation: Conversation | null;
   messages: Message[];
   currentUserId: string;
-  onSendMessage: (content: string) => void;
-  onSendAudio: (audioBlob: Blob, duration: number) => void;
+  onSendMessage: (content: string) => Promise<void> | void;
   onBack?: () => void;
   isSending?: boolean;
   isLoadingMessages?: boolean;
@@ -35,14 +34,14 @@ type ChatWindowProps = {
 export function ChatWindow({
   conversation,
   messages,
-  currentUserId: _currentUserId,
+  currentUserId,
   onSendMessage,
-  onSendAudio,
   onBack,
   isSending = false,
   isLoadingMessages = false,
 }: ChatWindowProps) {
   const t = useTranslations();
+  const locale = useLocale();
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -77,6 +76,7 @@ export function ChatWindow({
               size="icon"
               className="md:hidden"
               onClick={onBack}
+              aria-label={t("common.back")}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -95,58 +95,58 @@ export function ChatWindow({
         </div>
         {typeof conversation.contextTokenLimit === "number" &&
           conversation.contextTokenLimit > 0 && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="shrink-0 rounded-full p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label={t("messages.contextUsage")}
-              >
-                <svg
-                  width={CIRCLE_SIZE}
-                  height={CIRCLE_SIZE}
-                  className="rotate-[-90deg]"
-                  aria-hidden
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="shrink-0 rounded-full p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label={t("messages.contextUsage")}
                 >
-                  <circle
-                    cx={CIRCLE_SIZE / 2}
-                    cy={CIRCLE_SIZE / 2}
-                    r={CIRCLE_R}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={CIRCLE_STROKE}
-                    className="text-muted"
-                  />
-                  <circle
-                    cx={CIRCLE_SIZE / 2}
-                    cy={CIRCLE_SIZE / 2}
-                    r={CIRCLE_R}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={CIRCLE_STROKE}
-                    strokeDasharray={CIRCLE_C}
-                    strokeDashoffset={
-                      CIRCLE_C *
-                      (1 -
-                        Math.min(
-                          1,
-                          (conversation.contextTokensUsed ?? 0) /
-                            conversation.contextTokenLimit
-                        ))
-                    }
-                    strokeLinecap="round"
-                    className="text-primary transition-all duration-300"
-                  />
-                </svg>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={6}>
-              {t("messages.contextUsage")}:{" "}
-              {(conversation.contextTokensUsed ?? 0).toLocaleString()} /{" "}
-              {conversation.contextTokenLimit.toLocaleString()}
-            </TooltipContent>
-          </Tooltip>
-        )}
+                  <svg
+                    width={CIRCLE_SIZE}
+                    height={CIRCLE_SIZE}
+                    className="rotate-[-90deg]"
+                    aria-hidden
+                  >
+                    <circle
+                      cx={CIRCLE_SIZE / 2}
+                      cy={CIRCLE_SIZE / 2}
+                      r={CIRCLE_R}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={CIRCLE_STROKE}
+                      className="text-muted"
+                    />
+                    <circle
+                      cx={CIRCLE_SIZE / 2}
+                      cy={CIRCLE_SIZE / 2}
+                      r={CIRCLE_R}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={CIRCLE_STROKE}
+                      strokeDasharray={CIRCLE_C}
+                      strokeDashoffset={
+                        CIRCLE_C *
+                        (1 -
+                          Math.min(
+                            1,
+                            (conversation.contextTokensUsed ?? 0) /
+                              conversation.contextTokenLimit,
+                          ))
+                      }
+                      strokeLinecap="round"
+                      className="text-primary transition-all duration-300"
+                    />
+                  </svg>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={6}>
+                {t("messages.contextUsage")}:{" "}
+                {(conversation.contextTokensUsed ?? 0).toLocaleString(locale)} /{" "}
+                {conversation.contextTokenLimit.toLocaleString(locale)}
+              </TooltipContent>
+            </Tooltip>
+          )}
       </div>
 
       <ScrollArea className="flex-1 min-h-0 p-4">
@@ -194,8 +194,7 @@ export function ChatWindow({
 
       <MessageInput
         onSendMessage={onSendMessage}
-        onSendAudio={onSendAudio}
-        disabled={isSending}
+        disabled={isSending || !currentUserId}
       />
     </div>
   );

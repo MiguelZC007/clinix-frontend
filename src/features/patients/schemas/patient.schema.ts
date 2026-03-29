@@ -1,14 +1,14 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const genderSchema = z.enum(['male', 'female']);
-type Gender = z.infer<typeof genderSchema>;
+export const genderSchema = z.enum(["male", "female", "other"]);
+export type Gender = z.infer<typeof genderSchema>;
 
 export const patientSchema = z.object({
   id: z.string(),
   patientNumber: z.number().optional(),
   email: z.string().min(1).max(255).email(),
-  name: z.string(),
-  lastName: z.string(),
+  name: z.string().min(1).max(255),
+  lastName: z.string().min(1).max(255),
   phone: z.string(),
   address: z.string().optional(),
   gender: genderSchema.optional(),
@@ -19,13 +19,13 @@ export const patientSchema = z.object({
 export type Patient = z.infer<typeof patientSchema>;
 
 export const patientFormSchema = z.object({
-  name: z.string().min(1, 'errors.required').min(2, 'errors.minLength'),
-  lastName: z.string().min(1, 'errors.required').min(2, 'errors.minLength'),
+  name: z.string().min(1, "errors.required").max(255, "errors.maxLength"),
+  lastName: z.string().min(1, "errors.required").max(255, "errors.maxLength"),
   birthDate: z.string().optional(),
   gender: genderSchema.optional(),
-  phone: z.string().min(1, 'errors.required'),
-  email: z.string().min(1, 'errors.required').email('errors.invalidEmail'),
-  address: z.string().min(1, 'errors.required'),
+  phone: z.string().min(1, "errors.required"),
+  email: z.string().min(1, "errors.required").email("errors.invalidEmail"),
+  address: z.string().optional(),
   password: z.string().min(6).optional(),
 });
 export type PatientFormData = z.infer<typeof patientFormSchema>;
@@ -56,4 +56,6 @@ export const updatePatientAntecedentsRequestSchema = z.object({
   familyHistory: z.array(z.string()).optional(),
 });
 
-export type UpdatePatientAntecedentsRequest = z.infer<typeof updatePatientAntecedentsRequestSchema>;
+export type UpdatePatientAntecedentsRequest = z.infer<
+  typeof updatePatientAntecedentsRequestSchema
+>;

@@ -1,31 +1,32 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Plus, LayoutGrid, Table } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
-import { useClinicalHistoryList } from '@/features/clinical-histories/hooks/useClinicalHistories';
-import type { ClinicalHistory } from '@/features/clinical-histories/types/clinical-history.types';
-import { ClinicalHistoryTable } from '@/features/clinical-histories/ui/ClinicalHistoryTable';
-import { ClinicalHistoryCard } from '@/features/clinical-histories/ui/ClinicalHistoryCard';
-import { ClinicalHistoryFilters } from '@/features/clinical-histories/ui/ClinicalHistoryFilters';
-import { useRouter } from '@/i18n/navigation';
-import { EmptyState } from '@/ui/molecules/EmptyState';
-import { ErrorState } from '@/ui/molecules/ErrorState';
-import { TableSkeleton } from '@/ui/molecules/TableSkeleton';
-import { ListPageTemplate } from '@/ui/templates/ListPageTemplate';
+import { useState } from "react";
+import { Plus, LayoutGrid, Table } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { useClinicalHistoryList } from "@/features/clinical-histories/hooks/useClinicalHistories";
+import type { ClinicalHistory } from "@/features/clinical-histories/types/clinical-history.types";
+import { ClinicalHistoryCard } from "@/features/clinical-histories/ui/ClinicalHistoryCard";
+import { ClinicalHistoryFilters } from "@/features/clinical-histories/ui/ClinicalHistoryFilters";
+import { ClinicalHistoryTable } from "@/features/clinical-histories/ui/ClinicalHistoryTable";
+import { useRouter } from "@/i18n/navigation";
+import { getSafeErrorMessage } from "@/lib/utils/error-handler";
+import { EmptyState } from "@/ui/molecules/EmptyState";
+import { ErrorState } from "@/ui/molecules/ErrorState";
+import { TableSkeleton } from "@/ui/molecules/TableSkeleton";
+import { ListPageTemplate } from "@/ui/templates/ListPageTemplate";
 
 const PAGE_SIZE = 10;
-type ViewMode = 'table' | 'cards';
+type ViewMode = "table" | "cards";
 
 export default function ClinicalHistoriesPage() {
   const t = useTranslations();
   const router = useRouter();
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-  const [viewMode, setViewMode] = useState<ViewMode>('table');
+  const [search, setSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const { data, isLoading, error, refetch } = useClinicalHistoryList({
     page,
@@ -57,20 +58,20 @@ export default function ClinicalHistoriesPage() {
   };
 
   const handleClearFilters = () => {
-    setSearch('');
-    setDateFrom('');
-    setDateTo('');
+    setSearch("");
+    setDateFrom("");
+    setDateTo("");
     setPage(1);
   };
 
   return (
     <ListPageTemplate
-      title={t('clinicalHistories.title')}
-      description={t('clinicalHistories.description')}
+      title={t("clinicalHistories.title")}
+      description={t("clinicalHistories.description")}
       actions={
-        <Button onClick={() => router.push('/clinical-histories/new')}>
+        <Button onClick={() => router.push("/clinical-histories/new")}>
           <Plus className="mr-2 h-4 w-4" />
-          {t('clinicalHistories.newHistory')}
+          {t("clinicalHistories.newHistory")}
         </Button>
       }
       filters={
@@ -89,41 +90,42 @@ export default function ClinicalHistoriesPage() {
         <TableSkeleton columns={5} rows={10} />
       ) : error ? (
         <ErrorState
-          title={t('common.error') || 'Error'}
-          description={error.message}
+          title={t("common.error")}
+          description={getSafeErrorMessage(error, t)}
+          retryLabel={t("common.retry")}
           onRetry={refetch}
         />
       ) : histories.length === 0 ? (
         <EmptyState
           type="clinical-histories"
-          title={t('clinicalHistories.emptyTitle')}
-          description={t('clinicalHistories.emptyDescription')}
-          actionLabel={t('clinicalHistories.newHistory')}
-          onAction={() => router.push('/clinical-histories/new')}
+          title={t("clinicalHistories.emptyTitle")}
+          description={t("clinicalHistories.emptyDescription")}
+          actionLabel={t("clinicalHistories.newHistory")}
+          onAction={() => router.push("/clinical-histories/new")}
         />
       ) : (
         <>
           <div className="flex items-center gap-2 mb-4">
             <Button
-              variant={viewMode === 'table' ? 'default' : 'outline'}
+              variant={viewMode === "table" ? "default" : "outline"}
               size="sm"
-              onClick={() => setViewMode('table')}
-              aria-pressed={viewMode === 'table'}
+              onClick={() => setViewMode("table")}
+              aria-pressed={viewMode === "table"}
             >
               <Table className="h-4 w-4 mr-1" />
-              {t('common.table') || 'Tabla'}
+              {t("common.table")}
             </Button>
             <Button
-              variant={viewMode === 'cards' ? 'default' : 'outline'}
+              variant={viewMode === "cards" ? "default" : "outline"}
               size="sm"
-              onClick={() => setViewMode('cards')}
-              aria-pressed={viewMode === 'cards'}
+              onClick={() => setViewMode("cards")}
+              aria-pressed={viewMode === "cards"}
             >
               <LayoutGrid className="h-4 w-4 mr-1" />
-              {t('common.cards') || 'Tarjetas'}
+              {t("common.cards")}
             </Button>
           </div>
-          {viewMode === 'table' ? (
+          {viewMode === "table" ? (
             <ClinicalHistoryTable
               histories={histories}
               page={page}

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import type { BreadcrumbItemData } from '@/ui/molecules/BreadcrumbNav';
-import { Sidebar } from '@/ui/organisms/Sidebar';
-import { MobileSidebar } from '@/ui/organisms/MobileSidebar';
 import { Header } from '@/ui/organisms/Header';
+import { MobileSidebar } from '@/ui/organisms/MobileSidebar';
+import { Sidebar } from '@/ui/organisms/Sidebar';
 
 const SIDEBAR_STORAGE_KEY = 'clinix-sidebar-collapsed';
 

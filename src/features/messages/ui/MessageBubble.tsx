@@ -1,9 +1,10 @@
 "use client";
 
 import { Check } from "lucide-react";
+import { useLocale } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { cn } from "@/lib/utils";
+import { cn, toDateLocale } from "@/lib/utils";
 import type { Message } from "../types/message.types";
 
 type MessageBubbleProps = {
@@ -35,8 +36,12 @@ const markdownClasses = {
 };
 
 export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
+  const dateLocale = toDateLocale(useLocale());
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleTimeString(dateLocale, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const c = isOwn ? markdownClasses.own : markdownClasses.other;
@@ -100,18 +105,49 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
           "max-w-[70%] rounded-2xl px-4 py-2",
           isOwn
             ? "bg-primary text-primary-foreground rounded-br-md"
-            : "bg-muted rounded-bl-md"
+            : "bg-muted rounded-bl-md",
         )}
       >
         <div className="markdown-content [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={components}
+            skipHtml
+            allowedElements={[
+              "p",
+              "strong",
+              "em",
+              "del",
+              "br",
+              "ul",
+              "ol",
+              "li",
+              "code",
+              "pre",
+              "a",
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6",
+              "blockquote",
+              "hr",
+              "table",
+              "thead",
+              "tbody",
+              "tr",
+              "th",
+              "td",
+            ]}
+          >
             {message.content}
           </ReactMarkdown>
         </div>
         <div
           className={cn(
             "flex items-center justify-end gap-1 mt-1",
-            isOwn ? "text-primary-foreground/70" : "text-muted-foreground"
+            isOwn ? "text-primary-foreground/70" : "text-muted-foreground",
           )}
         >
           <span className="text-[10px]">{formatTime(message.createdAt)}</span>

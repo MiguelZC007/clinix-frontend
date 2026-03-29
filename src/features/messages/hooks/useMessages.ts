@@ -1,9 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import type { PaginatedData } from '@/types/contracts/api-response';
-import { getConversations, getConversation, getMessages, sendMessage, markAsRead, patchConversation } from '../api/messages.api';
-import type { Conversation, Message, SendMessageRequest } from '../types/message.types';
+import { useState, useEffect, useCallback } from "react";
+import { toError } from "@/lib/utils";
+import type { PaginatedData } from "@/types/contracts/api-response";
+import {
+  getConversations,
+  getConversation,
+  getMessages,
+  sendMessage,
+  markAsRead,
+  patchConversation,
+} from "../api/messages.api";
+import type {
+  Conversation,
+  Message,
+  SendMessageRequest,
+} from "../types/message.types";
 
 type UseConversationsState = {
   data: PaginatedData<Conversation> | null;
@@ -24,7 +36,7 @@ export function useConversations() {
       const data = await getConversations();
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, []);
 
@@ -62,7 +74,7 @@ export function useConversation(conversationId: string | null) {
       const data = await getConversation(conversationId);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, [conversationId]);
 
@@ -100,7 +112,7 @@ export function useMessages(conversationId: string | null) {
       const data = await getMessages(conversationId);
       setState({ data, isLoading: false, error: null });
     } catch (error) {
-      setState({ data: null, isLoading: false, error: error as Error });
+      setState({ data: null, isLoading: false, error: toError(error) });
     }
   }, [conversationId]);
 
@@ -125,17 +137,20 @@ export function useSendMessage() {
     error: null,
   });
 
-  const mutate = useCallback(async (data: SendMessageRequest): Promise<Message> => {
-    setState({ isLoading: true, error: null });
-    try {
-      const result = await sendMessage(data);
-      setState({ isLoading: false, error: null });
-      return result;
-    } catch (error) {
-      setState({ isLoading: false, error: error as Error });
-      throw error;
-    }
-  }, []);
+  const mutate = useCallback(
+    async (data: SendMessageRequest): Promise<Message> => {
+      setState({ isLoading: true, error: null });
+      try {
+        const result = await sendMessage(data);
+        setState({ isLoading: false, error: null });
+        return result;
+      } catch (error) {
+        setState({ isLoading: false, error: toError(error) });
+        throw error;
+      }
+    },
+    [],
+  );
 
   return {
     ...state,
@@ -143,7 +158,7 @@ export function useSendMessage() {
   };
 }
 
-function useMarkAsRead() {
+export function useMarkAsRead() {
   const [state, setState] = useState<MutationState>({
     isLoading: false,
     error: null,
@@ -155,7 +170,7 @@ function useMarkAsRead() {
       await markAsRead(conversationId);
       setState({ isLoading: false, error: null });
     } catch (error) {
-      setState({ isLoading: false, error: error as Error });
+      setState({ isLoading: false, error: toError(error) });
       throw error;
     }
   }, []);
@@ -172,17 +187,20 @@ export function usePatchConversation() {
     error: null,
   });
 
-  const mutate = useCallback(async (conversationId: string): Promise<Conversation> => {
-    setState({ isLoading: true, error: null });
-    try {
-      const result = await patchConversation(conversationId, {});
-      setState({ isLoading: false, error: null });
-      return result;
-    } catch (error) {
-      setState({ isLoading: false, error: error as Error });
-      throw error;
-    }
-  }, []);
+  const mutate = useCallback(
+    async (conversationId: string): Promise<Conversation> => {
+      setState({ isLoading: true, error: null });
+      try {
+        const result = await patchConversation(conversationId, {});
+        setState({ isLoading: false, error: null });
+        return result;
+      } catch (error) {
+        setState({ isLoading: false, error: toError(error) });
+        throw error;
+      }
+    },
+    [],
+  );
 
   return {
     ...state,

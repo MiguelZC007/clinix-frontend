@@ -2,12 +2,12 @@
 
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { useCreateClinicalHistory } from "@/features/clinical-histories/hooks/useClinicalHistories";
 import { mapFormDataToBackendPayload } from "@/features/clinical-histories/api/mapFormDataToBackendPayload";
+import { useCreateClinicalHistory } from "@/features/clinical-histories/hooks/useClinicalHistories";
 import type { ClinicalHistoryFormData } from "@/features/clinical-histories/schemas/clinical-history.schema";
 import { ClinicalHistoryForm } from "@/features/clinical-histories/ui/ClinicalHistoryForm";
-import { AppError } from "@/lib/api/errors";
 import { useRouter } from "@/i18n/navigation";
+import { AppError } from "@/lib/api/errors";
 import { FormPageTemplate } from "@/ui/templates/FormPageTemplate";
 
 export default function NewClinicalHistoryPage() {

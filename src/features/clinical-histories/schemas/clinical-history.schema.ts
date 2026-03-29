@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const vitalSignsSchema = z.object({
   bloodPressure: z.string(),
@@ -20,7 +20,7 @@ export const clinicalHistorySchema = z.object({
   physicalExam: z.string(),
   diagnosis: z.string(),
   treatment: z.string(),
-  notes: z.string(),
+  notes: z.string().optional(),
   vitalSigns: vitalSignsSchema,
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -28,21 +28,21 @@ export const clinicalHistorySchema = z.object({
 export type ClinicalHistory = z.infer<typeof clinicalHistorySchema>;
 
 export const vitalSignsFormSchema = z.object({
-  bloodPressure: z.string().min(1, 'errors.required'),
-  heartRate: z.number().min(1, 'errors.required'),
-  temperature: z.number().min(0.1, 'errors.required'),
-  weight: z.number().min(0.1, 'errors.required'),
-  height: z.number().min(1, 'errors.required'),
+  bloodPressure: z.string().min(1, "errors.required"),
+  heartRate: z.number().min(1, "errors.required"),
+  temperature: z.number().min(0.1, "errors.required"),
+  weight: z.number().min(0.1, "errors.required"),
+  height: z.number().min(1, "errors.required"),
 });
 
 export const clinicalHistoryFormSchema = z.object({
-  patientId: z.string().min(1, 'errors.required'),
-  reason: z.string().min(1, 'errors.required'),
-  symptoms: z.string().min(1, 'errors.required'),
-  physicalExam: z.string().min(1, 'errors.required'),
-  diagnosis: z.string().min(1, 'errors.required'),
-  treatment: z.string().min(1, 'errors.required'),
-  notes: z.string(),
+  patientId: z.string().min(1, "errors.required"),
+  appointmentId: z.string().min(1, "clinicalHistories.appointmentRequired"),
+  reason: z.string().min(1, "errors.required"),
+  symptoms: z.string().min(1, "errors.required"),
+  physicalExam: z.string().min(1, "errors.required"),
+  diagnosis: z.string().min(1, "errors.required"),
+  treatment: z.string().min(1, "errors.required"),
   vitalSigns: vitalSignsFormSchema,
 });
 export type ClinicalHistoryFormData = z.infer<typeof clinicalHistoryFormSchema>;
@@ -92,8 +92,17 @@ export const clinicalHistoryBackendSchema = z.object({
   physicalExams: z.array(physicalExamBackendSchema),
   vitalSigns: z.array(vitalSignBackendSchema),
   prescription: z.unknown().optional(),
-  patient: z.object({ id: z.string(), name: z.string(), lastName: z.string() }).optional(),
-  doctor: z.object({ id: z.string(), name: z.string(), lastName: z.string(), specialty: z.string().optional() }).optional(),
+  patient: z
+    .object({ id: z.string(), name: z.string(), lastName: z.string() })
+    .optional(),
+  doctor: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      lastName: z.string(),
+      specialty: z.string().optional(),
+    })
+    .optional(),
   createdAt: z.union([z.string(), z.date()]),
   updatedAt: z.union([z.string(), z.date()]),
 });
@@ -101,21 +110,71 @@ export const clinicalHistoryBackendSchema = z.object({
 type ClinicalHistoryBackend = z.infer<typeof clinicalHistoryBackendSchema>;
 
 function formatDate(v: string | Date): string {
-  return typeof v === 'string' ? v : v.toISOString();
+  return typeof v === "string" ? v : v.toISOString();
 }
 
-export function mapClinicalHistoryFromBackend(b: ClinicalHistoryBackend): ClinicalHistory {
-  const bloodPressure = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('presión') || vs.name?.toLowerCase().includes('presion'))?.value ?? '';
-  const heartRate = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('cardíac') || vs.name?.toLowerCase().includes('cardiac'))?.value ?? '0';
-  const temperature = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('temperatura'))?.value ?? '0';
-  const weight = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('peso'))?.value ?? '0';
-  const height = b.vitalSigns.find((vs) => vs.name?.toLowerCase().includes('talla') || vs.name?.toLowerCase().includes('altura'))?.value ?? '0';
+function findVitalSign(
+  vitalSigns: ClinicalHistoryBackend["vitalSigns"],
+  predicate: (vs: (typeof vitalSigns)[number]) => boolean,
+  name: string,
+): string | undefined {
+  const found = vitalSigns.find(predicate);
+  if (found) return found.value;
+  console.warn(
+    `[mapClinicalHistoryFromBackend] Unknown vital sign type: ${name}`,
+  );
+  return undefined;
+}
+
+export function mapClinicalHistoryFromBackend(
+  b: ClinicalHistoryBackend,
+): ClinicalHistory {
+  const bloodPressure =
+    findVitalSign(
+      b.vitalSigns,
+      (vs) =>
+        vs.name?.toLowerCase().includes("presión") ||
+        vs.name?.toLowerCase().includes("presion"),
+      "bloodPressure",
+    ) ?? "";
+  const heartRate =
+    findVitalSign(
+      b.vitalSigns,
+      (vs) =>
+        vs.name?.toLowerCase().includes("cardíac") ||
+        vs.name?.toLowerCase().includes("cardiac"),
+      "heartRate",
+    ) ?? "0";
+  const temperature =
+    findVitalSign(
+      b.vitalSigns,
+      (vs) => vs.name?.toLowerCase().includes("temperatura"),
+      "temperature",
+    ) ?? "0";
+  const weight =
+    findVitalSign(
+      b.vitalSigns,
+      (vs) => vs.name?.toLowerCase().includes("peso"),
+      "weight",
+    ) ?? "0";
+  const height =
+    findVitalSign(
+      b.vitalSigns,
+      (vs) =>
+        vs.name?.toLowerCase().includes("talla") ||
+        vs.name?.toLowerCase().includes("altura"),
+      "height",
+    ) ?? "0";
   const parseNum = (s: string): number => {
-    const n = parseFloat(s.replace(',', '.'));
+    const n = parseFloat(s.replace(",", "."));
     return Number.isFinite(n) ? n : 0;
   };
-  const patientName = b.patient ? `${b.patient.name} ${b.patient.lastName}`.trim() : undefined;
-  const doctorName = b.doctor ? `${b.doctor.name} ${b.doctor.lastName}`.trim() : undefined;
+  const patientName = b.patient
+    ? `${b.patient.name} ${b.patient.lastName}`.trim()
+    : undefined;
+  const doctorName = b.doctor
+    ? `${b.doctor.name} ${b.doctor.lastName}`.trim()
+    : undefined;
   const doctorSpecialty = b.doctor?.specialty;
   return {
     id: b.id,
@@ -124,11 +183,14 @@ export function mapClinicalHistoryFromBackend(b: ClinicalHistoryBackend): Clinic
     doctorName,
     doctorSpecialty,
     reason: b.consultationReason,
-    symptoms: Array.isArray(b.symptoms) ? b.symptoms.join(', ') : '',
-    physicalExam: b.physicalExams.map((e) => `${e.name}: ${e.description}`).join('; ') || '',
-    diagnosis: b.diagnostics.map((d) => `${d.name}: ${d.description}`).join('; ') || '',
+    symptoms: Array.isArray(b.symptoms) ? b.symptoms.join(", ") : "",
+    physicalExam:
+      b.physicalExams.map((e) => `${e.name}: ${e.description}`).join("; ") ||
+      "",
+    diagnosis:
+      b.diagnostics.map((d) => `${d.name}: ${d.description}`).join("; ") || "",
     treatment: b.treatment,
-    notes: '',
+    notes: "",
     vitalSigns: {
       bloodPressure,
       heartRate: parseNum(heartRate),

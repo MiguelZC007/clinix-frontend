@@ -1,10 +1,12 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const messageTypeSchema = z.enum(['text', 'audio']);
-export type MessageType = z.infer<typeof messageTypeSchema>;
-
-export const messageStatusSchema = z.enum(['sending', 'sent', 'delivered', 'read']);
-type MessageStatus = z.infer<typeof messageStatusSchema>;
+export const messageStatusSchema = z.enum([
+  "sending",
+  "sent",
+  "delivered",
+  "read",
+]);
+export type MessageStatus = z.infer<typeof messageStatusSchema>;
 
 export const conversationSchema = z.object({
   id: z.string(),
@@ -26,7 +28,7 @@ export type Conversation = z.infer<typeof conversationSchema>;
 export const messageEntitySchema = z.object({
   id: z.string(),
   conversationId: z.string().optional(),
-  role: z.enum(['user', 'assistant']),
+  role: z.enum(["user", "assistant"]),
   content: z.string(),
   tokenCount: z.number(),
   readAt: z.coerce.date().optional().nullable(),
@@ -36,12 +38,9 @@ export const messageEntitySchema = z.object({
 export type Message = z.infer<typeof messageEntitySchema>;
 
 export const messageFormSchema = z.object({
-  content: z.string().min(1, 'errors.required').max(1000, 'errors.maxLength'),
+  content: z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(z.string().min(1, "errors.required").max(1000, "errors.maxLength")),
 });
 export type MessageFormData = z.infer<typeof messageFormSchema>;
-
-export const audioMessageSchema = z.object({
-  audioUrl: z.string().min(1),
-  audioDuration: z.number().min(1),
-});
-type AudioMessageFormData = z.infer<typeof audioMessageSchema>;

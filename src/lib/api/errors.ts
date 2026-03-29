@@ -1,25 +1,28 @@
-import { AxiosError } from 'axios';
-import { ProblemDetailsSchema, type ProblemDetails } from '@/types/contracts/errors';
+import { AxiosError } from "axios";
+import {
+  ProblemDetailsSchema,
+  type ProblemDetails,
+} from "@/types/contracts/errors";
 
 export type ErrorCode =
-  | 'UNKNOWN_ERROR'
-  | 'CLIENT_ERROR'
-  | 'NETWORK_ERROR'
-  | 'SERVER_ERROR'
-  | 'VALIDATION_ERROR'
-  | 'UNAUTHORIZED'
-  | 'FORBIDDEN'
-  | 'NOT_FOUND';
+  | "UNKNOWN_ERROR"
+  | "CLIENT_ERROR"
+  | "NETWORK_ERROR"
+  | "SERVER_ERROR"
+  | "VALIDATION_ERROR"
+  | "UNAUTHORIZED"
+  | "FORBIDDEN"
+  | "NOT_FOUND";
 
 export const ERROR_TRANSLATION_KEYS: Record<ErrorCode, string> = {
-  UNKNOWN_ERROR: 'errors.serverError',
-  CLIENT_ERROR: 'errors.serverError',
-  NETWORK_ERROR: 'errors.networkError',
-  SERVER_ERROR: 'errors.serverError',
-  VALIDATION_ERROR: 'errors.validationError',
-  UNAUTHORIZED: 'errors.unauthorized',
-  FORBIDDEN: 'errors.forbidden',
-  NOT_FOUND: 'errors.notFound',
+  UNKNOWN_ERROR: "errors.serverError",
+  CLIENT_ERROR: "errors.clientError",
+  NETWORK_ERROR: "errors.networkError",
+  SERVER_ERROR: "errors.serverError",
+  VALIDATION_ERROR: "errors.validationError",
+  UNAUTHORIZED: "errors.unauthorized",
+  FORBIDDEN: "errors.forbidden",
+  NOT_FOUND: "errors.notFound",
 };
 
 export class AppError extends Error {
@@ -30,12 +33,12 @@ export class AppError extends Error {
 
   constructor(
     message: string,
-    code: ErrorCode = 'UNKNOWN_ERROR',
+    code: ErrorCode = "UNKNOWN_ERROR",
     status?: number,
-    errors?: Record<string, string[]>
+    errors?: Record<string, string[]>,
   ) {
     super(message);
-    this.name = 'AppError';
+    this.name = "AppError";
     this.code = code;
     this.translationKey = ERROR_TRANSLATION_KEYS[code];
     this.status = status;
@@ -44,19 +47,19 @@ export class AppError extends Error {
 }
 
 function getErrorCodeFromStatus(status?: number): ErrorCode {
-  if (!status) return 'NETWORK_ERROR';
+  if (!status) return "NETWORK_ERROR";
 
   switch (status) {
     case 401:
-      return 'UNAUTHORIZED';
+      return "UNAUTHORIZED";
     case 403:
-      return 'FORBIDDEN';
+      return "FORBIDDEN";
     case 404:
-      return 'NOT_FOUND';
+      return "NOT_FOUND";
     case 422:
-      return 'VALIDATION_ERROR';
+      return "VALIDATION_ERROR";
     default:
-      return status >= 500 ? 'SERVER_ERROR' : 'CLIENT_ERROR';
+      return status >= 500 ? "SERVER_ERROR" : "CLIENT_ERROR";
   }
 }
 
@@ -68,20 +71,28 @@ export function normalizeError(error: unknown): AppError {
     const status = error.response?.status;
 
     // Manejar errores de conexión (ECONNREFUSED, etc.)
-    if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND' || error.message.includes('ECONNREFUSED')) {
+    if (
+      error.code === "ECONNREFUSED" ||
+      error.code === "ENOTFOUND" ||
+      error.message.includes("ECONNREFUSED")
+    ) {
       return new AppError(
-        'No se pudo conectar con el servidor. Verifica que el servidor esté disponible.',
-        'NETWORK_ERROR',
-        status
+        "No se pudo conectar con el servidor. Verifica que el servidor esté disponible.",
+        "NETWORK_ERROR",
+        status,
       );
     }
 
-    let parsed: { success: true; data: ProblemDetails } | { success: false; data: undefined };
-    const isObject = typeof data === 'object' && data !== null;
+    let parsed:
+      | { success: true; data: ProblemDetails }
+      | { success: false; data: undefined };
+    const isObject = typeof data === "object" && data !== null;
     if (isObject) {
       try {
         const result = ProblemDetailsSchema.safeParse(data);
-        parsed = result.success ? { success: true, data: result.data } : { success: false, data: undefined };
+        parsed = result.success
+          ? { success: true, data: result.data }
+          : { success: false, data: undefined };
       } catch {
         parsed = { success: false, data: undefined };
       }
@@ -92,12 +103,7 @@ export function normalizeError(error: unknown): AppError {
     if (parsed.success) {
       const { detail, code, errors } = parsed.data;
       const errorCode = (code as ErrorCode) || getErrorCodeFromStatus(status);
-      return new AppError(
-        detail || error.message,
-        errorCode,
-        status,
-        errors
-      );
+      return new AppError(detail || error.message, errorCode, status, errors);
     }
 
     const errorCode = getErrorCodeFromStatus(status);
@@ -105,15 +111,16 @@ export function normalizeError(error: unknown): AppError {
   }
 
   if (error instanceof Error) {
-    const message = typeof error.message === 'string' ? error.message : 'Unknown error';
-    if (message.includes('ECONNREFUSED') || message.includes('ENOTFOUND')) {
+    const message =
+      typeof error.message === "string" ? error.message : "Unknown error";
+    if (message.includes("ECONNREFUSED") || message.includes("ENOTFOUND")) {
       return new AppError(
-        'No se pudo conectar con el servidor. Verifica que el servidor esté disponible.',
-        'NETWORK_ERROR'
+        "No se pudo conectar con el servidor. Verifica que el servidor esté disponible.",
+        "NETWORK_ERROR",
       );
     }
-    return new AppError(message, 'CLIENT_ERROR');
+    return new AppError(message, "CLIENT_ERROR");
   }
 
-  return new AppError('Unknown error', 'UNKNOWN_ERROR');
+  return new AppError("Unknown error", "UNKNOWN_ERROR");
 }

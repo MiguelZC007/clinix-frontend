@@ -31,16 +31,20 @@ export function ConversationList({
     <div className="flex flex-col h-full border-r">
       <div className="border-b p-3 md:p-4">
         <div className="mb-2 flex items-center justify-between md:mb-4">
-          <h2 className="text-base font-semibold md:text-lg">{t("messages.title")}</h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onNewConversation}
-            title={t("messages.newConversation")}
-            aria-label={t("messages.newConversation")}
-          >
-            <MessageSquarePlus className="h-5 w-5" />
-          </Button>
+          <h2 className="text-base font-semibold md:text-lg">
+            {t("messages.title")}
+          </h2>
+          {onNewConversation && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onNewConversation}
+              title={t("messages.newConversation")}
+              aria-label={t("messages.newConversation")}
+            >
+              <MessageSquarePlus className="h-5 w-5" />
+            </Button>
+          )}
         </div>
       </div>
 

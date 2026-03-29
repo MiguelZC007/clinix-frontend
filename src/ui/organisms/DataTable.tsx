@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
 export type Column<T> = {
   key: keyof T | string;
@@ -47,7 +47,10 @@ export function DataTable<T extends Record<string, unknown>>({
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <TableHead key={String(column.key)} className={column.className}>
+                <TableHead
+                  key={String(column.key)}
+                  className={column.className}
+                >
                   {t(column.headerKey)}
                 </TableHead>
               ))}
@@ -57,11 +60,30 @@ export function DataTable<T extends Record<string, unknown>>({
             {data.map((item) => (
               <TableRow
                 key={keyExtractor(item)}
-                className={onRowClick ? 'cursor-pointer' : ''}
+                className={
+                  onRowClick
+                    ? "cursor-pointer hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    : ""
+                }
                 onClick={() => onRowClick?.(item)}
+                {...(onRowClick
+                  ? {
+                      tabIndex: 0,
+                      role: "button",
+                      onKeyDown: (e: React.KeyboardEvent) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onRowClick(item);
+                        }
+                      },
+                    }
+                  : {})}
               >
                 {columns.map((column) => (
-                  <TableCell key={String(column.key)} className={column.className}>
+                  <TableCell
+                    key={String(column.key)}
+                    className={column.className}
+                  >
                     {column.render
                       ? column.render(item)
                       : (item[column.key as keyof T] as React.ReactNode)}
@@ -80,6 +102,7 @@ export function DataTable<T extends Record<string, unknown>>({
             size="sm"
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
+            aria-label={t("common.previousPage")}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -91,6 +114,7 @@ export function DataTable<T extends Record<string, unknown>>({
             size="sm"
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages}
+            aria-label={t("common.nextPage")}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>

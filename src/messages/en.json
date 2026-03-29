@@ -1,4 +1,8 @@
 {
+  "metadata": {
+    "title": "Medical Dashboard",
+    "description": "Medical management system"
+  },
   "common": {
     "appName": "Clínica San Miguel",
     "loading": "Loading...",
@@ -22,7 +26,12 @@
     "yesterday": "Yesterday",
     "date": "Date",
     "table": "Table",
-    "cards": "Cards"
+    "cards": "Cards",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "comingSoon": "Coming soon",
+    "loadError": "Failed to load data. Please try again",
+    "openCalendar": "Open calendar"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -32,6 +41,7 @@
     "messages": "Messages",
     "settings": "Settings",
     "sidebar": "Main navigation",
+    "sidebarDescription": "Application sidebar navigation",
     "openMenu": "Open menu",
     "expandSidebar": "Expand sidebar",
     "collapseSidebar": "Collapse sidebar"
@@ -78,8 +88,11 @@
       "sat": "Sat",
       "sun": "Sun"
     },
+    "previousPeriod": "Previous period",
+    "nextPeriod": "Next period",
     "more": "+{count} more",
-    "noAppointments": "No appointments for this date"
+    "noAppointments": "No appointments for this date",
+    "viewSelector": "View selector"
   },
   "dashboard": {
     "welcome": "Welcome to the system",
@@ -131,6 +144,7 @@
     "searchPlaceholder": "Search by name...",
     "searchNoResults": "No matches",
     "searchTypeToSearch": "Type to search",
+    "searchError": "Error searching patients",
     "selectPatient": "Select patient",
     "deleteConfirmTitle": "Delete Patient",
     "deleteConfirmDescription": "Are you sure you want to delete this patient? This action cannot be undone.",
@@ -211,16 +225,22 @@
     "vitalSigns": "Vital Signs",
     "vitalSignsDescription": "Record the patient's vital signs",
     "bloodPressure": "Blood Pressure",
+    "bloodPressureUnit": "mmHg",
     "heartRate": "Heart Rate",
+    "heartRateUnit": "bpm",
     "temperature": "Temperature",
+    "temperatureUnit": "°C",
     "weight": "Weight",
+    "weightUnit": "kg",
     "height": "Height",
+    "heightUnit": "cm",
     "consultationInfo": "Consultation Information",
     "consultationInfoDescription": "Medical consultation details",
     "emptyTitle": "No histories",
     "emptyDescription": "Clinical histories will appear here",
     "createdSuccess": "History created successfully",
     "selectPatient": "Select patient",
+    "selectPatientFirst": "Select a patient first",
     "searchPatient": "Search patient...",
     "createSuccess": "Clinical history created successfully",
     "createError": "Error creating clinical history",
@@ -230,7 +250,11 @@
     "searchPlaceholder": "Search by patient, diagnosis, reason...",
     "dateFrom": "From",
     "dateTo": "To",
-    "clearFilters": "Clear filters"
+    "clearFilters": "Clear filters",
+    "notFound": "Clinical history not found",
+    "notFoundDescription": "The requested clinical history does not exist or has been deleted",
+    "loadAppointmentsError": "Error loading patient appointments",
+    "appointmentRequired": "Please select an appointment"
   },
   "messages": {
     "title": "Messages",
@@ -244,18 +268,19 @@
     "searchConversations": "Search conversations...",
     "typeMessage": "Type a message...",
     "send": "Send",
-    "recording": "Recording...",
-    "holdToRecord": "Hold to record",
     "noConversations": "No conversations",
     "loadingMessages": "Loading messages...",
     "noMessages": "Select a conversation to start",
     "startConversation": "Start the conversation",
-    "audio": "Voice message",
+    "selectConversation": "Select a conversation",
+    "sendError": "Error sending message",
+    "createError": "Error creating conversation",
+    "loadError": "Error loading conversations",
     "you": "You",
     "online": "Online",
     "offline": "Offline",
     "typing": "Typing...",
-    "voiceMessage": "Voice message"
+    "unauthorized": "You are not authorized. Please log in"
   },
   "errors": {
     "required": "This field is required",
@@ -274,6 +299,7 @@
     "unknownError": "An unexpected error has occurred",
     "clientError": "Request error. Please verify the data.",
     "invalidOtp": "The code must be 6 digits",
-    "passwordsDoNotMatch": "Passwords do not match"
+    "passwordsDoNotMatch": "Passwords do not match",
+    "endTimeBeforeStart": "End time must be after start time"
   }
 }

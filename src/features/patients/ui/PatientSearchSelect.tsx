@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useTranslations } from "next-intl";
 import { ChevronDownIcon, Loader2Icon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { getPatients } from "../api/patients.api";
@@ -41,6 +41,7 @@ export function PatientSearchSelect({
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +52,7 @@ export function PatientSearchSelect({
 
   const fetchPatients = useCallback(async (search: string) => {
     setLoading(true);
+    setError(false);
     try {
       const data = await getPatients({
         search: search || undefined,
@@ -59,6 +61,7 @@ export function PatientSearchSelect({
       setPatients(data.items);
     } catch {
       setPatients([]);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -131,6 +134,10 @@ export function PatientSearchSelect({
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
+            <div className="py-6 text-center text-sm text-destructive">
+              {t("searchError")}
             </div>
           ) : patients.length === 0 ? (
             <div className="py-6 text-center text-sm text-muted-foreground">

@@ -1,37 +1,39 @@
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@/__tests__/test-utils';
-import { ClinicalHistoryFilters } from '../ClinicalHistoryFilters';
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@/__tests__/test-utils";
+import { ClinicalHistoryFilters } from "../ClinicalHistoryFilters";
 
-describe('ClinicalHistoryFilters', () => {
+describe("ClinicalHistoryFilters", () => {
   const defaultProps = {
-    search: '',
+    search: "",
     onSearchChange: vi.fn(),
-    dateFrom: '',
-    dateTo: '',
+    dateFrom: "",
+    dateTo: "",
     onDateFromChange: vi.fn(),
     onDateToChange: vi.fn(),
   };
 
-  it('renderiza con valores vacíos', () => {
+  it("renderiza con valores vacíos", () => {
     render(<ClinicalHistoryFilters {...defaultProps} />);
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+    expect(screen.getByRole("textbox")).toBeInTheDocument();
     expect(
-      document.getElementById('clinical-history-date-from'),
+      document.getElementById("clinical-history-date-from"),
     ).toBeInTheDocument();
     expect(
-      document.getElementById('clinical-history-date-to'),
+      document.getElementById("clinical-history-date-to"),
     ).toBeInTheDocument();
   });
 
-  it('muestra placeholder de búsqueda', () => {
+  it("muestra placeholder de búsqueda", () => {
     render(<ClinicalHistoryFilters {...defaultProps} />);
     expect(
-      screen.getByPlaceholderText('clinicalHistories.searchPlaceholder'),
+      screen.getByPlaceholderText(
+        "Buscar por paciente, diagnóstico, motivo...",
+      ),
     ).toBeInTheDocument();
   });
 
-  it('llama onSearchChange al cambiar búsqueda', async () => {
+  it("llama onSearchChange al cambiar búsqueda", async () => {
     const user = userEvent.setup();
     const onSearchChange = vi.fn();
     render(
@@ -40,12 +42,12 @@ describe('ClinicalHistoryFilters', () => {
         onSearchChange={onSearchChange}
       />,
     );
-    const input = screen.getByRole('textbox');
-    await user.type(input, 'dolor');
+    const input = screen.getByRole("textbox");
+    await user.type(input, "dolor");
     expect(onSearchChange).toHaveBeenCalled();
   });
 
-  it('llama onDateFromChange al cambiar fecha desde', async () => {
+  it("llama onDateFromChange al cambiar fecha desde", async () => {
     const user = userEvent.setup();
     const onDateFromChange = vi.fn();
     render(
@@ -54,15 +56,15 @@ describe('ClinicalHistoryFilters', () => {
         onDateFromChange={onDateFromChange}
       />,
     );
-    const input = document.getElementById('clinical-history-date-from');
+    const input = document.getElementById("clinical-history-date-from");
     expect(input).toBeInTheDocument();
     if (input) {
-      await user.type(input, '2026-01-01');
+      await user.type(input, "2026-01-01");
       expect(onDateFromChange).toHaveBeenCalled();
     }
   });
 
-  it('llama onDateToChange al cambiar fecha hasta', async () => {
+  it("llama onDateToChange al cambiar fecha hasta", async () => {
     const user = userEvent.setup();
     const onDateToChange = vi.fn();
     render(
@@ -71,31 +73,35 @@ describe('ClinicalHistoryFilters', () => {
         onDateToChange={onDateToChange}
       />,
     );
-    const input = document.getElementById('clinical-history-date-to');
+    const input = document.getElementById("clinical-history-date-to");
     expect(input).toBeInTheDocument();
     if (input) {
-      await user.type(input, '2026-12-31');
+      await user.type(input, "2026-12-31");
       expect(onDateToChange).toHaveBeenCalled();
     }
   });
 
-  it('no muestra botón Limpiar cuando no hay filtros', () => {
+  it("no muestra botón Limpiar cuando no hay filtros", () => {
     render(<ClinicalHistoryFilters {...defaultProps} />);
     expect(
-      screen.queryByTestId('clinical-history-filters-clear'),
+      screen.queryByTestId("clinical-history-filters-clear"),
     ).not.toBeInTheDocument();
   });
 
-  it('muestra botón Limpiar cuando hay search', () => {
+  it("muestra botón Limpiar cuando hay search", () => {
     render(
-      <ClinicalHistoryFilters {...defaultProps} search="test" onClear={vi.fn()} />,
+      <ClinicalHistoryFilters
+        {...defaultProps}
+        search="test"
+        onClear={vi.fn()}
+      />,
     );
     expect(
-      screen.getByTestId('clinical-history-filters-clear'),
+      screen.getByTestId("clinical-history-filters-clear"),
     ).toBeInTheDocument();
   });
 
-  it('muestra botón Limpiar cuando hay dateFrom', () => {
+  it("muestra botón Limpiar cuando hay dateFrom", () => {
     render(
       <ClinicalHistoryFilters
         {...defaultProps}
@@ -104,11 +110,11 @@ describe('ClinicalHistoryFilters', () => {
       />,
     );
     expect(
-      screen.getByTestId('clinical-history-filters-clear'),
+      screen.getByTestId("clinical-history-filters-clear"),
     ).toBeInTheDocument();
   });
 
-  it('llama onClear al hacer click en Limpiar filtros', async () => {
+  it("llama onClear al hacer click en Limpiar filtros", async () => {
     const user = userEvent.setup();
     const onClear = vi.fn();
     render(
@@ -118,7 +124,7 @@ describe('ClinicalHistoryFilters', () => {
         onClear={onClear}
       />,
     );
-    const button = screen.getByTestId('clinical-history-filters-clear');
+    const button = screen.getByTestId("clinical-history-filters-clear");
     await user.click(button);
     expect(onClear).toHaveBeenCalledTimes(1);
   });

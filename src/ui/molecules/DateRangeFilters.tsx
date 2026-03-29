@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Calendar } from '@/components/ui/calendar';
+import { CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 type DateRangeFiltersProps = {
   dateFrom: string;
@@ -19,9 +19,25 @@ type DateRangeFiltersProps = {
   onDateToChange: (value: string) => void;
   dateFromLabel: string;
   dateToLabel: string;
+  calendarButtonLabel?: string;
   idPrefix: string;
   className?: string;
 };
+
+function parseLocalDate(value: string): Date | undefined {
+  if (!value) return undefined;
+  const [year, month, day] = value.split("-").map(Number);
+  if (!year || !month || !day) return undefined;
+  // Create at noon to avoid timezone off-by-one shifts
+  return new Date(year, month - 1, day, 12, 0, 0);
+}
+
+function formatLocalDate(value: Date): string {
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, "0");
+  const day = String(value.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 export function DateRangeFilters({
   dateFrom,
@@ -30,14 +46,15 @@ export function DateRangeFilters({
   onDateToChange,
   dateFromLabel,
   dateToLabel,
+  calendarButtonLabel,
   idPrefix,
   className,
 }: DateRangeFiltersProps) {
-  const dateFromDate = dateFrom ? new Date(dateFrom) : undefined;
-  const dateToDate = dateTo ? new Date(dateTo) : undefined;
+  const dateFromDate = parseLocalDate(dateFrom);
+  const dateToDate = parseLocalDate(dateTo);
 
   return (
-    <div className={cn('flex flex-wrap items-end gap-2', className)}>
+    <div className={cn("flex flex-wrap items-end gap-2", className)}>
       <div className="space-y-1">
         <Label htmlFor={`${idPrefix}-date-from`} className="text-xs">
           {dateFromLabel}
@@ -52,7 +69,17 @@ export function DateRangeFilters({
           />
           <Popover>
             <PopoverTrigger asChild>
-              <Button type="button" variant="outline" size="icon" className="shrink-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="shrink-0"
+                aria-label={
+                  calendarButtonLabel
+                    ? `${calendarButtonLabel} — ${dateFromLabel}`
+                    : dateFromLabel
+                }
+              >
                 <CalendarIcon className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
@@ -60,7 +87,7 @@ export function DateRangeFilters({
               <Calendar
                 mode="single"
                 selected={dateFromDate}
-                onSelect={(d) => d && onDateFromChange(d.toISOString().slice(0, 10))}
+                onSelect={(d) => d && onDateFromChange(formatLocalDate(d))}
               />
             </PopoverContent>
           </Popover>
@@ -80,7 +107,17 @@ export function DateRangeFilters({
           />
           <Popover>
             <PopoverTrigger asChild>
-              <Button type="button" variant="outline" size="icon" className="shrink-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="shrink-0"
+                aria-label={
+                  calendarButtonLabel
+                    ? `${calendarButtonLabel} — ${dateToLabel}`
+                    : dateToLabel
+                }
+              >
                 <CalendarIcon className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
@@ -88,7 +125,7 @@ export function DateRangeFilters({
               <Calendar
                 mode="single"
                 selected={dateToDate}
-                onSelect={(d) => d && onDateToChange(d.toISOString().slice(0, 10))}
+                onSelect={(d) => d && onDateToChange(formatLocalDate(d))}
               />
             </PopoverContent>
           </Popover>

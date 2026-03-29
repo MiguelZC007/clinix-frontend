@@ -1,7 +1,13 @@
-export type { VitalSigns, ClinicalHistory } from '../schemas/clinical-history.schema';
-import type { ClinicalHistory } from '../schemas/clinical-history.schema';
+export type {
+  VitalSigns,
+  ClinicalHistory,
+} from "../schemas/clinical-history.schema";
+import type { ClinicalHistory } from "../schemas/clinical-history.schema";
 
-type CreateClinicalHistoryRequest = Omit<ClinicalHistory, 'id' | 'patientName' | 'createdAt' | 'updatedAt'>; = Omit<ClinicalHistory, 'id' | 'patientName' | 'createdAt' | 'updatedAt'>;
+export type CreateClinicalHistoryRequest = Omit<
+  ClinicalHistory,
+  "id" | "patientName" | "createdAt" | "updatedAt"
+>;
 
 export type ClinicalHistoriesListParams = {
   page?: number;

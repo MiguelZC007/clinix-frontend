@@ -9,7 +9,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,10 +21,11 @@ import {
 import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboardSummary";
 import type { RecentConsultation } from "@/features/dashboard/types/dashboard.types";
 import { useRouter } from "@/i18n/navigation";
+import { toDateLocale } from "@/lib/utils";
 import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
-import { PageHeader } from "@/ui/molecules/PageHeader";
 import { EmptyState } from "@/ui/molecules/EmptyState";
 import { ErrorState } from "@/ui/molecules/ErrorState";
+import { PageHeader } from "@/ui/molecules/PageHeader";
 
 type StatCardProps = {
   title: string;
@@ -61,7 +62,15 @@ function QuickAction({ title, description, icon, onClick }: QuickActionProps) {
   return (
     <Card
       className="cursor-pointer transition-all hover:shadow-md hover:border-primary/50"
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
       <CardContent className="flex items-center gap-4 p-4">
         <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
@@ -80,7 +89,8 @@ function QuickAction({ title, description, icon, onClick }: QuickActionProps) {
 function formatConsultationDate(
   isoDate: string,
   todayKey: string,
-  yesterdayKey: string
+  yesterdayKey: string,
+  dateLocale: string,
 ): string {
   const d = new Date(isoDate);
   const now = new Date();
@@ -90,7 +100,7 @@ function formatConsultationDate(
   const dateOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   if (dateOnly.getTime() === today.getTime()) return todayKey;
   if (dateOnly.getTime() === yesterday.getTime()) return yesterdayKey;
-  return d.toLocaleDateString(undefined, {
+  return d.toLocaleDateString(dateLocale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -105,13 +115,14 @@ function getInitials(name: string, lastName: string): string {
 
 export default function DashboardPage() {
   const t = useTranslations();
+  const dateLocale = toDateLocale(useLocale());
   const router = useRouter();
   const { data: session } = useSession();
   const { data: summary, isLoading, error, refetch } = useDashboardSummary();
   const displayName =
     session?.user?.name && session?.user?.lastName
       ? `${session.user.name} ${session.user.lastName}`.trim()
-      : session?.user?.name ?? null;
+      : (session?.user?.name ?? null);
   const welcomeText = displayName
     ? t("dashboard.welcomeUser", { name: displayName })
     : t("dashboard.welcome");
@@ -251,7 +262,7 @@ export default function DashboardPage() {
                           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium shrink-0">
                             {getInitials(
                               item.patientName,
-                              item.patientLastName
+                              item.patientLastName,
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -266,11 +277,12 @@ export default function DashboardPage() {
                             {formatConsultationDate(
                               item.createdAt,
                               t("common.today"),
-                              t("common.yesterday")
+                              t("common.yesterday"),
+                              dateLocale,
                             )}
                           </span>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 )}

@@ -13,7 +13,7 @@ describe("ConversationList", () => {
 
   it("renderiza correctamente", () => {
     render(<ConversationList {...defaultProps} />);
-    expect(screen.getByText("messages.title")).toBeInTheDocument();
+    expect(screen.getByText("Mensajes")).toBeInTheDocument();
   });
 
   it("muestra conversaciones", () => {
@@ -30,20 +30,25 @@ describe("ConversationList", () => {
       <ConversationList
         {...defaultProps}
         onSelectConversation={onSelectConversation}
-      />
+      />,
     );
 
-    const title =
-      MOCK_CONVERSATIONS[0].title ?? MOCK_CONVERSATIONS[0].summary ?? "";
-    const conversation = screen.getByText(title);
-    await user.click(conversation);
+    const buttons = screen.getAllByRole("button");
+    // First button is the "new conversation" button, rest are conversation items
+    const conversationButton = buttons.find((btn) =>
+      btn.textContent?.includes(
+        MOCK_CONVERSATIONS[0].title ?? MOCK_CONVERSATIONS[0].summary ?? "",
+      ),
+    );
+    expect(conversationButton).toBeDefined();
+    await user.click(conversationButton!);
 
     expect(onSelectConversation).toHaveBeenCalledWith(MOCK_CONVERSATIONS[0]);
   });
 
   it("titulo tiene clases responsive para cabecera compacta", () => {
     render(<ConversationList {...defaultProps} />);
-    const heading = screen.getByRole("heading", { name: "messages.title" });
+    const heading = screen.getByRole("heading", { name: "Mensajes" });
     expect(heading).toHaveClass("text-base", "md:text-lg");
   });
 });

@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 type ConfirmDialogProps = {
   open: boolean;
@@ -18,8 +18,9 @@ type ConfirmDialogProps = {
   description: string;
   confirmLabel: string;
   cancelLabel: string;
+  loadingLabel?: string;
   onConfirm: () => void;
-  variant?: 'default' | 'destructive';
+  variant?: "default" | "destructive";
   isLoading?: boolean;
 };
 
@@ -30,26 +31,34 @@ export function ConfirmDialog({
   description,
   confirmLabel,
   cancelLabel,
+  loadingLabel,
   onConfirm,
-  variant = 'default',
+  variant = "default",
   isLoading = false,
 }: ConfirmDialogProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+    <AlertDialog
+      open={open}
+      onOpenChange={isLoading ? undefined : onOpenChange}
+    >
+      <AlertDialogContent
+        onEscapeKeyDown={isLoading ? (e) => e.preventDefault() : undefined}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>{cancelLabel}</AlertDialogCancel>
-          <AlertDialogAction
+          <AlertDialogCancel disabled={isLoading}>
+            {cancelLabel}
+          </AlertDialogCancel>
+          <Button
             onClick={onConfirm}
             disabled={isLoading}
-            className={variant === 'destructive' ? 'bg-destructive hover:bg-destructive/90' : ''}
+            variant={variant === "destructive" ? "destructive" : "default"}
           >
-            {isLoading ? 'Cargando...' : confirmLabel}
-          </AlertDialogAction>
+            {isLoading ? (loadingLabel ?? confirmLabel) : confirmLabel}
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

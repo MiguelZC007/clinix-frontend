@@ -1,106 +1,114 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Send, Mic, Loader2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { messageFormSchema, type MessageFormData } from '../schemas/message.schema';
-import { AudioRecorder } from './AudioRecorder';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Send, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  messageFormSchema,
+  type MessageFormData,
+} from "../schemas/message.schema";
 
 type MessageInputProps = {
-  onSendMessage: (content: string) => void;
-  onSendAudio: (audioBlob: Blob, duration: number) => void;
+  onSendMessage: (content: string) => Promise<void> | void;
   disabled?: boolean;
 };
 
-export function MessageInput({ onSendMessage, onSendAudio, disabled }: MessageInputProps) {
+export function MessageInput({ onSendMessage, disabled }: MessageInputProps) {
   const t = useTranslations();
-  const [showRecordingUI, setShowRecordingUI] = useState(false);
+
+  const getLocalizedError = (message?: string) => {
+    switch (message) {
+      case "errors.required":
+        return t("errors.required");
+      case "errors.maxLength":
+        return t("errors.maxLength", { max: 1000 });
+      default:
+        return message;
+    }
+  };
 
   const form = useForm<MessageFormData>({
     resolver: zodResolver(messageFormSchema),
     defaultValues: {
-      content: '',
+      content: "",
     },
   });
 
-  const onSubmit = (data: MessageFormData) => {
-    onSendMessage(data.content);
-    form.reset();
+  const onSubmit = async (data: MessageFormData) => {
+    try {
+      await onSendMessage(data.content);
+      form.reset();
+    } catch {
+      // Keep the typed text so the user can retry
+    }
   };
-
-  const handleRecordingComplete = (audioBlob: Blob, duration: number) => {
-    onSendAudio(audioBlob, duration);
-    setShowRecordingUI(false);
-  };
-
-  const messageValue = form.watch('content');
-  const showSendButton = messageValue.trim().length > 0;
 
   return (
     <div className="shrink-0 border-t p-4 bg-background">
-      {showRecordingUI ? (
-        <div className="flex items-center gap-2">
-          <AudioRecorder
-            onRecordingComplete={handleRecordingComplete}
-            onCancel={() => setShowRecordingUI(false)}
-            className="flex-1"
-          />
-        </div>
-      ) : (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center gap-2">
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormControl>
-                    <Input
-                      placeholder={t('messages.typeMessage')}
-                      disabled={disabled}
-                      className="rounded-full px-4"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {showSendButton ? (
-              <Button
-                type="submit"
-                size="icon"
-                className="rounded-full h-10 w-10"
-                disabled={disabled || form.formState.isSubmitting}
-              >
-                {form.formState.isSubmitting ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Send className="h-5 w-5" />
-                )}
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                size="icon"
-                variant="secondary"
-                className={cn('rounded-full h-10 w-10')}
-                disabled={disabled}
-                onMouseDown={() => setShowRecordingUI(true)}
-                onTouchStart={() => setShowRecordingUI(true)}
-              >
-                <Mic className="h-5 w-5" />
-              </Button>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex items-center gap-2"
+        >
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field, fieldState }) => (
+              <FormItem className="flex-1">
+                <FormLabel className="sr-only">
+                  {t("messages.typeMessage")}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder={t("messages.typeMessage")}
+                    aria-label={t("messages.typeMessage")}
+                    disabled={disabled}
+                    maxLength={1000}
+                    className="rounded-full px-4"
+                    onBlur={async () => {
+                      field.onBlur();
+                      await form.trigger("content");
+                    }}
+                  />
+                </FormControl>
+                <FormMessage>
+                  {getLocalizedError(fieldState.error?.message)}
+                </FormMessage>
+              </FormItem>
             )}
-          </form>
-        </Form>
-      )}
+          />
+
+          <Button
+            type="submit"
+            size="icon"
+            className="rounded-full h-10 w-10"
+            aria-label={t("messages.send")}
+            disabled={
+              disabled ||
+              form.formState.isSubmitting ||
+              !form.watch("content").trim()
+            }
+          >
+            {form.formState.isSubmitting ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <Send className="h-5 w-5" />
+            )}
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 }
