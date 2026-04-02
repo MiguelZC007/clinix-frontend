@@ -24,6 +24,7 @@ import {
 import { LoadingSpinner } from "@/ui/atoms/LoadingSpinner";
 import { FormSection } from "@/ui/molecules/FormSection";
 import { createDoctorFormSchema, updateDoctorFormSchema } from "../schemas/doctor.schema";
+import type { CreateDoctorFormData, UpdateDoctorFormData } from "../schemas/doctor.schema";
 import type { Specialty } from "@/features/appointments/types/appointment.types";
 
 type DoctorFormProps = {
@@ -37,7 +38,7 @@ type DoctorFormProps = {
     licenseNumber: string;
   };
   specialties: Specialty[];
-  onSubmit: (data: Record<string, unknown>) => Promise<void>;
+  onSubmit: (data: CreateDoctorFormData | UpdateDoctorFormData) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
   mode: "create" | "edit";
@@ -87,7 +88,7 @@ export function DoctorForm({
                 <FormItem>
                   <FormLabel>{t("doctors.name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} autoComplete="given-name" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,7 +102,7 @@ export function DoctorForm({
                 <FormItem>
                   <FormLabel>{t("doctors.lastName")}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} autoComplete="family-name" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -185,7 +186,7 @@ export function DoctorForm({
                   <FormItem>
                     <FormLabel>{t("doctors.password")}</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input type="password" autoComplete="new-password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

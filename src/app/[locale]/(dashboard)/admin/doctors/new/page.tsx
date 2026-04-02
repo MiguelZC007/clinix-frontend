@@ -10,6 +10,8 @@ import { getSpecialties } from "@/features/appointments/api/appointments.api";
 import type { Specialty } from "@/features/appointments/types/appointment.types";
 import { useCreateDoctor } from "@/features/admin/hooks/useDoctors";
 import { DoctorForm } from "@/features/admin/ui/DoctorForm";
+import type { CreateDoctorFormData, UpdateDoctorFormData } from "@/features/admin/schemas/doctor.schema";
+import type { CreateDoctorRequest } from "@/features/admin/types/doctor.types";
 
 type NewDoctorPageProps = {
   specialties: Specialty[];
@@ -20,10 +22,9 @@ function NewDoctorPageContent({ specialties }: NewDoctorPageProps) {
   const router = useRouter();
   const { mutate, isLoading } = useCreateDoctor();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: CreateDoctorFormData | UpdateDoctorFormData) => {
     try {
-      await mutate(data);
+      await mutate(data as CreateDoctorRequest);
       toast.success(t("doctors.createSuccess"));
       router.push("/admin/doctors");
     } catch (_error) {
@@ -56,13 +57,17 @@ function NewDoctorPageContent({ specialties }: NewDoctorPageProps) {
 }
 
 export default function NewDoctorPage() {
+  const t = useTranslations();
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSpecialties()
       .then(setSpecialties)
-      .catch(() => setSpecialties([]))
+      .catch(() => {
+        setSpecialties([]);
+        toast.error(t("doctors.specialtiesLoadError"));
+      })
       .finally(() => setLoading(false));
   }, []);
 

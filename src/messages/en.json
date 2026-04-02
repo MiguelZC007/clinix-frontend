@@ -324,11 +324,13 @@
     "activateError": "Error activating doctor",
     "deactivateError": "Error deactivating doctor",
     "notFound": "Doctor not found",
-    "notFoundDescription": "The requested doctor does not exist"
+    "notFoundDescription": "The requested doctor does not exist",
+    "specialtiesLoadError": "Error loading specialties"
   },
   "audit": {
     "title": "Audit",
-    "noLogs": "No audit logs"
+    "noLogs": "No audit logs",
+    "viewChanges": "View changes"
   },
   "errors": {
     "required": "This field is required",
@@ -349,6 +351,7 @@
     "clientError": "Request error. Please verify the data.",
     "invalidOtp": "The code must be 6 digits",
     "passwordsDoNotMatch": "Passwords do not match",
-    "endTimeBeforeStart": "End time must be after start time"
+    "endTimeBeforeStart": "End time must be after start time",
+    "atLeastOneField": "At least one field must be provided"
   }
 }

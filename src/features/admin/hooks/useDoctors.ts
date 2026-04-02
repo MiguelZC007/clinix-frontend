@@ -39,6 +39,7 @@ export function useDoctorList(params?: DoctorsListParams) {
   const specialtyId = params?.specialtyId;
 
   const fetchDoctors = useCallback(async () => {
+    const controller = new AbortController();
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
       const requestParams: DoctorsListParams | undefined =
@@ -46,14 +47,25 @@ export function useDoctorList(params?: DoctorsListParams) {
           ? undefined
           : { page, pageSize, search, isActive, specialtyId };
       const data = await getDoctors(requestParams);
-      setState({ data, isLoading: false, error: null });
+      if (!controller.signal.aborted) {
+        setState({ data, isLoading: false, error: null });
+      }
     } catch (error) {
-      setState({ data: null, isLoading: false, error: toError(error) });
+      if (!controller.signal.aborted) {
+        setState({ data: null, isLoading: false, error: toError(error) });
+      }
     }
+    return () => controller.abort();
   }, [page, pageSize, search, isActive, specialtyId]);
 
   useEffect(() => {
-    fetchDoctors();
+    let cleanup: (() => void) | undefined;
+    fetchDoctors().then((fn) => {
+      cleanup = fn;
+    });
+    return () => {
+      cleanup?.();
+    };
   }, [fetchDoctors]);
 
   return {
@@ -84,6 +96,7 @@ export function useDoctorAuditLogs(doctorId: string | undefined, page = 1, pageS
       });
       return;
     }
+    const controller = new AbortController();
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
       const params: AuditLogsParams = {
@@ -93,14 +106,25 @@ export function useDoctorAuditLogs(doctorId: string | undefined, page = 1, pageS
         entityId: doctorId,
       };
       const data = await getAuditLogs(params);
-      setState({ data, isLoading: false, error: null });
+      if (!controller.signal.aborted) {
+        setState({ data, isLoading: false, error: null });
+      }
     } catch (error) {
-      setState({ data: null, isLoading: false, error: toError(error) });
+      if (!controller.signal.aborted) {
+        setState({ data: null, isLoading: false, error: toError(error) });
+      }
     }
+    return () => controller.abort();
   }, [doctorId, page, pageSize]);
 
   useEffect(() => {
-    fetchAuditLogs();
+    let cleanup: (() => void) | undefined;
+    fetchAuditLogs().then((fn) => {
+      cleanup = fn;
+    });
+    return () => {
+      cleanup?.();
+    };
   }, [fetchAuditLogs]);
 
   return {
@@ -123,17 +147,29 @@ export function useDoctor(id: string) {
   });
 
   const fetchDoctor = useCallback(async () => {
+    const controller = new AbortController();
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
       const data = await getDoctorById(id);
-      setState({ data, isLoading: false, error: null });
+      if (!controller.signal.aborted) {
+        setState({ data, isLoading: false, error: null });
+      }
     } catch (error) {
-      setState({ data: null, isLoading: false, error: toError(error) });
+      if (!controller.signal.aborted) {
+        setState({ data: null, isLoading: false, error: toError(error) });
+      }
     }
+    return () => controller.abort();
   }, [id]);
 
   useEffect(() => {
-    fetchDoctor();
+    let cleanup: (() => void) | undefined;
+    fetchDoctor().then((fn) => {
+      cleanup = fn;
+    });
+    return () => {
+      cleanup?.();
+    };
   }, [fetchDoctor]);
 
   return {

@@ -34,7 +34,10 @@ export const updateDoctorFormSchema = z.object({
   lastName: z.string().min(1, "errors.required").min(2, "errors.minLength").max(100, "errors.maxLength").optional(),
   specialtyId: z.string().min(1, "errors.required").optional(),
   licenseNumber: z.string().min(1, "errors.required").min(2, "errors.minLength").max(50, "errors.maxLength").optional(),
-});
+}).refine(
+  (data) => data.name || data.lastName || data.specialtyId || data.licenseNumber,
+  { message: "errors.atLeastOneField", path: ["name"] },
+);
 
 export type UpdateDoctorFormData = z.infer<typeof updateDoctorFormSchema>;
 

@@ -324,11 +324,13 @@
     "activateError": "Error al activar doctor",
     "deactivateError": "Error al desactivar doctor",
     "notFound": "Doctor no encontrado",
-    "notFoundDescription": "El doctor solicitado no existe"
+    "notFoundDescription": "El doctor solicitado no existe",
+    "specialtiesLoadError": "Error al cargar las especialidades"
   },
   "audit": {
     "title": "Auditoría",
-    "noLogs": "No hay registros de auditoría"
+    "noLogs": "No hay registros de auditoría",
+    "viewChanges": "Ver cambios"
   },
   "errors": {
     "required": "Este campo es requerido",
@@ -349,6 +351,7 @@
     "clientError": "Error en la solicitud. Por favor, verifica los datos.",
     "invalidOtp": "El código debe tener 6 dígitos",
     "passwordsDoNotMatch": "Las contraseñas no coinciden",
-    "endTimeBeforeStart": "La hora de fin debe ser posterior a la de inicio"
+    "endTimeBeforeStart": "La hora de fin debe ser posterior a la de inicio",
+    "atLeastOneField": "Debe proporcionar al menos un campo"
   }
 }

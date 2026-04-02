@@ -24,6 +24,7 @@ type DoctorDetailPageProps = {
 const AUDIT_PAGE_SIZE = 10;
 
 function AuditLogCard({ log }: { log: AuditLog }) {
+  const t = useTranslations();
   const dateLocale = toDateLocale(useLocale());
 
   const actionColors: Record<string, string> = {
@@ -60,7 +61,7 @@ function AuditLogCard({ log }: { log: AuditLog }) {
             {log.previousState && log.newState && (
               <div className="text-xs text-muted-foreground mt-2">
                 <details className="cursor-pointer">
-                  <summary className="font-medium">Ver cambios</summary>
+                  <summary className="font-medium">{t("audit.viewChanges")}</summary>
                   <div className="mt-2 p-2 bg-muted rounded text-xs font-mono overflow-x-auto">
                     <div className="text-red-500">- {JSON.stringify(log.previousState)}</div>
                     <div className="text-green-500">+ {JSON.stringify(log.newState)}</div>
