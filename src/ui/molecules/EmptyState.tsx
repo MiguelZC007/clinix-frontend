@@ -1,10 +1,10 @@
 'use client';
 
-import { FileQuestion, Users, Calendar, FileText } from 'lucide-react';
+import { FileQuestion, Users, Calendar, FileText, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-type EmptyStateType = 'default' | 'patients' | 'appointments' | 'clinical-histories';
+type EmptyStateType = 'default' | 'patients' | 'appointments' | 'clinical-histories' | 'doctors';
 
 type EmptyStateProps = {
   type?: EmptyStateType;
@@ -20,6 +20,7 @@ const iconMap: Record<EmptyStateType, React.ComponentType<{ className?: string }
   patients: Users,
   appointments: Calendar,
   'clinical-histories': FileText,
+  doctors: UserCog,
 };
 
 export function EmptyState({
