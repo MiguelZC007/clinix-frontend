@@ -1,0 +1,7 @@
+{
+  "status": "init",
+  "scope": "diff",
+  "type": "frontend",
+  "localEndpoint": "http://localhost:4301/",
+  "serverPort": 42885
+}
