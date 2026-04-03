@@ -50,7 +50,7 @@ export function ChatWindow({
 
   if (!conversation) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-muted/30">
+      <div className="flex-1 flex flex-col items-center justify-center bg-muted/30" data-testid="chat-window">
         <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center mb-4">
           <MessageSquare className="h-10 w-10 text-muted-foreground" />
         </div>
@@ -67,7 +67,7 @@ export function ChatWindow({
     t("messages.conversation");
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden" data-testid="chat-window">
       <div className="flex items-center justify-between p-4 border-b bg-background">
         <div className="flex items-center gap-3">
           {onBack && (

@@ -62,7 +62,7 @@ export function PatientForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8" data-testid="patient-form">
         <FormSection
           title={t("patients.personalInfo")}
           description={t("patients.personalInfoDescription")}
@@ -75,7 +75,7 @@ export function PatientForm({
                 <FormItem>
                   <FormLabel>{t("patients.name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} data-testid="input-name" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,7 +89,7 @@ export function PatientForm({
                 <FormItem>
                   <FormLabel>{t("patients.lastName")}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} data-testid="input-lastName" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -103,7 +103,7 @@ export function PatientForm({
                 <FormItem>
                   <FormLabel>{t("patients.birthDate")}</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input type="date" {...field} data-testid="input-birthDate" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,7 +121,7 @@ export function PatientForm({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger data-testid="select-gender">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -154,7 +154,7 @@ export function PatientForm({
                 <FormItem>
                   <FormLabel>{t("patients.phone")}</FormLabel>
                   <FormControl>
-                    <Input type="tel" {...field} />
+                    <Input type="tel" {...field} data-testid="input-phone" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -168,7 +168,7 @@ export function PatientForm({
                 <FormItem>
                   <FormLabel>{t("patients.email")}</FormLabel>
                   <FormControl>
-                    <Input type="email" {...field} />
+                    <Input type="email" {...field} data-testid="input-email" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -182,7 +182,7 @@ export function PatientForm({
                 <FormItem className="md:col-span-2">
                   <FormLabel>{t("patients.address")}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} data-testid="input-address" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -197,10 +197,11 @@ export function PatientForm({
             variant="outline"
             onClick={onCancel}
             disabled={isLoading}
+            data-testid="btn-cancel"
           >
             {t("common.cancel")}
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} data-testid="btn-submit">
             {isLoading && <LoadingSpinner size="sm" className="mr-2" />}
             {t("common.save")}
           </Button>

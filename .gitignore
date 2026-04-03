@@ -13,6 +13,10 @@ coverage/*
 
 # testing
 /coverage
+/test-results
+/playwright-report
+/blob-report
+/testsprite_tests/tmp
 
 # next.js
 /.next/

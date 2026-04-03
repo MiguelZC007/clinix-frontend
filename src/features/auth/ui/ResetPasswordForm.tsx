@@ -61,7 +61,7 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <Card>
+    <Card data-testid="reset-password-card">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl text-center">
           {t("auth.resetPassword")}
@@ -72,7 +72,7 @@ export function ResetPasswordForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" data-testid="reset-password-form">
             <FormField
               control={form.control}
               name="phone"
@@ -80,7 +80,7 @@ export function ResetPasswordForm() {
                 <FormItem>
                   <FormLabel>{t("auth.phone")}</FormLabel>
                   <FormControl>
-                    <Input type="tel" placeholder="+584241234567" {...field} />
+                    <Input type="tel" placeholder="+584241234567" {...field} data-testid="input-phone" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,6 +98,7 @@ export function ResetPasswordForm() {
                       placeholder="123456"
                       maxLength={6}
                       {...field}
+                      data-testid="input-code"
                     />
                   </FormControl>
                   <FormMessage />
@@ -111,7 +112,7 @@ export function ResetPasswordForm() {
                 <FormItem>
                   <FormLabel>{t("auth.newPassword")}</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type="password" {...field} data-testid="input-new-password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,7 +125,7 @@ export function ResetPasswordForm() {
                 <FormItem>
                   <FormLabel>{t("auth.confirmPassword")}</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type="password" {...field} data-testid="input-confirm-password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,6 +135,7 @@ export function ResetPasswordForm() {
               type="submit"
               className="w-full"
               disabled={form.formState.isSubmitting}
+              data-testid="btn-submit"
             >
               {form.formState.isSubmitting ? (
                 <LoadingSpinner size="sm" className="mr-2" />
@@ -147,6 +149,7 @@ export function ResetPasswordForm() {
         <Link
           href="/login"
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
+          data-testid="link-back-login"
         >
           <ArrowLeft className="h-4 w-4" />
           {t("auth.backToLogin")}

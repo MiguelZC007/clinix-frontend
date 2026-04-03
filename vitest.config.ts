@@ -17,6 +17,7 @@ export default defineConfig({
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
+      '**/e2e/**',
       ...(process.env.RUN_INTEGRATION !== '1' ? ['**/__tests__/integration/**'] : []),
     ],
     coverage: {

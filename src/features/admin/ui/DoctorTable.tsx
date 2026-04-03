@@ -80,26 +80,27 @@ export function DoctorTable({
                 size="sm"
                 className="h-8 w-8 p-0"
                 aria-label={t("common.actions")}
+                data-testid="btn-actions"
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onView(doctor)}>
+              <DropdownMenuItem onClick={() => onView(doctor)} data-testid="btn-view">
                 <Eye className="mr-2 h-4 w-4" />
                 {t("common.view")}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEdit(doctor)}>
+              <DropdownMenuItem onClick={() => onEdit(doctor)} data-testid="btn-edit">
                 <Pencil className="mr-2 h-4 w-4" />
                 {t("common.edit")}
               </DropdownMenuItem>
               {doctor.isActive ? (
-                <DropdownMenuItem onClick={() => onDeactivate(doctor)}>
+                <DropdownMenuItem onClick={() => onDeactivate(doctor)} data-testid="btn-deactivate">
                   <PowerOff className="mr-2 h-4 w-4" />
                   {t("doctors.deactivate")}
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem onClick={() => onActivate(doctor)}>
+                <DropdownMenuItem onClick={() => onActivate(doctor)} data-testid="btn-activate">
                   <Power className="mr-2 h-4 w-4" />
                   {t("doctors.activate")}
                 </DropdownMenuItem>

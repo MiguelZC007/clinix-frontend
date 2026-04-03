@@ -53,7 +53,7 @@ export function ForgotPasswordForm() {
   };
 
   return (
-    <Card>
+    <Card data-testid="forgot-password-card">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl text-center">
           {t("auth.forgotPassword")}
@@ -64,7 +64,7 @@ export function ForgotPasswordForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" data-testid="forgot-password-form">
             <FormField
               control={form.control}
               name="phone"
@@ -72,7 +72,7 @@ export function ForgotPasswordForm() {
                 <FormItem>
                   <FormLabel>{t("auth.phone")}</FormLabel>
                   <FormControl>
-                    <Input type="tel" placeholder="+584241234567" {...field} />
+                    <Input type="tel" placeholder="+584241234567" {...field} data-testid="input-phone" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -83,6 +83,7 @@ export function ForgotPasswordForm() {
               type="submit"
               className="w-full"
               disabled={form.formState.isSubmitting}
+              data-testid="btn-submit"
             >
               {form.formState.isSubmitting ? (
                 <LoadingSpinner size="sm" className="mr-2" />
@@ -96,6 +97,7 @@ export function ForgotPasswordForm() {
         <Link
           href="/login"
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
+          data-testid="link-back-login"
         >
           <ArrowLeft className="h-4 w-4" />
           {t("auth.backToLogin")}

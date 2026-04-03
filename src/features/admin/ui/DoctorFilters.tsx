@@ -27,7 +27,7 @@ export function DoctorFilters({
   const t = useTranslations();
 
   return (
-    <div className="flex flex-wrap items-end gap-4">
+    <div className="flex flex-wrap items-end gap-4" data-testid="doctor-filters">
       <div className="flex-1 min-w-[200px]">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -37,6 +37,7 @@ export function DoctorFilters({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
+            data-testid="input-search"
           />
         </div>
       </div>
@@ -49,7 +50,7 @@ export function DoctorFilters({
             else onIsActiveChange(false);
           }}
         >
-          <SelectTrigger>
+          <SelectTrigger data-testid="select-status">
             <SelectValue placeholder={t("doctors.filterByStatus")} />
           </SelectTrigger>
           <SelectContent>

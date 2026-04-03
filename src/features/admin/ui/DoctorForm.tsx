@@ -75,7 +75,7 @@ export function DoctorForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8" data-testid="doctor-form">
         <FormSection
           title={t("doctors.personalInfo")}
           description={t("doctors.personalInfoDescription")}
@@ -88,7 +88,7 @@ export function DoctorForm({
                 <FormItem>
                   <FormLabel>{t("doctors.name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} autoComplete="given-name" />
+                    <Input {...field} autoComplete="given-name" data-testid="input-name" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -102,7 +102,7 @@ export function DoctorForm({
                 <FormItem>
                   <FormLabel>{t("doctors.lastName")}</FormLabel>
                   <FormControl>
-                    <Input {...field} autoComplete="family-name" />
+                    <Input {...field} autoComplete="family-name" data-testid="input-lastName" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -116,7 +116,7 @@ export function DoctorForm({
                 <FormItem>
                   <FormLabel>{t("doctors.licenseNumber")}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} data-testid="input-licenseNumber" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,7 +134,7 @@ export function DoctorForm({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger data-testid="select-specialty">
                         <SelectValue placeholder={t("doctors.selectSpecialty")} />
                       </SelectTrigger>
                     </FormControl>
@@ -186,7 +186,7 @@ export function DoctorForm({
                   <FormItem>
                     <FormLabel>{t("doctors.password")}</FormLabel>
                     <FormControl>
-                      <Input type="password" autoComplete="new-password" {...field} />
+                      <Input type="password" autoComplete="new-password" {...field} data-testid="input-password" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -202,10 +202,11 @@ export function DoctorForm({
             variant="outline"
             onClick={onCancel}
             disabled={isLoading}
+            data-testid="btn-cancel"
           >
             {t("common.cancel")}
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} data-testid="btn-submit">
             {isLoading && <LoadingSpinner size="sm" className="mr-2" />}
             {t("common.save")}
           </Button>

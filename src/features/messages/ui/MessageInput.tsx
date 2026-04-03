@@ -55,7 +55,7 @@ export function MessageInput({ onSendMessage, disabled }: MessageInputProps) {
   };
 
   return (
-    <div className="shrink-0 border-t p-4 bg-background">
+    <div className="shrink-0 border-t p-4 bg-background" data-testid="message-input">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -77,6 +77,7 @@ export function MessageInput({ onSendMessage, disabled }: MessageInputProps) {
                     disabled={disabled}
                     maxLength={1000}
                     className="rounded-full px-4"
+                    data-testid="input-message"
                     onBlur={async () => {
                       field.onBlur();
                       await form.trigger("content");
@@ -100,6 +101,7 @@ export function MessageInput({ onSendMessage, disabled }: MessageInputProps) {
               form.formState.isSubmitting ||
               !form.watch("content").trim()
             }
+            data-testid="btn-send"
           >
             {form.formState.isSubmitting ? (
               <Loader2 className="h-5 w-5 animate-spin" />

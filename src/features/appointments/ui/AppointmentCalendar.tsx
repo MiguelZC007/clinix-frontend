@@ -100,40 +100,37 @@ export function AppointmentCalendar({ appointments, onAppointmentClick, onDateRa
     setView('day');
   }, []);
 
-  return (
-    <div className="flex flex-col h-full">
+return (
+    <div className="flex flex-col h-full" data-testid="appointment-calendar">
       <CalendarHeader
         currentDate={currentDate}
         view={view}
         onViewChange={handleViewChange}
         onNavigate={handleNavigate}
       />
-
-      {view === 'day' && (
-        <CalendarDayView
-          currentDate={currentDate}
-          appointments={appointments}
-          onAppointmentClick={onAppointmentClick}
-        />
-      )}
-
-      {view === 'week' && (
-        <CalendarWeekView
-          currentDate={currentDate}
-          appointments={appointments}
-          onAppointmentClick={onAppointmentClick}
-          onDayClick={handleDayClick}
-        />
-      )}
-
-      {view === 'month' && (
-        <CalendarMonthView
-          currentDate={currentDate}
-          appointments={appointments}
-          onAppointmentClick={onAppointmentClick}
-          onDayClick={handleDayClick}
-        />
-      )}
+      <div className="flex-1 overflow-hidden">
+        {view === 'day' && (
+          <CalendarDayView
+            currentDate={currentDate}
+            appointments={appointments}
+            onAppointmentClick={onAppointmentClick}
+          />
+        )}
+        {view === 'week' && (
+          <CalendarWeekView
+            currentDate={currentDate}
+            appointments={appointments}
+            onAppointmentClick={onAppointmentClick}
+          />
+        )}
+        {view === 'month' && (
+          <CalendarMonthView
+            currentDate={currentDate}
+            appointments={appointments}
+            onAppointmentClick={onAppointmentClick}
+          />
+        )}
+      </div>
     </div>
   );
 }
