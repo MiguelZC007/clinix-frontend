@@ -30,6 +30,7 @@ export function SearchInput({
         placeholder={placeholder}
         className="pl-9 pr-9"
         aria-label={placeholder ?? t("common.search")}
+        data-testid="input-search"
       />
       {value && (
         <Button

@@ -64,22 +64,24 @@ export function PatientTable({
                 size="sm"
                 className="h-8 w-8 p-0"
                 aria-label={t("common.actions")}
+                data-testid="btn-actions"
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onView(patient)}>
+              <DropdownMenuItem onClick={() => onView(patient)} data-testid="btn-view">
                 <Eye className="mr-2 h-4 w-4" />
                 {t("common.view")}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEdit(patient)}>
+              <DropdownMenuItem onClick={() => onEdit(patient)} data-testid="btn-edit">
                 <Pencil className="mr-2 h-4 w-4" />
                 {t("common.edit")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => onDelete(patient)}
                 className="text-destructive"
+                data-testid="btn-delete"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 {t("common.delete")}

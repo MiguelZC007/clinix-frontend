@@ -79,7 +79,7 @@ export function LoginForm() {
   };
 
   return (
-    <Card>
+    <Card data-testid="login-card">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl text-center">
           {t("auth.login")}
@@ -87,7 +87,7 @@ export function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" data-testid="login-form">
             <FormField
               control={form.control}
               name="phone"
@@ -101,6 +101,7 @@ export function LoginForm() {
                       onBlur={field.onBlur}
                       placeholder="4241234567"
                       defaultCountry="BO"
+                      data-testid="input-phone"
                     />
                   </FormControl>
                   <FormMessage />
@@ -115,7 +116,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>{t("auth.password")}</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type="password" {...field} data-testid="input-password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -126,6 +127,7 @@ export function LoginForm() {
               type="submit"
               className="w-full"
               disabled={isLoading || form.formState.isSubmitting}
+              data-testid="btn-login"
             >
               {isLoading || form.formState.isSubmitting ? (
                 <LoadingSpinner size="sm" className="mr-2" />
@@ -139,6 +141,7 @@ export function LoginForm() {
         <Link
           href="/forgot-password"
           className="text-sm text-muted-foreground hover:text-primary"
+          data-testid="link-forgot-password"
         >
           {t("auth.forgotPassword")}
         </Link>

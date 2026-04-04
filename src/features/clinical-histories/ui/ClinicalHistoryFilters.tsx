@@ -28,13 +28,14 @@ export function ClinicalHistoryFilters({
   const hasFilters = search !== "" || dateFrom !== "" || dateTo !== "";
 
   return (
-    <div className="flex flex-wrap items-end gap-4">
+    <div className="flex flex-wrap items-end gap-4" data-testid="clinical-history-filters">
       <div className="w-full min-w-[200px] max-w-sm">
         <SearchInput
           value={search}
           onChange={onSearchChange}
           placeholder={t("clinicalHistories.searchPlaceholder")}
           className="w-full"
+          data-testid="input-search"
         />
       </div>
       <DateRangeFilters

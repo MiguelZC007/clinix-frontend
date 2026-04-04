@@ -28,7 +28,7 @@ export function ConversationList({
   const t = useTranslations();
 
   return (
-    <div className="flex flex-col h-full border-r">
+    <div className="flex flex-col h-full border-r" data-testid="conversation-list">
       <div className="border-b p-3 md:p-4">
         <div className="mb-2 flex items-center justify-between md:mb-4">
           <h2 className="text-base font-semibold md:text-lg">
@@ -41,6 +41,7 @@ export function ConversationList({
               onClick={onNewConversation}
               title={t("messages.newConversation")}
               aria-label={t("messages.newConversation")}
+              data-testid="btn-new-conversation"
             >
               <MessageSquarePlus className="h-5 w-5" />
             </Button>
@@ -62,7 +63,7 @@ export function ConversationList({
             </p>
           </div>
         ) : (
-          <div className="divide-y">
+          <div className="divide-y" data-testid="conversation-items">
             {conversations.map((conversation) => (
               <ConversationItem
                 key={conversation.id}

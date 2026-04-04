@@ -17,6 +17,7 @@ export function PatientFilters({ search, onSearchChange }: PatientFiltersProps) 
       onChange={onSearchChange}
       placeholder={t('common.search')}
       className="w-full max-w-sm"
+      data-testid="patient-filters"
     />
   );
 }
