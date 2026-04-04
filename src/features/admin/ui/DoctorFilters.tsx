@@ -1,5 +1,6 @@
 "use client";
 
+import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,13 +10,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
+
+type Specialty = {
+  id: string;
+  name: string;
+};
 
 type DoctorFiltersProps = {
   search: string;
   onSearchChange: (value: string) => void;
   isActive?: boolean;
   onIsActiveChange: (value: boolean | undefined) => void;
+  specialtyId?: string;
+  onSpecialtyChange: (value: string | undefined) => void;
+  specialties: Specialty[];
 };
 
 export function DoctorFilters({
@@ -23,6 +31,9 @@ export function DoctorFilters({
   onSearchChange,
   isActive,
   onIsActiveChange,
+  specialtyId,
+  onSpecialtyChange,
+  specialties,
 }: DoctorFiltersProps) {
   const t = useTranslations();
 
@@ -40,6 +51,26 @@ export function DoctorFilters({
             data-testid="input-search"
           />
         </div>
+      </div>
+      <div className="w-[180px]">
+        <Select
+          value={specialtyId ?? "all"}
+          onValueChange={(v) => {
+            onSpecialtyChange(v === "all" ? undefined : v);
+          }}
+        >
+          <SelectTrigger data-testid="select-specialty-filter">
+            <SelectValue placeholder={t("doctors.filterBySpecialty")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("doctors.allSpecialties")}</SelectItem>
+            {specialties.map((s) => (
+              <SelectItem key={s.id} value={s.id}>
+                {s.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div className="w-[180px]">
         <Select

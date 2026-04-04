@@ -1,8 +1,24 @@
 import '@/lib/auth/types';
+import type { UserRole } from '@/lib/auth/types';
 import { type NextAuthOptions } from 'next-auth';
+import type { JWT as _JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { login } from '@/features/auth/api/auth.api';
-import type { JWT as _JWT } from 'next-auth/jwt';
+
+const VALID_ROLES: UserRole[] = ['PATIENT', 'DOCTOR', 'ADMIN'];
+
+function decodeRoleFromToken(accessToken: string): UserRole {
+  try {
+    const payload = JSON.parse(atob(accessToken.split('.')[1]));
+    const role = payload.role;
+    if (typeof role === 'string' && VALID_ROLES.includes(role as UserRole)) {
+      return role as UserRole;
+    }
+    return 'PATIENT';
+  } catch {
+    return 'PATIENT';
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -23,12 +39,15 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           });
 
+          const role = decodeRoleFromToken(response.accessToken);
+
           return {
             id: response.user.id,
             name: response.user.name,
             lastName: response.user.lastName,
             phone: response.user.phone,
             email: response.user.email,
+            role,
             accessToken: response.accessToken,
           };
         } catch (_error) {
@@ -47,6 +66,7 @@ export const authOptions: NextAuthOptions = {
         token.lastName = user.lastName;
         token.phone = user.phone;
         token.email = user.email;
+        token.role = user.role;
         token.accessToken = user.accessToken;
       }
       return token;
@@ -58,6 +78,7 @@ export const authOptions: NextAuthOptions = {
         session.user.lastName = token.lastName;
         session.user.phone = token.phone;
         session.user.email = token.email;
+        session.user.role = token.role;
         session.accessToken = token.accessToken;
       }
       return session;

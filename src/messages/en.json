@@ -325,7 +325,14 @@
     "deactivateError": "Error deactivating doctor",
     "notFound": "Doctor not found",
     "notFoundDescription": "The requested doctor does not exist",
-    "specialtiesLoadError": "Error loading specialties"
+    "specialtiesLoadError": "Error loading specialties",
+    "filterBySpecialty": "Filter by specialty",
+    "allSpecialties": "All specialties"
+  },
+  "admin": {
+    "accessDenied": "Access Denied",
+    "accessDeniedDescription": "You do not have admin permissions to access this section.",
+    "backToDashboard": "Back to Dashboard"
   },
   "audit": {
     "title": "Audit",

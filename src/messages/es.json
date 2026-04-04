@@ -325,7 +325,14 @@
     "deactivateError": "Error al desactivar doctor",
     "notFound": "Doctor no encontrado",
     "notFoundDescription": "El doctor solicitado no existe",
-    "specialtiesLoadError": "Error al cargar las especialidades"
+    "specialtiesLoadError": "Error al cargar las especialidades",
+    "filterBySpecialty": "Filtrar por especialidad",
+    "allSpecialties": "Todas las especialidades"
+  },
+  "admin": {
+    "accessDenied": "Acceso Denegado",
+    "accessDeniedDescription": "No tienes permisos de administrador para acceder a esta sección.",
+    "backToDashboard": "Volver al Dashboard"
   },
   "audit": {
     "title": "Auditoría",

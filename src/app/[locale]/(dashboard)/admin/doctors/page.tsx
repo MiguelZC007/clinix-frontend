@@ -13,6 +13,7 @@ import {
 import type { Doctor } from "@/features/admin/types/doctor.types";
 import { DoctorFilters } from "@/features/admin/ui/DoctorFilters";
 import { DoctorTable } from "@/features/admin/ui/DoctorTable";
+import { useSpecialties } from "@/features/appointments/hooks/useAppointments";
 import { useRouter } from "@/i18n/navigation";
 import { getSafeErrorMessage } from "@/lib/utils/error-handler";
 import { ConfirmDialog } from "@/ui/molecules/ConfirmDialog";
@@ -27,14 +28,18 @@ export default function DoctorsPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
+  const [specialtyId, setSpecialtyId] = useState<string | undefined>(undefined);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [dialogAction, setDialogAction] = useState<"activate" | "deactivate" | null>(null);
+
+  const { data: specialties } = useSpecialties();
 
   const { data, isLoading, error, refetch } = useDoctorList({
     search,
     page,
     pageSize: 10,
     isActive,
+    specialtyId,
   });
 
   const { mutate: deactivateMutation, isLoading: isDeactivating } = useDeactivateDoctor();
@@ -50,6 +55,11 @@ export default function DoctorsPage() {
 
   const handleIsActiveChange = (value: boolean | undefined) => {
     setIsActive(value);
+    setPage(1);
+  };
+
+  const handleSpecialtyChange = (value: string | undefined) => {
+    setSpecialtyId(value);
     setPage(1);
   };
 
@@ -113,6 +123,9 @@ export default function DoctorsPage() {
             onSearchChange={handleSearchChange}
             isActive={isActive}
             onIsActiveChange={handleIsActiveChange}
+            specialtyId={specialtyId}
+            onSpecialtyChange={handleSpecialtyChange}
+            specialties={specialties ?? []}
           />
         }
       >
